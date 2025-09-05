@@ -1,0 +1,744 @@
+@extends('layouts.dashboard-ultra')
+
+@section('title', 'Dashboard Excellence Afrik')
+@section('page_title', 'Tableau de Bord')
+
+@section('content')
+<!-- Primary Statistics Grid -->
+
+
+<div class="dashboard-content">
+
+    <!-- Dashboard Overview Section -->
+    <section id="dashboard-section" class="content-section active">
+
+        <!-- Modern Clean Dashboard -->
+        <div class="modern-dashboard">
+
+            <!-- Excellence Afrik Admin Dashboard Header -->
+            <div class="admin-dashboard-header">
+                <div class="header-content">
+                    <div class="header-info">
+                        <h1 class="admin-dashboard-title">
+                            <i class="fas fa-crown" style="color: #D4AF37;"></i>
+                            Excellence Afrik Admin
+                        </h1>
+                        <p class="admin-dashboard-subtitle">Interface d'administration complète et moderne</p>
+                        <div class="last-update">
+                            <i class="fas fa-clock"></i>
+                            Dernière mise à jour : <span id="lastUpdate">Il y a 2 minutes</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <div class="time-filter">
+                            <button class="filter-btn active" data-period="today">
+                                <i class="fas fa-calendar-day"></i>
+                                Aujourd'hui
+                            </button>
+                            <button class="filter-btn" data-period="week">
+                                <i class="fas fa-calendar-week"></i>
+                                7 jours
+                            </button>
+                            <button class="filter-btn" data-period="month">
+                                <i class="fas fa-calendar-alt"></i>
+                                30 jours
+                            </button>
+                        </div>
+                        <button class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualiser
+                        </button>
+                        <button class="export-btn">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques Principales (Ligne 1) -->
+            <div class="primary-stats-grid">
+                <div class="primary-stat-card articles">
+                    <div class="stat-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">127</div>
+                        <div class="stat-label">Articles Publiés</div>
+                        <div class="stat-period">Ce mois</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+18.2%</span>
+                    </div>
+                    <div class="stat-sparkline">
+                        <div class="sparkline-bar" style="height: 40%"></div>
+                        <div class="sparkline-bar" style="height: 65%"></div>
+                        <div class="sparkline-bar" style="height: 45%"></div>
+                        <div class="sparkline-bar" style="height: 80%"></div>
+                        <div class="sparkline-bar" style="height: 100%"></div>
+                    </div>
+                    <button class="stat-view-more-btn" data-stat="articles">
+                        <i class="fas fa-chart-line"></i>
+                        Voir plus
+                    </button>
+                </div>
+
+                <div class="primary-stat-card views">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">2.8M</div>
+                        <div class="stat-label">Vues Totales</div>
+                        <div class="stat-period">Ce mois</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+24.7%</span>
+                    </div>
+                    <div class="stat-sparkline">
+                        <div class="sparkline-bar" style="height: 60%"></div>
+                        <div class="sparkline-bar" style="height: 75%"></div>
+                        <div class="sparkline-bar" style="height: 85%"></div>
+                        <div class="sparkline-bar" style="height: 90%"></div>
+                        <div class="sparkline-bar" style="height: 100%"></div>
+                    </div>
+                    <button class="stat-view-more-btn" data-stat="views">
+                        <i class="fas fa-eye"></i>
+                        Voir plus
+                    </button>
+                </div>
+
+                <div class="primary-stat-card visitors">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">189K</div>
+                        <div class="stat-label">Visiteurs Uniques</div>
+                        <div class="stat-period">Ce mois</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15.3%</span>
+                    </div>
+                    <div class="stat-sparkline">
+                        <div class="sparkline-bar" style="height: 50%"></div>
+                        <div class="sparkline-bar" style="height: 70%"></div>
+                        <div class="sparkline-bar" style="height: 65%"></div>
+                        <div class="sparkline-bar" style="height: 85%"></div>
+                        <div class="sparkline-bar" style="height: 100%"></div>
+                    </div>
+                    <button class="stat-view-more-btn" data-stat="visitors">
+                        <i class="fas fa-users"></i>
+                        Voir plus
+                    </button>
+                </div>
+
+                <div class="primary-stat-card newsletter">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope-open"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">47.2K</div>
+                        <div class="stat-label">Abonnés Newsletter</div>
+                        <div class="stat-period">Total</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+9.8%</span>
+                    </div>
+                    <div class="stat-sparkline">
+                        <div class="sparkline-bar" style="height: 70%"></div>
+                        <div class="sparkline-bar" style="height: 75%"></div>
+                        <div class="sparkline-bar" style="height: 80%"></div>
+                        <div class="sparkline-bar" style="height: 90%"></div>
+                        <div class="sparkline-bar" style="height: 100%"></div>
+                    </div>
+                    <button class="stat-view-more-btn" data-stat="newsletter">
+                        <i class="fas fa-envelope-open"></i>
+                        Voir plus
+                    </button>
+                </div>
+
+                <div class="primary-stat-card users">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">12.4K</div>
+                        <div class="stat-label">Utilisateurs Inscrits</div>
+                        <div class="stat-period">Total</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12.1%</span>
+                    </div>
+                    <div class="stat-sparkline">
+                        <div class="sparkline-bar" style="height: 55%"></div>
+                        <div class="sparkline-bar" style="height: 65%"></div>
+                        <div class="sparkline-bar" style="height: 75%"></div>
+                        <div class="sparkline-bar" style="height: 85%"></div>
+                        <div class="sparkline-bar" style="height: 100%"></div>
+                    </div>
+                    <button class="stat-view-more-btn" data-stat="users">
+                        <i class="fas fa-user-plus"></i>
+                        Voir plus
+                    </button>
+                </div>
+            </div>
+
+
+
+
+            <!-- Data Tables Section -->
+            <section class="data-tables-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-table"></i>
+                        Tableaux de Données
+                    </h2>
+                    <div class="section-actions">
+                        <button class="btn-refresh" title="Actualiser les données">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="btn-export" title="Exporter les données">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="data-tables-grid">
+                    <!-- Dernières Publications -->
+                    <div class="data-table-card publications">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-newspaper"></i>
+                                Dernières Publications
+                            </h3>
+                            <div class="card-badge">4 récents</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="publications-list">
+                                <div class="publication-item">
+                                    <div class="publication-thumbnail">
+                                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
+                                        <div class="publication-type">Article</div>
+                                    </div>
+                                    <div class="publication-info">
+                                        <h4 class="publication-title">Innovation Fintech en Afrique de l'Ouest</h4>
+                                        <div class="publication-meta">
+                                            <span class="author">
+                                                <i class="fas fa-user"></i>
+                                                Deza Auguste César
+                                            </span>
+                                            <span class="date">
+                                                <i class="fas fa-calendar"></i>
+                                                Il y a 2h
+                                            </span>
+                                        </div>
+                                        <div class="publication-stats">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                1.2K vues
+                                            </span>
+                                            <span class="comments">
+                                                <i class="fas fa-comment"></i>
+                                                24 commentaires
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="publication-status published">
+                                        <i class="fas fa-check-circle"></i>
+                                        Publié
+                                    </div>
+                                </div>
+
+                                <div class="publication-item">
+                                    <div class="publication-thumbnail">
+                                        <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
+                                        <div class="publication-type">Analyse</div>
+                                    </div>
+                                    <div class="publication-info">
+                                        <h4 class="publication-title">Économie Numérique : Défis et Opportunités</h4>
+                                        <div class="publication-meta">
+                                            <span class="author">
+                                                <i class="fas fa-user"></i>
+                                                Marie Kouassi
+                                            </span>
+                                            <span class="date">
+                                                <i class="fas fa-calendar"></i>
+                                                Il y a 5h
+                                            </span>
+                                        </div>
+                                        <div class="publication-stats">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                890 vues
+                                            </span>
+                                            <span class="comments">
+                                                <i class="fas fa-comment"></i>
+                                                18 commentaires
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="publication-status draft">
+                                        <i class="fas fa-edit"></i>
+                                        Brouillon
+                                    </div>
+                                </div>
+
+                                <div class="publication-item">
+                                    <div class="publication-thumbnail">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
+                                        <div class="publication-type">Interview</div>
+                                    </div>
+                                    <div class="publication-info">
+                                        <h4 class="publication-title">Startups Diasporiques : Retour aux Sources</h4>
+                                        <div class="publication-meta">
+                                            <span class="author">
+                                                <i class="fas fa-user"></i>
+                                                Kofi Asante
+                                            </span>
+                                            <span class="date">
+                                                <i class="fas fa-calendar"></i>
+                                                Il y a 1j
+                                            </span>
+                                        </div>
+                                        <div class="publication-stats">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                2.1K vues
+                                            </span>
+                                            <span class="comments">
+                                                <i class="fas fa-comment"></i>
+                                                31 commentaires
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="publication-status review">
+                                        <i class="fas fa-clock"></i>
+                                        En révision
+                                    </div>
+                                </div>
+
+                                <div class="publication-item">
+                                    <div class="publication-thumbnail">
+                                        <img src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
+                                        <div class="publication-type">Podcast</div>
+                                    </div>
+                                    <div class="publication-info">
+                                        <h4 class="publication-title">Leadership Féminin en Entreprise</h4>
+                                        <div class="publication-meta">
+                                            <span class="author">
+                                                <i class="fas fa-user"></i>
+                                                Fatou Diallo
+                                            </span>
+                                            <span class="date">
+                                                <i class="fas fa-calendar"></i>
+                                                Il y a 2j
+                                            </span>
+                                        </div>
+                                        <div class="publication-stats">
+                                            <span class="views">
+                                                <i class="fas fa-headphones"></i>
+                                                1.8K écoutes
+                                            </span>
+                                            <span class="comments">
+                                                <i class="fas fa-comment"></i>
+                                                42 commentaires
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="publication-status published">
+                                        <i class="fas fa-check-circle"></i>
+                                        Publié
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn-view-all">
+                                    <i class="fas fa-list"></i>
+                                    Voir toutes les publications
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Articles les Plus Vus -->
+                    <div class="data-table-card top-articles">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-fire"></i>
+                                Articles les Plus Vus
+                            </h3>
+                            <div class="card-badge trending">Top 6 semaine</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="top-articles-list">
+                                <div class="top-article-item rank-1">
+                                    <div class="article-rank">
+                                        <span class="rank-number">1</span>
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Innovation Fintech : L'Afrique en Première Ligne</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                24.7K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                4.2K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+18%</span>
+                                    </div>
+                                </div>
+
+                                <div class="top-article-item rank-2">
+                                    <div class="article-rank">
+                                        <span class="rank-number">2</span>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Startups Diasporiques : Retour aux Sources</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                18.3K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                3.1K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+24%</span>
+                                    </div>
+                                </div>
+
+                                <div class="top-article-item rank-3">
+                                    <div class="article-rank">
+                                        <span class="rank-number">3</span>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Économie Circulaire en Afrique de l'Ouest</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                15.9K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                2.8K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+31%</span>
+                                    </div>
+                                </div>
+
+                                <div class="top-article-item">
+                                    <div class="article-rank">
+                                        <span class="rank-number">4</span>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Leadership Féminin : Nouvelles Perspectives</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                12.4K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                2.3K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+15%</span>
+                                    </div>
+                                </div>
+
+                                <div class="top-article-item">
+                                    <div class="article-rank">
+                                        <span class="rank-number">5</span>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Tech Africaine : Révolution Silencieuse</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                9.8K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                1.9K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>+22%</span>
+                                    </div>
+                                </div>
+
+                                <div class="top-article-item">
+                                    <div class="article-rank">
+                                        <span class="rank-number">6</span>
+                                    </div>
+                                    <div class="article-details">
+                                        <h4 class="article-title">Investissements Durables : Tendances 2024</h4>
+                                        <div class="article-metrics">
+                                            <span class="views">
+                                                <i class="fas fa-eye"></i>
+                                                8.2K vues
+                                            </span>
+                                            <span class="engagement">
+                                                <i class="fas fa-heart"></i>
+                                                1.5K interactions
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="article-growth neutral">
+                                        <i class="fas fa-minus"></i>
+                                        <span>+3%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn-view-all">
+                                    <i class="fas fa-chart-line"></i>
+                                    Voir les analytics détaillés
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activité Temps Réel -->
+                    <div class="data-table-card real-time">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-broadcast-tower"></i>
+                                Activité Temps Réel
+                            </h3>
+                            <div class="card-badge live">
+                                <div class="live-indicator"></div>
+                                En direct
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="real-time-stats">
+                                <div class="stat-item">
+                                    <div class="stat-icon online">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-value">247</div>
+                                        <div class="stat-label">Utilisateurs en ligne</div>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon reading">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <div class="stat-value">89</div>
+                                        <div class="stat-label">Lectures actives</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-feed">
+                                <div class="activity-item">
+                                    <div class="activity-icon new-user">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>Nouveau membre</strong> s'est inscrit
+                                        </div>
+                                        <div class="activity-time">Il y a 2 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon comment">
+                                        <i class="fas fa-comment"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>Marie K.</strong> a commenté "Innovation Fintech"
+                                        </div>
+                                        <div class="activity-time">Il y a 5 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon view">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>12 nouvelles vues</strong> sur "Startups Diasporiques"
+                                        </div>
+                                        <div class="activity-time">Il y a 8 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon share">
+                                        <i class="fas fa-share"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>Kofi A.</strong> a partagé un article
+                                        </div>
+                                        <div class="activity-time">Il y a 12 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon newsletter">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>8 nouveaux abonnés</strong> à la newsletter
+                                        </div>
+                                        <div class="activity-time">Il y a 15 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="activity-item">
+                                    <div class="activity-icon like">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">
+                                            <strong>24 nouveaux likes</strong> sur les articles récents
+                                        </div>
+                                        <div class="activity-time">Il y a 18 min</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button class="btn-view-all">
+                                    <i class="fas fa-history"></i>
+                                    Voir l'historique complet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Grid -->
+            <div class="analytics-grid">
+                <div class="analytics-card large" style="animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal none running fadeInUp;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Performance Globale
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="performance-chart">
+                            <canvas id="performanceChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card medium" style="animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal none running fadeInUp;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-fire"></i>
+                            Top Articles
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="top-articles">
+                            <div class="article-item">
+                                <div class="article-rank">1</div>
+                                <div class="article-info">
+                                    <div class="article-title">Économie Africaine 2025</div>
+                                    <div class="article-stats">24.7K vues</div>
+                                </div>
+                                <div class="article-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+45%</span>
+                                </div>
+                            </div>
+                            <div class="article-item">
+                                <div class="article-rank">2</div>
+                                <div class="article-info">
+                                    <div class="article-title">Tech Startups Afrique</div>
+                                    <div class="article-stats">18.3K vues</div>
+                                </div>
+                                <div class="article-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+32%</span>
+                                </div>
+                            </div>
+                            <div class="article-item">
+                                <div class="article-rank">3</div>
+                                <div class="article-info">
+                                    <div class="article-title">Diaspora Investissements</div>
+                                    <div class="article-stats">15.9K vues</div>
+                                </div>
+                                <div class="article-trend positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+28%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card small" style="animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal none running fadeInUp;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-globe-africa"></i>
+                            Audience
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="audience-stats">
+                            <div class="audience-item">
+                                <span class="country">🇨🇮 Côte d'Ivoire</span>
+                                <span class="percentage">28%</span>
+                            </div>
+                            <div class="audience-item">
+                                <span class="country">🇫🇷 France</span>
+                                <span class="percentage">22%</span>
+                            </div>
+                            <div class="audience-item">
+                                <span class="country">🇸🇳 Sénégal</span>
+                                <span class="percentage">19%</span>
+                            </div>
+                            <div class="audience-item">
+                                <span class="country">🇨🇦 Canada</span>
+                                <span class="percentage">15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
+@endsection

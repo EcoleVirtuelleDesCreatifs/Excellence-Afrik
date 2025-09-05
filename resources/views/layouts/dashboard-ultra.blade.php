@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Dashboard Excellence Afrik - Plateforme Éditoriale Africaine')</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard-ultra.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard-pages.css') }}">
+
+    @stack('styles')
+</head>
+
+<body class="dashboard-body">
+    @php
+        // Charger les catégories actives pour le sous-menu (sidebar)
+        try {
+            $sidebarCategories = \App\Models\Category::where('status', 'active')
+                ->where('is_active', 1)
+                ->orderBy('name')
+                ->get();
+        } catch (\Throwable $e) {
+            $sidebarCategories = collect();
+        }
+    @endphp
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-ultra-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-crown" style="color: #D4AF37; font-size: 1.5rem;"></i>
+                    <span class="sidebar-logo-text">Excellence Afrik</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard') }}" class="nav-link" data-section="dashboard">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <span class="nav-text">Tableau de Bord</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard.analytics') }}" class="nav-link" data-section="analytics">
+                                <i class="nav-icon fas fa-chart-line"></i>
+                                <span class="nav-text">Analytics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#content" class="nav-link" data-section="content">
+                                <i class="nav-icon fas fa-newspaper"></i>
+                                <span class="nav-text">Contenu</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion</div>
+                    <ul class="nav-menu">
+                        <!-- Gestion des Menus -->
+                        <li class="nav-item has-submenu">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-bars"></i>
+                                <span class="nav-text">Gestion des Menus</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="#add-menu" class="nav-sublink" data-section="add-menu">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Ajouter un menu</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#list-menus" class="nav-sublink" data-section="list-menus">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des menus</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#add-menu-category" class="nav-sublink" data-section="add-menu-category">
+                                        <i class="nav-subicon fas fa-folder-plus"></i>
+                                        <span class="nav-subtext">Ajouter une catégorie</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#menu-structure" class="nav-sublink" data-section="menu-structure">
+                                        <i class="nav-subicon fas fa-sitemap"></i>
+                                        <span class="nav-subtext">Structure des menus</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Gestion des Articles -->
+                        <li class="nav-item has-submenu {{ request()->routeIs('dashboard.articles') ? 'active' : '' }}">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-newspaper"></i>
+                                <span class="nav-text">Gestion des Articles</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.articles.create') }}" class="nav-sublink" data-section="add-article">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Ajouter un article</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.articles') }}" class="nav-sublink" data-section="list-articles">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des articles</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.categories.index') }}" class="nav-sublink" data-section="list-categories">
+                                        <i class="nav-subicon fas fa-folder-tree"></i>
+                                        <span class="nav-subtext">Toutes les catégories</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.categories.create') }}" class="nav-sublink" data-section="add-article-category">
+                                        <i class="nav-subicon fas fa-folder-plus"></i>
+                                        <span class="nav-subtext">Ajouter une catégorie</span>
+                                    </a>
+                                </li>
+                                @if(isset($sidebarCategories) && $sidebarCategories->count())
+                                    @foreach($sidebarCategories as $cat)
+                                        <li class="nav-subitem">
+                                            <a href="{{ route('dashboard.categories.edit', $cat->id) }}" class="nav-sublink" title="Éditer {{ $cat->name }}">
+                                                <i class="nav-subicon fas fa-folder"></i>
+                                                <span class="nav-subtext">{{ $cat->name }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                <li class="nav-subitem">
+                                    <a href="#article-drafts" class="nav-sublink" data-section="article-drafts">
+                                        <i class="nav-subicon fas fa-edit"></i>
+                                        <span class="nav-subtext">Brouillons</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#article-comments" class="nav-sublink" data-section="article-comments">
+                                        <i class="nav-subicon fas fa-comments"></i>
+                                        <span class="nav-subtext">Commentaires</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Gestion WebTV -->
+                        <li class="nav-item has-submenu">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-video"></i>
+                                <span class="nav-text">Gestion WebTV</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.webtv.media.create') }}" class="nav-sublink" data-section="add-webtv-article">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Ajouter un Media</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.webtv.index') }}" class="nav-sublink" data-section="list-webtv-articles">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste Articles WebTV</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.webtv.programs.create') }}" class="nav-sublink" data-section="add-webtv-program">
+                                        <i class="nav-subicon fas fa-tv"></i>
+                                        <span class="nav-subtext">Ajouter un programme</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- Gestion des Magazines -->
+                        <li class="nav-item has-submenu {{ request()->routeIs('dashboard.magazines.*') ? 'active' : '' }}">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-book-open"></i>
+                                <span class="nav-text">Gestion des Magazines</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.magazines.index') }}" class="nav-sublink" data-section="list-magazines">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des magazines</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.magazines.create') }}" class="nav-sublink" data-section="add-magazine">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Nouveau magazine</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Gestion des Utilisateurs -->
+                        <li class="nav-item has-submenu {{ request()->routeIs('dashboard.users') ? 'active' : '' }}">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-users"></i>
+                                <span class="nav-text">Gestion des Utilisateurs</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.users') }}" class="nav-sublink" data-section="list-users">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des utilisateurs</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#add-user" class="nav-sublink" data-section="add-user">
+                                        <i class="nav-subicon fas fa-user-plus"></i>
+                                        <span class="nav-subtext">Ajouter un utilisateur</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Gestion Newsletters -->
+                        <li class="nav-item has-submenu">
+                            <a href="#" class="nav-link submenu-toggle">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <span class="nav-text">Gestion Newsletters</span>
+                                <i class="submenu-arrow fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="#create-newsletter" class="nav-sublink" data-section="create-newsletter">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Créer Newsletter</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#newsletter-subscribers" class="nav-sublink" data-section="newsletter-subscribers">
+                                        <i class="nav-subicon fas fa-users"></i>
+                                        <span class="nav-subtext">Abonnés</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="#newsletter-campaigns" class="nav-sublink" data-section="newsletter-campaigns">
+                                        <i class="nav-subicon fas fa-paper-plane"></i>
+                                        <span class="nav-subtext">Campagnes</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Configuration</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item {{ request()->routeIs('dashboard.settings') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard.settings') }}" class="nav-link" data-section="settings">
+                                <i class="nav-icon fas fa-cog"></i>
+                                <span class="nav-text">Paramètres</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#profile" class="nav-link" data-section="profile">
+                                <i class="nav-icon fas fa-user-circle"></i>
+                                <span class="nav-text">Profil</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                        <div class="user-status"></div>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">{{ Auth::user()->name ?? 'Admin' }}</div>
+                        <div class="user-role">Administrateur</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb-nav">
+                        <span class="breadcrumb-item active">@yield('page_title', 'Tableau de Bord')</span>
+                        <span class="breadcrumb-separator">•</span>
+                        <span class="breadcrumb-subtitle">Excellence Afrik - Plateforme Éditoriale</span>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="header-search">
+                        <input type="text" class="search-input" placeholder="Rechercher articles, auteurs, statistiques...">
+                        <i class="fas fa-search search-icon"></i>
+                        <div class="search-suggestions" id="searchSuggestions" style="display: none;">
+                            <div class="suggestion-item">
+                                <i class="fas fa-newspaper"></i>
+                                <span>Articles récents</span>
+                            </div>
+                            <div class="suggestion-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Statistiques</span>
+                            </div>
+                            <div class="suggestion-item">
+                                <i class="fas fa-users"></i>
+                                <span>Auteurs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="action-btn notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+
+                        <button class="action-btn message-btn">
+                            <i class="fas fa-envelope"></i>
+                            <span class="message-badge">7</span>
+                        </button>
+
+                        <div class="dropdown">
+                            <button class="user-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar-small">
+                                    {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('dashboard.settings') }}">
+                                        <i class="fas fa-user me-2"></i>Mon profil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('dashboard.settings') }}">
+                                        <i class="fas fa-cog me-2"></i>Paramètres
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('home') }}" target="_blank">
+                                        <i class="fas fa-external-link-alt me-2"></i>Voir le site
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Se déconnecter
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Flash Messages -->
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Succès !</strong> {{ session('success') }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Erreur !</strong> {{ session('error') }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('warning'))
+                    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Attention !</strong> {{ session('warning') }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('info'))
+                    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px; border: none; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Information !</strong> {{ session('info') }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </main>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ asset('assets/js/dashboard-ultra.js') }}"></script>
+
+    @stack('scripts')
+</body>
+</html>
