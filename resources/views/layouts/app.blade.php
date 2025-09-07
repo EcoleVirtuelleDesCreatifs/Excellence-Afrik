@@ -184,6 +184,50 @@
                                 </a>
                             </div>
 
+                            <!-- conversions des monnaies  -->
+                            <div class="topbar-currency">
+                                <div class="currency-display" id="currency-display">
+                                    <div class="currency-item">
+                                        <span class="currency-label">EUR/CFA</span>
+                                        <span class="currency-rate" id="eur-cfa-rate">...</span>
+                                    </div>
+                                    <div class="currency-item">
+                                        <span class="currency-label">USD/CFA</span>
+                                        <span class="currency-rate" id="usd-cfa-rate">...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- meteo Module -->
+                            <div class="topbar-weather">
+                                <div class="weather-display" id="weather-display">
+                                    <div class="weather-location">
+                                        <i class="fas fa-map-marker-alt weather-location-icon"></i>
+                                        <span class="weather-city">Abidjan</span>
+                                    </div>
+                                    <div class="weather-info">
+                                        <span class="weather-temp" id="weather-temp">...</span>
+                                        <span class="weather-desc" id="weather-desc">...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BRVM Module -->
+                            <div class="topbar-brvm">
+                                <div class="brvm-display" id="brvm-display">
+                                    <div class="brvm-label">
+                                        <i class="fas fa-chart-line brvm-icon"></i>
+                                        <span class="brvm-title">BRVM</span>
+                                    </div>
+                                    <div class="brvm-data">
+                                        <div class="brvm-item">
+                                            <span class="brvm-index-name">BRVM10</span>
+                                            <span class="brvm-value" id="brvm10-value">...</span>
+                                            <span class="brvm-change" id="brvm10-change">...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Language Selector -->
                             <div class="topbar-language">
@@ -504,6 +548,525 @@
 
     <!-- Custom JavaScript -->
     <script src="{{ asset('assets/js/modern-app.js') }}"></script>
+
+    <!-- Currency Exchange Script -->
+    <script>
+    class CurrencyExchange {
+        constructor() {
+            this.baseURL = 'https://api.exchangerate-api.com/v4/latest';
+            this.updateInterval = 300000; // Update every 5 minutes to avoid rate limits
+            this.init();
+        }
+
+        init() {
+            this.fetchRates();
+            setInterval(() => this.fetchRates(), this.updateInterval);
+        }
+
+        async fetchRates() {
+            try {
+                // Fetch EUR rates to get EUR/XOF
+                const eurResponse = await fetch(`${this.baseURL}/EUR`);
+                if (!eurResponse.ok) {
+                    throw new Error('Failed to fetch EUR rates');
+                }
+                const eurData = await eurResponse.json();
+                const eurToCfa = eurData.rates.XOF;
+
+                // Fetch USD rates to get USD/XOF  
+                const usdResponse = await fetch(`${this.baseURL}/USD`);
+                if (!usdResponse.ok) {
+                    throw new Error('Failed to fetch USD rates');
+                }
+                const usdData = await usdResponse.json();
+                const usdToCfa = usdData.rates.XOF;
+
+                // Update display
+                this.updateDisplay(eurToCfa, usdToCfa);
+                
+                // Store last update time
+                localStorage.setItem('lastCurrencyUpdate', Date.now());
+                
+            } catch (error) {
+                console.error('Error fetching currency rates:', error);
+                this.showError();
+            }
+        }
+
+        updateDisplay(eurToCfa, usdToCfa) {
+            const eurCfaElement = document.getElementById('eur-cfa-rate');
+            const usdCfaElement = document.getElementById('usd-cfa-rate');
+            
+            if (eurCfaElement && usdCfaElement) {
+                eurCfaElement.textContent = eurToCfa.toFixed(0);
+                usdCfaElement.textContent = usdToCfa.toFixed(0);
+                
+                // Add visual feedback for updates
+                eurCfaElement.classList.add('currency-updated');
+                usdCfaElement.classList.add('currency-updated');
+                
+                setTimeout(() => {
+                    eurCfaElement.classList.remove('currency-updated');
+                    usdCfaElement.classList.remove('currency-updated');
+                }, 1000);
+            }
+        }
+
+        showError() {
+            const eurCfaElement = document.getElementById('eur-cfa-rate');
+            const usdCfaElement = document.getElementById('usd-cfa-rate');
+            
+            if (eurCfaElement && usdCfaElement) {
+                eurCfaElement.textContent = 'N/A';
+                usdCfaElement.textContent = 'N/A';
+            }
+        }
+    }
+
+    // Weather API Class
+    class WeatherWidget {
+        constructor() {
+            this.apiEndpoint = '/api/weather'; // Notre endpoint Laravel
+            this.updateInterval = 600000; // Update every 10 minutes
+            this.init();
+        }
+
+        init() {
+            this.fetchWeather();
+            setInterval(() => this.fetchWeather(), this.updateInterval);
+        }
+
+        async fetchWeather() {
+            try {
+                const response = await fetch(this.apiEndpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Weather API Response:', result);
+                
+                if (result.success && result.data) {
+                    // Données réelles de l'API
+                    this.updateDisplay({
+                        main: { temp: result.data.temp },
+                        weather: [{ description: result.data.description }]
+                    });
+                } else if (result.fallback) {
+                    // Données de fallback
+                    this.updateDisplay({
+                        main: { temp: result.fallback.temp },
+                        weather: [{ description: result.fallback.description }]
+                    });
+                } else {
+                    throw new Error('Invalid response format');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                this.showDemoWeather();
+            }
+        }
+
+        showDemoWeather() {
+            // Fixed demo weather data for Abidjan (API fallback)
+            const demoData = {
+                main: { temp: 29 }, // Temperature fixe
+                weather: [{ 
+                    description: 'API indisponible'
+                }]
+            };
+            console.log('Using demo weather data due to API error');
+            this.updateDisplay(demoData);
+        }
+
+        updateDisplay(data) {
+            const tempElement = document.getElementById('weather-temp');
+            const descElement = document.getElementById('weather-desc');
+            
+            if (tempElement && descElement) {
+                tempElement.textContent = `${Math.round(data.main.temp)}°C`;
+                descElement.textContent = data.weather[0].description;
+                
+                // Add visual feedback
+                tempElement.classList.add('weather-updated');
+                descElement.classList.add('weather-updated');
+                
+                setTimeout(() => {
+                    tempElement.classList.remove('weather-updated');
+                    descElement.classList.remove('weather-updated');
+                }, 1000);
+            }
+        }
+    }
+
+    // BRVM Widget Class
+    class BRVMWidget {
+        constructor() {
+            this.apiEndpoint = '/api/brvm';
+            this.updateInterval = 300000; // Update every 5 minutes
+            this.init();
+        }
+
+        init() {
+            this.fetchBRVMData();
+            setInterval(() => this.fetchBRVMData(), this.updateInterval);
+        }
+
+        async fetchBRVMData() {
+            try {
+                const response = await fetch(this.apiEndpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('BRVM API Response:', result);
+                
+                if (result.success && result.data) {
+                    this.updateDisplay(result.data);
+                } else if (result.fallback) {
+                    this.updateDisplay(result.fallback);
+                } else {
+                    throw new Error('Invalid BRVM response format');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching BRVM data:', error);
+                this.showError();
+            }
+        }
+
+        updateDisplay(data) {
+            const valueElement = document.getElementById('brvm10-value');
+            const changeElement = document.getElementById('brvm10-change');
+            
+            if (valueElement && changeElement) {
+                valueElement.textContent = data.value.toString();
+                changeElement.textContent = data.change_display;
+                
+                // Remove existing classes
+                changeElement.classList.remove('brvm-positive', 'brvm-negative', 'brvm-neutral');
+                
+                // Add appropriate class based on change
+                if (data.change_class === 'positive') {
+                    changeElement.classList.add('brvm-positive');
+                } else if (data.change_class === 'negative') {
+                    changeElement.classList.add('brvm-negative');
+                } else {
+                    changeElement.classList.add('brvm-neutral');
+                }
+                
+                // Add visual feedback
+                valueElement.classList.add('brvm-updated');
+                changeElement.classList.add('brvm-updated');
+                
+                setTimeout(() => {
+                    valueElement.classList.remove('brvm-updated');
+                    changeElement.classList.remove('brvm-updated');
+                }, 1000);
+            }
+        }
+
+        showError() {
+            const valueElement = document.getElementById('brvm10-value');
+            const changeElement = document.getElementById('brvm10-change');
+            
+            if (valueElement && changeElement) {
+                valueElement.textContent = 'N/A';
+                changeElement.textContent = 'N/A';
+                changeElement.classList.remove('brvm-positive', 'brvm-negative');
+                changeElement.classList.add('brvm-neutral');
+            }
+        }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        new CurrencyExchange();
+        new WeatherWidget();
+        new BRVMWidget();
+    });
+    </script>
+
+    <!-- Currency Exchange Styles -->
+    <style>
+    .topbar-currency {
+        margin-left: 20px;
+        padding-left: 20px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .currency-display {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .currency-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 11px;
+        color: #ffffff;
+        line-height: 1.2;
+    }
+
+    .currency-label {
+        font-weight: 600;
+        opacity: 0.8;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .currency-rate {
+        font-weight: 700;
+        color: #00d4aa;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        margin-top: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .currency-rate.currency-updated {
+        color: #ffeb3b;
+        transform: scale(1.1);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .topbar-currency {
+            margin-left: 15px;
+            padding-left: 15px;
+        }
+        
+        .currency-display {
+            gap: 10px;
+        }
+        
+        .currency-item {
+            font-size: 10px;
+        }
+        
+        .currency-rate {
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topbar-currency {
+            display: none;
+        }
+    }
+
+    /* Weather Module Styles */
+    .topbar-weather {
+        margin-left: 20px;
+        padding-left: 20px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .weather-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+        color: #ffffff;
+    }
+
+    .weather-location {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        opacity: 0.8;
+    }
+
+    .weather-location-icon {
+        font-size: 10px;
+        color: #ff6b6b;
+    }
+
+    .weather-city {
+        font-weight: 600;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .weather-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .weather-temp {
+        font-weight: 700;
+        color: #ffd93d;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .weather-desc {
+        font-weight: 500;
+        font-size: 10px;
+        color: #87ceeb;
+        text-transform: capitalize;
+        transition: all 0.3s ease;
+    }
+
+    .weather-temp.weather-updated,
+    .weather-desc.weather-updated {
+        color: #ffeb3b;
+        transform: scale(1.1);
+    }
+
+    /* Responsive adjustments for weather */
+    @media (max-width: 992px) {
+        .topbar-weather {
+            margin-left: 15px;
+            padding-left: 15px;
+        }
+        
+        .weather-display {
+            gap: 8px;
+            font-size: 10px;
+        }
+        
+        .weather-temp {
+            font-size: 11px;
+        }
+        
+        .weather-desc {
+            font-size: 9px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topbar-weather {
+            display: none;
+        }
+    }
+
+    /* BRVM Module Styles */
+    .topbar-brvm {
+        margin-left: 20px;
+        padding-left: 20px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .brvm-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 11px;
+        color: #ffffff;
+    }
+
+    .brvm-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        opacity: 0.8;
+    }
+
+    .brvm-icon {
+        font-size: 10px;
+        color: #4a90e2;
+    }
+
+    .brvm-title {
+        font-weight: 600;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .brvm-data {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .brvm-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .brvm-index-name {
+        font-weight: 600;
+        font-size: 9px;
+        opacity: 0.7;
+    }
+
+    .brvm-value {
+        font-weight: 700;
+        color: #ffd700;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        transition: all 0.3s ease;
+    }
+
+    .brvm-change {
+        font-weight: 600;
+        font-size: 9px;
+        padding: 1px 4px;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+
+    .brvm-change.brvm-positive {
+        color: #28a745;
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .brvm-change.brvm-negative {
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .brvm-change.brvm-neutral {
+        color: #6c757d;
+        background-color: rgba(108, 117, 125, 0.1);
+    }
+
+    .brvm-value.brvm-updated,
+    .brvm-change.brvm-updated {
+        color: #ffeb3b;
+        transform: scale(1.05);
+    }
+
+    /* Responsive adjustments for BRVM */
+    @media (max-width: 992px) {
+        .topbar-brvm {
+            margin-left: 15px;
+            padding-left: 15px;
+        }
+        
+        .brvm-display {
+            gap: 8px;
+            font-size: 10px;
+        }
+        
+        .brvm-value {
+            font-size: 10px;
+        }
+        
+        .brvm-change {
+            font-size: 8px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topbar-brvm {
+            display: none;
+        }
+    }
+    </style>
 
     @stack('scripts')
 </body>

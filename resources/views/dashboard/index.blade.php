@@ -23,10 +23,42 @@
                             <i class="fas fa-crown" style="color: #D4AF37;"></i>
                             Excellence Afrik Admin
                         </h1>
-                        <p class="admin-dashboard-subtitle">Interface d'administration complète et moderne</p>
+                        
+                        <!-- Message de bienvenue personnalisé -->
+                        <p class="admin-dashboard-subtitle">
+                            @if(auth()->check())
+                                @if(auth()->user()->estAdmin())
+                                    <span class="role-badge admin">
+                                        <i class="fas fa-crown"></i> Super Administrateur
+                                    </span>
+                                    Interface d'administration complète et moderne
+                                @elseif(auth()->user()->estDirecteurPublication())
+                                    <span class="role-badge directeur">
+                                        <i class="fas fa-user-tie"></i> Directeur de Publication
+                                    </span>
+                                    Tableau de bord de validation et gestion éditoriale
+                                @elseif(auth()->user()->estJournaliste())
+                                    <span class="role-badge journaliste">
+                                        <i class="fas fa-pen-nib"></i> Journaliste
+                                    </span>
+                                    Espace de création et gestion de vos articles
+                                @else
+                                    Interface d'administration
+                                @endif
+                                <br>
+                                <small>Bienvenue, <strong>{{ auth()->user()->name }}</strong></small>
+                            @else
+                                Interface d'administration complète et moderne
+                            @endif
+                        </p>
+                        
                         <div class="last-update">
                             <i class="fas fa-clock"></i>
-                            Dernière mise à jour : <span id="lastUpdate">Il y a 2 minutes</span>
+                            @if(auth()->check() && auth()->user()->derniere_connexion)
+                                Dernière connexion : <span>{{ auth()->user()->derniere_connexion->diffForHumans() }}</span>
+                            @else
+                                Dernière mise à jour : <span id="lastUpdate">Il y a 2 minutes</span>
+                            @endif
                         </div>
                     </div>
                     <div class="header-actions">
@@ -741,4 +773,52 @@
 
 
 </div>
+
+@push('styles')
+<style>
+/* Styles pour les badges de rôles */
+.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 10px;
+    border: 1px solid;
+}
+
+.role-badge.admin {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B4513;
+    border-color: #DAA520;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.role-badge.directeur {
+    background: linear-gradient(135deg, #4169E1, #0047AB);
+    color: #ffffff;
+    border-color: #1E90FF;
+    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.3);
+}
+
+.role-badge.journaliste {
+    background: linear-gradient(135deg, #32CD32, #228B22);
+    color: #ffffff;
+    border-color: #00FF00;
+    box-shadow: 0 2px 8px rgba(50, 205, 50, 0.3);
+}
+
+.role-badge i {
+    margin-right: 4px;
+}
+
+.admin-dashboard-subtitle small {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+</style>
+@endpush
+
 @endsection

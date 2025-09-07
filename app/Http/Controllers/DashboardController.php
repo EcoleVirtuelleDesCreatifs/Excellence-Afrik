@@ -44,15 +44,54 @@ class DashboardController extends Controller
 
     /**
      * Show articles management page.
+     * Articles avec gestion de la confidentialité des brouillons
      */
     public function articles()
     {
-        // Récupération des articles avec leurs relations
-        $articles = Article::with(['category', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $utilisateur = Auth::user();
+        
+        // Récupération des articles selon les règles de confidentialité
+        $articlesQuery = Article::with(['category', 'user']);
+        
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes voient :
+            // - Leurs propres brouillons uniquement
+            // - Tous les autres articles (pending, published, etc.) de tout le monde
+            $articlesQuery->where(function($query) use ($utilisateur) {
+                $query->where(function($subQuery) use ($utilisateur) {
+                    // Leurs propres articles (tous statuts)
+                    $subQuery->where('user_id', $utilisateur->id);
+                })->orWhere(function($subQuery) {
+                    // Articles des autres (sauf brouillons)
+                    $subQuery->where('status', '!=', 'draft');
+                });
+            });
+        } else {
+            // Admin et Directeur voient seulement les articles soumis et publiés
+            // PAS les brouillons des journalistes (privés)
+            $articlesQuery->where('status', '!=', 'draft');
+        }
+        
+        $articles = $articlesQuery->orderBy('created_at', 'desc')->get();
 
         return view('dashboard.articles', compact('articles'));
+    }
+
+    /**
+     * Show personal articles for journalists.
+     * Affiche seulement les articles du journaliste connecté
+     */
+    public function mesArticles()
+    {
+        $utilisateur = Auth::user();
+        
+        // Récupération des articles du journaliste connecté uniquement
+        $articles = Article::with(['category', 'user'])
+                          ->where('user_id', $utilisateur->id)
+                          ->orderBy('created_at', 'desc')
+                          ->get();
+
+        return view('dashboard.mes-articles', compact('articles'));
     }
 
     /**
@@ -107,7 +146,15 @@ class DashboardController extends Controller
      */
     public function storeArticle(Request $request)
     {
-        // Validation des données
+        $utilisateur = Auth::user();
+        
+        // Validation des données - adapté selon le rôle
+        $statusValidation = 'required|in:draft,published';
+        if ($utilisateur->estJournaliste()) {
+            // Les journalistes ne peuvent que créer des brouillons ou soumettre pour validation
+            $statusValidation = 'required|in:draft,pending';
+        }
+        
         $validatedData = $request->validate([
             'title' => 'required|string|max:200',
             'slug' => 'nullable|string|max:255|unique:articles,slug',
@@ -120,7 +167,7 @@ class DashboardController extends Controller
             'meta_description' => 'nullable|string|max:160',
             'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
             'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
-            'status' => 'required|in:draft,published',
+            'status' => $statusValidation,
             'published_at' => 'nullable|date',
             'featured' => 'boolean'
         ]);
@@ -140,6 +187,7 @@ class DashboardController extends Controller
             'excerpt' => $validatedData['excerpt'],
             'content' => $validatedData['content'],
             'author_id' => Auth::id(),
+            'user_id' => Auth::id(), // Assigner l'auteur connecté
             'category_id' => $validatedData['category_id'],
             'seo_title' => $validatedData['meta_title'],
             'seo_description' => $validatedData['meta_description'],
@@ -226,10 +274,18 @@ class DashboardController extends Controller
             }
         }
 
-        // Message de succès et redirection
-        $message = $validatedData['status'] === 'published'
-            ? 'Article publié avec succès !'
-            : 'Article enregistré comme brouillon.';
+        // Message de succès et redirection - adapté selon le statut et le rôle
+        $message = '';
+        switch ($validatedData['status']) {
+            case 'published':
+                $message = 'Article publié avec succès !';
+                break;
+            case 'pending':
+                $message = 'Article soumis pour validation. Il sera examiné par un administrateur ou directeur de publication.';
+                break;
+            default:
+                $message = 'Article enregistré comme brouillon.';
+        }
 
         return redirect()->route('dashboard.articles')
             ->with('success', $message);
@@ -237,10 +293,15 @@ class DashboardController extends Controller
 
     /**
      * Show edit article page.
+     * Vérification des permissions selon le rôle
      */
     public function editArticle($id)
     {
+        $utilisateur = Auth::user();
         $article = Article::with('category')->findOrFail($id);
+        
+        // Pas de restriction d'édition - tous peuvent éditer tous les articles
+        
         $categories = Category::where('status', 'active')->orderBy('name')->get();
 
         return view('dashboard.articles.edit', compact('article', 'categories'));
@@ -250,10 +311,21 @@ class DashboardController extends Controller
 
     /**
      * Update an article.
+     * Vérification des permissions selon le rôle
      */
     public function updateArticle(Request $request, $id)
     {
+        $utilisateur = Auth::user();
         $article = Article::findOrFail($id);
+        
+        // Pas de restriction d'édition - tous peuvent éditer tous les articles
+
+        // Validation adaptée selon le rôle
+        $statusValidation = 'required|in:draft,published,archived';
+        if ($utilisateur->estJournaliste()) {
+            // Les journalistes ne peuvent que créer des brouillons ou soumettre pour validation
+            $statusValidation = 'required|in:draft,pending';
+        }
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -267,7 +339,7 @@ class DashboardController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
             'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
-            'status' => 'required|in:draft,published,archived',
+            'status' => $statusValidation,
             'featured' => 'sometimes|boolean'
         ]);
 
@@ -385,10 +457,25 @@ class DashboardController extends Controller
 
     /**
      * Delete an article.
+     * Règles de suppression selon le rôle et le statut
      */
     public function deleteArticle($id)
     {
+        $utilisateur = Auth::user();
         $article = Article::findOrFail($id);
+
+        // Vérification des permissions de suppression
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes peuvent supprimer seulement leurs articles non-publiés
+            if ($article->user_id !== $utilisateur->id) {
+                return redirect()->back()->with('error', 'Vous ne pouvez supprimer que vos propres articles.');
+            }
+            
+            if ($article->status === 'published') {
+                return redirect()->back()->with('error', 'Impossible de supprimer un article déjà publié. Contactez un administrateur.');
+            }
+        }
+        // Admin et Directeur peuvent supprimer tous les articles (pas de restriction)
 
         // Delete associated image if exists
         if ($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path))) {
@@ -536,6 +623,139 @@ class DashboardController extends Controller
 
         return redirect()->route('dashboard.categories.index')
             ->with('success', 'Catégorie supprimée avec succès !');
+    }
+
+    /**
+     * Approuver et publier un article en attente.
+     * Réservé aux admin et directeur de publication.
+     */
+    public function approveArticle($id)
+    {
+        $utilisateur = Auth::user();
+        
+        // Vérification supplémentaire du rôle
+        if (!$utilisateur->estAdmin() && !$utilisateur->estDirecteurPublication()) {
+            abort(403, 'Action non autorisée');
+        }
+        
+        $article = Article::findOrFail($id);
+        
+        // Vérifier que l'article est bien en attente
+        if ($article->status !== 'pending') {
+            return redirect()->back()->with('error', 'Seuls les articles en attente peuvent être approuvés.');
+        }
+        
+        // Approuver et publier l'article
+        $article->update([
+            'status' => 'published',
+            'published_at' => now()
+        ]);
+        
+        return redirect()->back()->with('success', "Article '{$article->title}' approuvé et publié avec succès !");
+    }
+    
+    /**
+     * Actions groupées sur les articles (approuver, publier, etc.)
+     */
+    public function bulkAction(Request $request)
+    {
+        $utilisateur = Auth::user();
+        $action = $request->input('action');
+        $articleIds = $request->input('articles', []);
+        
+        if (empty($articleIds)) {
+            return redirect()->back()->with('error', 'Aucun article sélectionné.');
+        }
+        
+        $count = 0;
+        $message = '';
+        
+        switch ($action) {
+            case 'approve':
+                // Seulement admin et directeur
+                if (!$utilisateur->estAdmin() && !$utilisateur->estDirecteurPublication()) {
+                    return redirect()->back()->with('error', 'Action non autorisée.');
+                }
+                
+                $count = Article::whereIn('id', $articleIds)
+                    ->where('status', 'pending')
+                    ->update([
+                        'status' => 'published',
+                        'published_at' => now()
+                    ]);
+                $message = "{$count} article(s) approuvé(s) et publié(s) avec succès !";
+                break;
+                
+            case 'publish':
+                // Seulement admin et directeur
+                if (!$utilisateur->estAdmin() && !$utilisateur->estDirecteurPublication()) {
+                    return redirect()->back()->with('error', 'Action non autorisée.');
+                }
+                
+                $count = Article::whereIn('id', $articleIds)
+                    ->whereIn('status', ['draft', 'pending'])
+                    ->update([
+                        'status' => 'published',
+                        'published_at' => now()
+                    ]);
+                $message = "{$count} article(s) publié(s) avec succès !";
+                break;
+                
+            case 'draft':
+                $count = Article::whereIn('id', $articleIds)
+                    ->update(['status' => 'draft']);
+                $message = "{$count} article(s) mis en brouillon.";
+                break;
+                
+            case 'submit':
+                // Journalistes peuvent soumettre leurs brouillons
+                $query = Article::whereIn('id', $articleIds)->where('status', 'draft');
+                if ($utilisateur->estJournaliste()) {
+                    $query->where('user_id', $utilisateur->id);
+                }
+                $count = $query->update(['status' => 'pending']);
+                $message = "{$count} article(s) soumis pour validation.";
+                break;
+                
+            case 'delete':
+                // Suppression avec permissions selon le rôle
+                $articlesToDelete = Article::whereIn('id', $articleIds)->get();
+                $count = 0;
+                
+                foreach ($articlesToDelete as $article) {
+                    $canDelete = false;
+                    
+                    if ($utilisateur->estAdmin() || $utilisateur->estDirecteurPublication()) {
+                        // Admin et Directeur peuvent supprimer tous les articles
+                        $canDelete = true;
+                    } elseif ($utilisateur->estJournaliste()) {
+                        // Journalistes peuvent supprimer seulement leurs articles non-publiés
+                        if ($article->user_id === $utilisateur->id && $article->status !== 'published') {
+                            $canDelete = true;
+                        }
+                    }
+                    
+                    if ($canDelete) {
+                        // Supprimer l'image associée si elle existe
+                        if ($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path))) {
+                            unlink(public_path('storage/' . $article->featured_image_path));
+                        }
+                        $article->delete();
+                        $count++;
+                    }
+                }
+                
+                $message = "{$count} article(s) supprimé(s) avec succès.";
+                if ($count === 0) {
+                    $message = "Aucun article n'a pu être supprimé (permissions insuffisantes ou articles déjà publiés).";
+                }
+                break;
+                
+            default:
+                return redirect()->back()->with('error', 'Action non reconnue.');
+        }
+        
+        return redirect()->back()->with('success', $message);
     }
 
     /**

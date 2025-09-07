@@ -57,64 +57,75 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Principal</div>
                     <ul class="nav-menu">
+                        <!-- Tableau de Bord - Accessible à tous -->
                         <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <a href="{{ route('dashboard') }}" class="nav-link" data-section="dashboard">
                                 <i class="nav-icon fas fa-chart-pie"></i>
                                 <span class="nav-text">Tableau de Bord</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}">
-                            <a href="{{ route('dashboard.analytics') }}" class="nav-link" data-section="analytics">
-                                <i class="nav-icon fas fa-chart-line"></i>
-                                <span class="nav-text">Analytics</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#content" class="nav-link" data-section="content">
-                                <i class="nav-icon fas fa-newspaper"></i>
-                                <span class="nav-text">Contenu</span>
-                            </a>
-                        </li>
+                        
+                        <!-- Analytics - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}">
+                                <a href="{{ route('dashboard.analytics') }}" class="nav-link" data-section="analytics">
+                                    <i class="nav-icon fas fa-chart-line"></i>
+                                    <span class="nav-text">Analytics</span>
+                                </a>
+                            </li>
+                        @endif
+                        
+                        <!-- Contenu - Masqué pour les journalistes -->
+                        @if(auth()->check() && !auth()->user()->estJournaliste())
+                            <li class="nav-item">
+                                <a href="#content" class="nav-link" data-section="content">
+                                    <i class="nav-icon fas fa-newspaper"></i>
+                                    <span class="nav-text">Contenu</span>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Gestion</div>
                     <ul class="nav-menu">
-                        <!-- Gestion des Menus -->
-                        <li class="nav-item has-submenu">
-                            <a href="#" class="nav-link submenu-toggle">
-                                <i class="nav-icon fas fa-bars"></i>
-                                <span class="nav-text">Gestion des Menus</span>
-                                <i class="submenu-arrow fas fa-chevron-down"></i>
-                            </a>
-                            <ul class="nav-submenu">
-                                <li class="nav-subitem">
-                                    <a href="#add-menu" class="nav-sublink" data-section="add-menu">
-                                        <i class="nav-subicon fas fa-plus"></i>
-                                        <span class="nav-subtext">Ajouter un menu</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#list-menus" class="nav-sublink" data-section="list-menus">
-                                        <i class="nav-subicon fas fa-list"></i>
-                                        <span class="nav-subtext">Liste des menus</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#add-menu-category" class="nav-sublink" data-section="add-menu-category">
-                                        <i class="nav-subicon fas fa-folder-plus"></i>
-                                        <span class="nav-subtext">Ajouter une catégorie</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#menu-structure" class="nav-sublink" data-section="menu-structure">
-                                        <i class="nav-subicon fas fa-sitemap"></i>
-                                        <span class="nav-subtext">Structure des menus</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        <!-- Gestion des Menus - Masqué pour les journalistes -->
+                        @if(auth()->check() && !auth()->user()->estJournaliste())
+                            <li class="nav-item has-submenu">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-bars"></i>
+                                    <span class="nav-text">Gestion des Menus</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
+                                <ul class="nav-submenu">
+                                    <li class="nav-subitem">
+                                        <a href="#add-menu" class="nav-sublink" data-section="add-menu">
+                                            <i class="nav-subicon fas fa-plus"></i>
+                                            <span class="nav-subtext">Ajouter un menu</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="#list-menus" class="nav-sublink" data-section="list-menus">
+                                            <i class="nav-subicon fas fa-list"></i>
+                                            <span class="nav-subtext">Liste des menus</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="#add-menu-category" class="nav-sublink" data-section="add-menu-category">
+                                            <i class="nav-subicon fas fa-folder-plus"></i>
+                                            <span class="nav-subtext">Ajouter une catégorie</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="#menu-structure" class="nav-sublink" data-section="menu-structure">
+                                            <i class="nav-subicon fas fa-sitemap"></i>
+                                            <span class="nav-subtext">Structure des menus</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
 
                         <!-- Gestion des Articles -->
                         <li class="nav-item has-submenu {{ request()->routeIs('dashboard.articles') ? 'active' : '' }}">
@@ -124,30 +135,49 @@
                                 <i class="submenu-arrow fas fa-chevron-down"></i>
                             </a>
                             <ul class="nav-submenu">
+                                <!-- Créer article - Accessible à tous -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.articles.create') }}" class="nav-sublink" data-section="add-article">
                                         <i class="nav-subicon fas fa-plus"></i>
                                         <span class="nav-subtext">Ajouter un article</span>
                                     </a>
                                 </li>
+                                
+                                <!-- Liste des articles - Accessible à tous -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.articles') }}" class="nav-sublink" data-section="list-articles">
                                         <i class="nav-subicon fas fa-list"></i>
                                         <span class="nav-subtext">Liste des articles</span>
                                     </a>
                                 </li>
+                                
+                                <!-- Mes articles - Seulement pour journalistes -->
+                                @if(auth()->check() && auth()->user()->estJournaliste())
+                                    <li class="nav-subitem">
+                                        <a href="{{ route('dashboard.mes-articles') }}" class="nav-sublink" data-section="mes-articles">
+                                            <i class="nav-subicon fas fa-user-edit"></i>
+                                            <span class="nav-subtext">Mes articles</span>
+                                        </a>
+                                    </li>
+                                @endif
+                                
+                                <!-- Catégories - Lecture pour tous -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.categories.index') }}" class="nav-sublink" data-section="list-categories">
                                         <i class="nav-subicon fas fa-folder-tree"></i>
-                                        <span class="nav-subtext">Toutes les catégories</span>
+                                        <span class="nav-subtext">Catégories</span>
                                     </a>
                                 </li>
-                                <li class="nav-subitem">
-                                    <a href="{{ route('dashboard.categories.create') }}" class="nav-sublink" data-section="add-article-category">
-                                        <i class="nav-subicon fas fa-folder-plus"></i>
-                                        <span class="nav-subtext">Ajouter une catégorie</span>
-                                    </a>
-                                </li>
+                                
+                                <!-- Créer catégorie - Seulement Admin et Directeur -->
+                                @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                                    <li class="nav-subitem">
+                                        <a href="{{ route('dashboard.categories.create') }}" class="nav-sublink" data-section="add-article-category">
+                                            <i class="nav-subicon fas fa-folder-plus"></i>
+                                            <span class="nav-subtext">Ajouter une catégorie</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 @if(isset($sidebarCategories) && $sidebarCategories->count())
                                     @foreach($sidebarCategories as $cat)
                                         <li class="nav-subitem">
@@ -173,13 +203,14 @@
                             </ul>
                         </li>
 
-                        <!-- Gestion WebTV -->
-                        <li class="nav-item has-submenu">
-                            <a href="#" class="nav-link submenu-toggle">
-                                <i class="nav-icon fas fa-video"></i>
-                                <span class="nav-text">Gestion WebTV</span>
-                                <i class="submenu-arrow fas fa-chevron-down"></i>
-                            </a>
+                        <!-- Gestion WebTV - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-video"></i>
+                                    <span class="nav-text">Gestion WebTV</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
                             <ul class="nav-submenu">
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.webtv.media.create') }}" class="nav-sublink" data-section="add-webtv-article">
@@ -202,14 +233,16 @@
 
                             </ul>
                         </li>
+                        @endif
 
-                        <!-- Gestion des Magazines -->
-                        <li class="nav-item has-submenu {{ request()->routeIs('dashboard.magazines.*') ? 'active' : '' }}">
-                            <a href="#" class="nav-link submenu-toggle">
-                                <i class="nav-icon fas fa-book-open"></i>
-                                <span class="nav-text">Gestion des Magazines</span>
-                                <i class="submenu-arrow fas fa-chevron-down"></i>
-                            </a>
+                        <!-- Gestion des Magazines - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu {{ request()->routeIs('dashboard.magazines.*') ? 'active' : '' }}">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-book-open"></i>
+                                    <span class="nav-text">Gestion des Magazines</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
                             <ul class="nav-submenu">
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.magazines.index') }}" class="nav-sublink" data-section="list-magazines">
@@ -225,14 +258,16 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
-                        <!-- Gestion des Utilisateurs -->
-                        <li class="nav-item has-submenu {{ request()->routeIs('dashboard.users') ? 'active' : '' }}">
-                            <a href="#" class="nav-link submenu-toggle">
-                                <i class="nav-icon fas fa-users"></i>
-                                <span class="nav-text">Gestion des Utilisateurs</span>
-                                <i class="submenu-arrow fas fa-chevron-down"></i>
-                            </a>
+                        <!-- Gestion des Utilisateurs - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu {{ request()->routeIs('dashboard.users') ? 'active' : '' }}">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <span class="nav-text">Gestion des Utilisateurs</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
                             <ul class="nav-submenu">
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.users') }}" class="nav-sublink" data-section="list-users">
@@ -248,47 +283,55 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
-                        <!-- Gestion Newsletters -->
-                        <li class="nav-item has-submenu">
-                            <a href="#" class="nav-link submenu-toggle">
-                                <i class="nav-icon fas fa-envelope"></i>
-                                <span class="nav-text">Gestion Newsletters</span>
-                                <i class="submenu-arrow fas fa-chevron-down"></i>
-                            </a>
-                            <ul class="nav-submenu">
-                                <li class="nav-subitem">
-                                    <a href="#create-newsletter" class="nav-sublink" data-section="create-newsletter">
-                                        <i class="nav-subicon fas fa-plus"></i>
-                                        <span class="nav-subtext">Créer Newsletter</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#newsletter-subscribers" class="nav-sublink" data-section="newsletter-subscribers">
-                                        <i class="nav-subicon fas fa-users"></i>
-                                        <span class="nav-subtext">Abonnés</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#newsletter-campaigns" class="nav-sublink" data-section="newsletter-campaigns">
-                                        <i class="nav-subicon fas fa-paper-plane"></i>
-                                        <span class="nav-subtext">Campagnes</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        <!-- Gestion Newsletters - Masqué pour les journalistes -->
+                        @if(auth()->check() && !auth()->user()->estJournaliste())
+                            <li class="nav-item has-submenu">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-envelope"></i>
+                                    <span class="nav-text">Gestion Newsletters</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
+                                <ul class="nav-submenu">
+                                    <li class="nav-subitem">
+                                        <a href="#create-newsletter" class="nav-sublink" data-section="create-newsletter">
+                                            <i class="nav-subicon fas fa-plus"></i>
+                                            <span class="nav-subtext">Créer Newsletter</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="#newsletter-subscribers" class="nav-sublink" data-section="newsletter-subscribers">
+                                            <i class="nav-subicon fas fa-users"></i>
+                                            <span class="nav-subtext">Abonnés</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="#newsletter-campaigns" class="nav-sublink" data-section="newsletter-campaigns">
+                                            <i class="nav-subicon fas fa-paper-plane"></i>
+                                            <span class="nav-subtext">Campagnes</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
                     </ul>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Configuration</div>
                     <ul class="nav-menu">
-                        <li class="nav-item {{ request()->routeIs('dashboard.settings') ? 'active' : '' }}">
-                            <a href="{{ route('dashboard.settings') }}" class="nav-link" data-section="settings">
-                                <i class="nav-icon fas fa-cog"></i>
-                                <span class="nav-text">Paramètres</span>
-                            </a>
-                        </li>
+                        <!-- Paramètres système - Seulement Super Admin -->
+                        @if(auth()->check() && auth()->user()->estAdmin())
+                            <li class="nav-item {{ request()->routeIs('dashboard.settings') ? 'active' : '' }}">
+                                <a href="{{ route('dashboard.settings') }}" class="nav-link" data-section="settings">
+                                    <i class="nav-icon fas fa-cog"></i>
+                                    <span class="nav-text">Paramètres</span>
+                                </a>
+                            </li>
+                        @endif
+                        
+                        <!-- Profil - Accessible à tous -->
                         <li class="nav-item">
                             <a href="#profile" class="nav-link" data-section="profile">
                                 <i class="nav-icon fas fa-user-circle"></i>
@@ -299,18 +342,7 @@
                 </div>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
-                        <div class="user-status"></div>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name">{{ Auth::user()->name ?? 'Admin' }}</div>
-                        <div class="user-role">Administrateur</div>
-                    </div>
-                </div>
-            </div>
+           
         </aside>
 
         <!-- Main Content -->

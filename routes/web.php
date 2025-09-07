@@ -299,26 +299,47 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 });
 
-// Dashboard Routes (Protected)
-Route::middleware('auth')->group(function () {
+// Dashboard Routes (Protected avec vérification des rôles)
+Route::middleware(['auth', 'verifier.role'])->group(function () {
+    
+    // === ACCÈS POUR TOUS LES UTILISATEURS AUTHENTIFIÉS ===
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
+    
+    // === GESTION DES ARTICLES - Tous peuvent créer et éditer ===
     Route::get('/dashboard/articles', [App\Http\Controllers\DashboardController::class, 'articles'])->name('dashboard.articles');
+    Route::get('/dashboard/mes-articles', [App\Http\Controllers\DashboardController::class, 'mesArticles'])->name('dashboard.mes-articles');
     Route::get('/dashboard/articles/create', [App\Http\Controllers\DashboardController::class, 'createArticle'])->name('dashboard.articles.create');
     Route::post('/dashboard/articles', [App\Http\Controllers\DashboardController::class, 'storeArticle'])->name('dashboard.articles.store');
     Route::get('/dashboard/articles/{id}/edit', [App\Http\Controllers\DashboardController::class, 'editArticle'])->name('dashboard.articles.edit');
     Route::put('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'updateArticle'])->name('dashboard.articles.update');
-    Route::delete('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'deleteArticle'])->name('dashboard.articles.delete');
     
-    // Category management routes
+    // === SUPPRESSION ARTICLES - Permissions gérées dans le contrôleur ===
+    Route::delete('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'deleteArticle'])
+         ->name('dashboard.articles.delete');
+    
+    // === APPROBATION ARTICLES - Seulement directeur et admin ===
+    Route::post('/dashboard/articles/{id}/approve', [App\Http\Controllers\DashboardController::class, 'approveArticle'])
+         ->name('dashboard.articles.approve')
+         ->middleware('verifier.role:admin|directeur_publication');
+    
+    // === ACTIONS GROUPÉES SUR ARTICLES - Seulement directeur et admin pour publication ===
+    Route::post('/dashboard/articles/bulk-action', [App\Http\Controllers\DashboardController::class, 'bulkAction'])
+         ->name('dashboard.articles.bulk-action');
+    
+    // === GESTION CATÉGORIES - Lecture pour tous, modification pour admin/directeur ===
     Route::get('/dashboard/categories', [App\Http\Controllers\DashboardController::class, 'categories'])->name('dashboard.categories.index');
+});
+
+// === ROUTES RÉSERVÉES ADMIN ET DIRECTEUR DE PUBLICATION ===
+Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(function () {
+    // Gestion complète des catégories
     Route::get('/dashboard/categories/create', [App\Http\Controllers\DashboardController::class, 'createCategory'])->name('dashboard.categories.create');
     Route::post('/dashboard/categories', [App\Http\Controllers\DashboardController::class, 'storeCategory'])->name('dashboard.categories.store');
     Route::get('/dashboard/categories/{id}/edit', [App\Http\Controllers\DashboardController::class, 'editCategory'])->name('dashboard.categories.edit');
     Route::put('/dashboard/categories/{id}', [App\Http\Controllers\DashboardController::class, 'updateCategory'])->name('dashboard.categories.update');
     Route::delete('/dashboard/categories/{id}', [App\Http\Controllers\DashboardController::class, 'deleteCategory'])->name('dashboard.categories.delete');
     
-    // Dashboard Magazines CRUD
+    // Gestion complète des magazines
     Route::prefix('dashboard/magazines')->name('dashboard.magazines.')->group(function () {
         Route::get('/', [App\Http\Controllers\MagazineController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\MagazineController::class, 'create'])->name('create');
@@ -327,40 +348,39 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [App\Http\Controllers\MagazineController::class, 'update'])->name('update');
         Route::delete('/{id}', [App\Http\Controllers\MagazineController::class, 'destroy'])->name('destroy');
     });
+    
+    // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
-    Route::get('/dashboard/settings', [App\Http\Controllers\DashboardController::class, 'settings'])->name('dashboard.settings');
+    
+    // Analytics complètes
     Route::get('/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics'])->name('dashboard.analytics');
 
-    // Dashboard WebTV routes
+    // Gestion complète WebTV
     Route::prefix('dashboard/webtv')->name('dashboard.webtv.')->group(function () {
-        // Index WebTV (admin dashboard)
         Route::get('/', [App\Http\Controllers\WebtvController::class, 'index'])->name('index');
-
-        // Ajouter un Live
         Route::get('/media/create', function() {
             return view('dashboard.webtv.add-media', ['type' => 'live']);
         })->name('media.create');
-
-        // Ajouter un Programme
         Route::get('/programs/create', function() {
             return view('dashboard.webtv.add-media', ['type' => 'programme']);
         })->name('programs.create');
-
-        // Enregistrer
         Route::post('/store', [App\Http\Controllers\WebtvController::class, 'store'])->name('store');
-
-        // Prévisualisation embed
         Route::post('/preview-embed', [App\Http\Controllers\WebtvController::class, 'previewEmbed'])->name('preview-embed');
-
-        // Edit/Update/Destroy
         Route::get('/{webtv}/edit', [App\Http\Controllers\WebtvController::class, 'edit'])->name('edit');
         Route::put('/{webtv}', [App\Http\Controllers\WebtvController::class, 'update'])->name('update');
         Route::delete('/{webtv}', [App\Http\Controllers\WebtvController::class, 'destroy'])->name('destroy');
-
-        // AJAX actions
         Route::post('/{webtv}/toggle-actif', [App\Http\Controllers\WebtvController::class, 'toggleActif'])->name('toggle-actif');
         Route::post('/{webtv}/changer-statut', [App\Http\Controllers\WebtvController::class, 'changerStatut'])->name('changer-statut');
     });
+});
+
+// === ROUTES RÉSERVÉES SUPER-ADMINISTRATEUR UNIQUEMENT ===
+Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
+    // Paramètres système
+    Route::get('/dashboard/settings', [App\Http\Controllers\DashboardController::class, 'settings'])->name('dashboard.settings');
+    
+    // Routes de test et développement
+    Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
 });
 
 // WebTV routes
@@ -405,3 +425,94 @@ Route::prefix('webtv')->name('webtv.')->group(function () {
 Route::post('/newsletter/subscribe', function () {
     return redirect()->back()->with('success', 'Merci pour votre inscription !');
 })->name('newsletter.subscribe');
+
+// Weather API route
+Route::get('/api/weather', function () {
+    $apiKey = 'f66a0e148241fe356827681a7ea53ad3';
+    $city = 'Abidjan';
+    $countryCode = 'CI';
+    
+    try {
+        $url = "https://api.openweathermap.org/data/2.5/weather?q={$city},{$countryCode}&units=metric&lang=fr&appid={$apiKey}";
+        
+        $response = file_get_contents($url);
+        if ($response === false) {
+            throw new Exception('Failed to fetch weather data');
+        }
+        
+        $data = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Invalid JSON response');
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'temp' => round($data['main']['temp']),
+                'description' => $data['weather'][0]['description'] ?? 'Inconnu',
+                'city' => $data['name'] ?? 'Abidjan'
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'fallback' => [
+                'temp' => 29,
+                'description' => 'API temporairement indisponible',
+                'city' => 'Abidjan'
+            ]
+        ], 200);
+    }
+})->name('api.weather');
+
+// BRVM API route
+Route::get('/api/brvm', function () {
+    try {
+        // Indice BRVM10 - valeurs typiques entre 145-175
+        $baseValue = 161.50;
+        $variation = (rand(-200, 200) / 100); // Variation de -2% à +2%
+        $currentValue = round($baseValue + $variation, 2);
+        
+        $changePercent = round(($variation / $baseValue) * 100, 2);
+        $changePoints = round($variation, 2);
+        
+        // Formatage de la variation avec couleur
+        $changeDisplay = ($changePercent >= 0 ? '+' : '') . $changePercent . '%';
+        $changeClass = $changePercent >= 0 ? 'positive' : 'negative';
+        
+        // Simulation horaire de la bourse (ouverte 9h-15h UTC, soit 9h-15h Abidjan)
+        $currentHour = (int)date('H');
+        $isMarketOpen = $currentHour >= 9 && $currentHour < 15;
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'index_name' => 'BRVM10',
+                'value' => $currentValue,
+                'change_percent' => $changePercent,
+                'change_points' => $changePoints,
+                'change_display' => $changeDisplay,
+                'change_class' => $changeClass,
+                'market_open' => $isMarketOpen,
+                'last_update' => now()->format('H:i')
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'fallback' => [
+                'index_name' => 'BRVM10',
+                'value' => 161.50,
+                'change_percent' => 0.00,
+                'change_display' => '0.00%',
+                'change_class' => 'neutral',
+                'market_open' => false,
+                'last_update' => 'N/A'
+            ]
+        ], 200);
+    }
+})->name('api.brvm');

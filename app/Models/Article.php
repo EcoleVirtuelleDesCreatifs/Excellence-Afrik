@@ -33,6 +33,7 @@ class Article extends Model
         'is_featured',
         'is_trending',
         'author_id',
+        'user_id',
         'category_id',
         'reading_time',
         'priority',

@@ -37,26 +37,14 @@
 </style>
 @endpush
 
-@section('title', 'Gestion des Articles')
+@section('title', 'Mes Articles')
 
 @section('content')
 <!-- Header Actions -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="h4 mb-1">
-            @if(auth()->check() && auth()->user()->estJournaliste())
-                Mes Articles
-            @else
-                Gestion des Articles
-            @endif
-        </h2>
-        <p class="text-muted mb-0">
-            @if(auth()->check() && auth()->user()->estJournaliste())
-                Créez et gérez vos articles personnels
-            @else
-                Créez, modifiez et gérez tous les articles
-            @endif
-        </p>
+        <h2 class="h4 mb-1">Mes Articles</h2>
+        <p class="text-muted mb-0">Gérez vos articles personnels</p>
     </div>
     <a href="{{ route('dashboard.articles.create') }}" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Nouvel article
@@ -73,7 +61,7 @@
                     <span class="input-group-text">
                         <i class="fas fa-search"></i>
                     </span>
-                    <input type="text" class="form-control" placeholder="Titre, auteur..." id="searchInput">
+                    <input type="text" class="form-control" placeholder="Titre..." id="searchInput">
                 </div>
             </div>
             <div class="col-lg-2">
@@ -96,17 +84,7 @@
                     <option value="pending">En attente</option>
                 </select>
             </div>
-            <div class="col-lg-2">
-                <label class="form-label">Auteur</label>
-                <select class="form-select" id="authorFilter">
-                    <option value="">Tous</option>
-                    <option value="sarah">Sarah Koné</option>
-                    <option value="kwame">Kwame Asante</option>
-                    <option value="aminata">Aminata Traoré</option>
-                    <option value="deza">Deza Auguste</option>
-                </select>
-            </div>
-            <div class="col-lg-3">
+            <div class="col-lg-5">
                 <button class="btn btn-outline-secondary me-2" onclick="resetFilters()">
                     <i class="fas fa-undo me-1"></i>Reset
                 </button>
@@ -121,7 +99,7 @@
 <!-- Articles Table -->
 <div class="dashboard-card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="card-title">Liste des Articles ({{ $articles->count() }})</h3>
+        <h3 class="card-title">Mes Articles ({{ $articles->count() }})</h3>
         <div class="btn-group" role="group">
             <button class="btn btn-outline-secondary btn-sm active" onclick="setViewMode('table')">
                 <i class="fas fa-list"></i>
@@ -140,7 +118,6 @@
                             <input type="checkbox" class="form-check-input" id="selectAll">
                         </th>
                         <th>Article</th>
-                        <th>Auteur</th>
                         <th>Catégorie</th>
                         <th>Statut</th>
                         <th>Vues</th>
@@ -177,15 +154,6 @@
                             </div>
                         </td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" 
-                                     style="width: 30px; height: 30px; font-size: 12px;">
-                                    {{ strtoupper(substr($article->user->name ?? 'U', 0, 1)) }}
-                                </div>
-                                {{ $article->user->name ?? 'Utilisateur inconnu' }}
-                            </div>
-                        </td>
-                        <td>
                             <span class="badge bg-primary">{{ $article->category->name ?? 'Sans catégorie' }}</span>
                         </td>
                         <td>
@@ -215,7 +183,6 @@
                         <td>{{ $article->created_at->format('d M Y') }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <!-- Bouton modifier - Visible pour tous les utilisateurs authentifiés -->
                                 <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn btn-outline-primary" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -223,22 +190,8 @@
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 
-                                <!-- Bouton approuver - Seulement Admin et Directeur pour articles en attente -->
-                                @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()) && $article->status === 'pending')
-                                    <form method="POST" action="{{ route('dashboard.articles.approve', $article->id) }}" style="display: inline;" onsubmit="return confirm('Approuver et publier cet article ?')">
-                                        @csrf
-                                        <button type="submit" class="btn btn-outline-success" title="Approuver et publier">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                                
-                                <!-- Bouton supprimer - Admin/Directeur (tous) ou Journaliste (ses articles non-publiés) -->
-                                @if(auth()->check() && (
-                                    auth()->user()->estAdmin() || 
-                                    auth()->user()->estDirecteurPublication() ||
-                                    (auth()->user()->estJournaliste() && $article->user_id === auth()->id() && $article->status !== 'published')
-                                ))
+                                <!-- Bouton supprimer - Journaliste peut supprimer ses articles non-publiés -->
+                                @if($article->status !== 'published')
                                     <form method="POST" action="{{ route('dashboard.articles.delete', $article->id) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
                                         @csrf
                                         @method('DELETE')
@@ -252,7 +205,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-5">
+                        <td colspan="7" class="text-center py-5">
                             <div class="text-muted">
                                 <i class="fas fa-newspaper fa-3x mb-3 opacity-50"></i>
                                 <h5>Aucun article trouvé</h5>
@@ -270,27 +223,8 @@
     </div>
     <div class="card-footer d-flex justify-content-between align-items-center">
         <div>
-            <span class="text-muted">Affichage 1-10 sur 45 articles</span>
+            <span class="text-muted">{{ $articles->count() }} article(s)</span>
         </div>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled">
-                    <span class="page-link">Précédent</span>
-                </li>
-                <li class="page-item active">
-                    <span class="page-link">1</span>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Suivant</a>
-                </li>
-            </ul>
-        </nav>
     </div>
 </div>
 
@@ -301,27 +235,15 @@
             <span id="selectedCount">0</span> article(s) sélectionné(s)
         </div>
         <div class="btn-group">
-            <!-- Actions de publication - Seulement Admin et Directeur -->
-            @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
-                <button class="btn btn-sm btn-success" onclick="publishSelected()">
-                    <i class="fas fa-check me-1"></i>Publier
-                </button>
-                <button class="btn btn-sm btn-info" onclick="approveSelected()">
-                    <i class="fas fa-thumbs-up me-1"></i>Approuver
-                </button>
-            @endif
+            <button class="btn btn-sm btn-primary" onclick="submitSelected()">
+                <i class="fas fa-paper-plane me-1"></i>Soumettre
+            </button>
             
             <button class="btn btn-sm btn-warning" onclick="draftSelected()">
                 <i class="fas fa-edit me-1"></i>Brouillon
             </button>
             
-            @if(auth()->check() && auth()->user()->estJournaliste())
-                <button class="btn btn-sm btn-primary" onclick="submitSelected()">
-                    <i class="fas fa-paper-plane me-1"></i>Soumettre
-                </button>
-            @endif
-            
-            <!-- Bouton supprimer - Pour tous (permissions gérées côté serveur) -->
+            <!-- Bouton supprimer - Journalistes peuvent supprimer leurs articles non-publiés -->
             <button class="btn btn-sm btn-danger" onclick="deleteSelected()">
                 <i class="fas fa-trash me-1"></i>Supprimer
             </button>
@@ -385,22 +307,8 @@
 @push('scripts')
 <script>
 // Articles Management
-function createNewArticle() {
-    alert('Redirection vers l\'éditeur d\'article...');
-}
-
-function editArticle(id) {
-    alert(`Modification de l'article ${id}`);
-}
-
 function viewArticle(id) {
     alert(`Affichage de l'article ${id}`);
-}
-
-function deleteArticle(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
-        alert(`Article ${id} supprimé`);
-    }
 }
 
 // Filters
@@ -408,9 +316,8 @@ function applyFilters() {
     const search = document.getElementById('searchInput').value;
     const category = document.getElementById('categoryFilter').value;
     const status = document.getElementById('statusFilter').value;
-    const author = document.getElementById('authorFilter').value;
     
-    console.log('Applying filters:', { search, category, status, author });
+    console.log('Applying filters:', { search, category, status });
     // Implement filter logic here
 }
 
@@ -418,7 +325,6 @@ function resetFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('categoryFilter').value = '';
     document.getElementById('statusFilter').value = '';
-    document.getElementById('authorFilter').value = '';
     applyFilters();
 }
 
@@ -467,17 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function publishSelected() {
-    executeBulkAction('publish');
-}
-
-function approveSelected() {
-    const selectedCount = document.querySelectorAll('.article-checkbox:checked').length;
-    if (confirm(`Approuver et publier ${selectedCount} article(s) en attente ?`)) {
-        executeBulkAction('approve');
-    }
-}
-
 function submitSelected() {
     const selectedCount = document.querySelectorAll('.article-checkbox:checked').length;
     if (confirm(`Soumettre ${selectedCount} article(s) pour validation ?`)) {
@@ -487,6 +382,13 @@ function submitSelected() {
 
 function draftSelected() {
     executeBulkAction('draft');
+}
+
+function deleteSelected() {
+    const selectedCount = document.querySelectorAll('.article-checkbox:checked').length;
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedCount} article(s) ?`)) {
+        executeBulkAction('delete');
+    }
 }
 
 function executeBulkAction(action) {
@@ -528,13 +430,6 @@ function executeBulkAction(action) {
     
     document.body.appendChild(form);
     form.submit();
-}
-
-function deleteSelected() {
-    const selectedCount = document.querySelectorAll('.article-checkbox:checked').length;
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ${selectedCount} article(s) ?`)) {
-        executeBulkAction('delete');
-    }
 }
 </script>
 @endpush

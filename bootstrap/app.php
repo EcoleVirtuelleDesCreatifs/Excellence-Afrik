@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Enregistrement du middleware de vérification des rôles
+        $middleware->alias([
+            'verifier.role' => \App\Http\Middleware\VerifierRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

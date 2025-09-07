@@ -407,6 +407,35 @@
     width: 0%;
     transition: width 0.3s ease;
 }
+
+.alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.alert h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.alert ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
 </style>
 @endpush
 
@@ -427,6 +456,25 @@
     </div>
 
     <!-- Main Form -->
+    <!-- Affichage des erreurs de validation -->
+    @if ($errors->any())
+        <div class="alert alert-danger mb-4">
+            <h4>Erreurs de validation :</h4>
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Affichage des messages de succès -->
+    @if (session('success'))
+        <div class="alert alert-success mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <form id="articleForm" class="form-container" action="{{ route('dashboard.articles.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
@@ -654,23 +702,31 @@
             <div class="form-group">
                 <label class="form-label required">Statut de publication</label>
                 <div class="status-selector">
-                    <div class="status-option" data-status="draft">
+                    <div class="status-option selected" data-status="draft">
                         <i class="fas fa-edit"></i>
                         <div>Brouillon</div>
                         <small>Enregistrer sans publier</small>
                     </div>
-                    <div class="status-option" data-status="review">
-                        <i class="fas fa-eye"></i>
-                        <div>En révision</div>
-                        <small>Soumettre pour validation</small>
-                    </div>
-                    <div class="status-option selected" data-status="published">
-                        <i class="fas fa-globe"></i>
-                        <div>Publié</div>
-                        <small>Visible par tous</small>
-                    </div>
+                    @if(auth()->check() && auth()->user()->estJournaliste())
+                        <div class="status-option" data-status="pending">
+                            <i class="fas fa-hourglass-half"></i>
+                            <div>Soumettre</div>
+                            <small>Soumettre pour validation</small>
+                        </div>
+                    @else
+                        <div class="status-option" data-status="pending">
+                            <i class="fas fa-hourglass-half"></i>
+                            <div>En attente</div>
+                            <small>En attente de validation</small>
+                        </div>
+                        <div class="status-option" data-status="published">
+                            <i class="fas fa-globe"></i>
+                            <div>Publié</div>
+                            <small>Visible par tous</small>
+                        </div>
+                    @endif
                 </div>
-                <input type="hidden" id="status" name="status" value="published">
+                <input type="hidden" id="status" name="status" value="draft">
             </div>
 
             <div class="form-row">
@@ -708,10 +764,21 @@
                     <i class="fas fa-save"></i>
                     Enregistrer le brouillon
                 </button>
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-rocket"></i>
-                    Publier l'article
-                </button>
+                @if(auth()->check() && auth()->user()->estJournaliste())
+                    <button type="button" id="submitForReview" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Soumettre pour validation
+                    </button>
+                @else
+                    <button type="button" id="submitForReview" class="btn btn-warning">
+                        <i class="fas fa-hourglass-half"></i>
+                        Marquer en attente
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-rocket"></i>
+                        Publier l'article
+                    </button>
+                @endif
             </div>
         </div>
     </form>
@@ -911,8 +978,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save draft functionality
     document.getElementById('saveDraft').addEventListener('click', function() {
         document.getElementById('status').value = 'draft';
+        document.getElementById('content').value = quill.root.innerHTML;
         document.getElementById('articleForm').submit();
     });
+
+    // Submit for review functionality
+    const submitForReviewBtn = document.getElementById('submitForReview');
+    if (submitForReviewBtn) {
+        submitForReviewBtn.addEventListener('click', function(e) {
+            console.log('Submit button clicked');
+            e.preventDefault(); // Empêcher le comportement par défaut
+            
+            // Vérifier les champs requis
+            const title = document.getElementById('title').value.trim();
+            const category = document.getElementById('category').value;
+            const excerpt = document.getElementById('excerpt').value.trim();
+            const content = quill.getText().trim();
+            
+            console.log('Title:', title);
+            console.log('Category:', category);
+            console.log('Excerpt:', excerpt);
+            console.log('Content length:', content.length);
+            
+            if (!title) {
+                alert('Veuillez saisir un titre');
+                return;
+            }
+            if (!category) {
+                alert('Veuillez sélectionner une catégorie');
+                return;
+            }
+            if (!excerpt) {
+                alert('Veuillez saisir un résumé');
+                return;
+            }
+            if (content.length < 10) {
+                alert('Veuillez saisir du contenu pour l\'article');
+                return;
+            }
+            
+            // Définir le statut et soumettre
+            document.getElementById('status').value = 'pending';
+            document.getElementById('content').value = quill.root.innerHTML;
+            
+            console.log('Submitting form with status: pending');
+            document.getElementById('articleForm').submit();
+        });
+    }
 
     // Form submission
     document.getElementById('articleForm').addEventListener('submit', function() {
