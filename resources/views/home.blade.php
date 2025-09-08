@@ -41,10 +41,10 @@
                                 $fwTitre = $fw?->titre ?? "Programme à l'affiche";
                                 $fwCategorie = $fw?->categorie ? ucfirst($fw->categorie) : 'WebTV';
                                 $fwDesc = $fw?->description ? Str::limit(strip_tags($fw->description), 140) : "Découvrez nos programmes exclusifs en direct et en replay.";
-                                $fwDate = $fw?->date_programmee_formatee ?? "Aujourd'hui";
+                              //  $fwDate = $fw?->date_programmee_formatee ?? "";
                                 $fwIsLive = $fw?->statut === 'en_direct';
                                 $fwVid = $fw && !empty($fw->vimeo_event_id) ? $fw->vimeo_event_id : ($fw && !empty($fw->video_id) ? $fw->video_id : null);
-                                $fwPlaceholder = 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=450&fit=crop';
+                                $fwPlaceholder = '';
                             @endphp
                             @if($fw)
                             <div class="webtv-featured-block">
@@ -68,9 +68,7 @@
                                         <h3 class="featured-video-title">{{ $fwTitre }}</h3>
                                         <p class="featured-video-description">{{ $fwDesc }}</p>
                                         <div class="video-metadata">
-                                            <div class="video-stats">
-                                                <span class="stat-item"><i class="fas fa-calendar"></i><span>{{ $fwDate }}</span></span>
-                                            </div>
+
                                             <div class="video-actions">
                                                 <button class="action-btn-webtv watch-btn" data-embed-container-id="embed-src-{{ $fw->id }}">
                                                     <i class="fas fa-play"></i>
@@ -306,10 +304,7 @@
                                                 <img src="{{ asset('assets/images/default-article.jpg') }}"
                                                      alt="{{ $mainFigure->featured_image_alt ?: $mainFigure->title }}">
                                             @endif
-                                            <div class="entrepreneurs-overlay">
-                                                <div class="entrepreneurs-badge">{{ $mainFigure->category->name }}</div>
 
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -327,16 +322,18 @@
 
 
                                                 <div class="entrepreneurs-stat">
-                                                    <span class="entrepreneurs-stat-number">{{ $mainFigure->created_at->locale('fr')->isoFormat('D MMMM YYYY [à] HH:mm') }}</span>
-                                                    <span class="entrepreneurs-stat-label">Publication</span>
+                                                    <span class="entrepreneurs-stat-number">Le {{ $mainFigure->created_at->locale('fr')->isoFormat('D MMMM YYYY [à] HH:mm') }}</span>
+
                                                 </div>
                                             </div>
-                                            <div class="entrepreneurs-actions">
-                                                <a href="{{ route('articles.show', $mainFigure->slug) }}" class="entrepreneurs-btn-primary">
-                                                    <span>Lire le portrait</span>
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </a>
-                                                <a href="{{ route('articles.category', $mainFigure->category->slug) }}" class="entrepreneurs-btn-secondary">
+                                            <div class="video-metadata">
+
+                                                    <a href="{{ route('articles.show', $mainFigure->slug) }}" class="action-btn-webtv watch-btn">
+                                                        <span>Lire le portrait</span>
+                                                        <i class="fas fa-arrow-right"></i>
+                                                    </a>
+
+                                                <a href="{{ route('articles.category', $mainFigure->category->slug) }}" class="action-btn-webtv share-btn">
                                                     <i class="fas fa-users"></i>
                                                     <span>Voir tous les portraits</span>
                                                 </a>
@@ -369,16 +366,13 @@
                                         <div class="entrepreneurs-card-content">
                                             <h4 class="entrepreneurs-card-title">
                                                 <a href="{{ route('articles.show', $figure->slug) }}" class="text-decoration-none text-dark">
-                                                    {{ Str::limit($figure->title, 50) }}
+                                                    {{ Str::limit($figure->title, 100) }}
                                                 </a>
                                             </h4>
                                             <p class="entrepreneurs-card-role">{{ $figure->subtitle ?: 'Figure de l\'Économie' }}</p>
-                                            <p class="entrepreneurs-card-excerpt">
-                                                {{ $figure->excerpt ?: Str::limit(strip_tags($figure->content), 120) }}
-                                            </p>
+
                                             <div class="entrepreneurs-card-impact">
-                                                <span class="entrepreneurs-impact-number">{{ $figure->created_at->diffForHumans() }}</span>
-                                                <span class="entrepreneurs-impact-label">Publié</span>
+                                                <span class="entrepreneurs-impact-number" style="font-size: 14px; color: hsl(205, 9%, 73%); font-weight: 500;">Le {{ $figure->created_at->locale('fr')->isoFormat('D MMMM YYYY [à] HH:mm') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -393,16 +387,18 @@
                             </div>
                         @endif
                                         <!-- Call to Action -->
-                                        <div class="entrepreneurs-cta">
+                                        <div class="entrepreneurs-cta text-center">
                                             <div class="entrepreneurs-cta-content">
                                                 <h3 class="entrepreneurs-cta-title">Vous êtes entrepreneur ?</h3>
                                                 <p class="entrepreneurs-cta-text">
                                                     Partagez votre histoire et inspirez la prochaine génération d'entrepreneurs africains.
                                                 </p>
-                                                <a href="#" class="entrepreneurs-cta-btn">
-                                                    <span>Proposer votre portrait</span>
-                                                    <i class="fas fa-plus"></i>
-                                                </a>
+
+                                                    <a href="#" class="action-btn-webtv watch-btn" style="width: 250px; position: relative; left: 50%; transform: translateX(-50%);">
+                                                        <span>Proposer votre portrait</span>
+                                                        <i class="fas fa-plus"></i>
+                                                    </a>
+
                                             </div>
                                         </div>
                                     </div>

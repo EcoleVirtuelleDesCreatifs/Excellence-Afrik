@@ -37,7 +37,7 @@
 
     /* Typography */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-heading: 'Inter', Georgia, serif;
 
     /* Spacing for Clean Design */
     --spacing-xs: 0.5rem;
@@ -4027,6 +4027,8 @@ h1, h2, h3, h4, h5, h6 {
 .logo-brand-image {
     height: 250px;
     width: auto;
+    position: relative;
+    right: 90px;
     transition: all 0.3s ease;
 }
 
@@ -5140,7 +5142,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .featured-video-title {
-    font-family: var(--font-heading);
+    font-family: var(--font-heading) !important;
     font-weight: 600;
     font-size: 2rem;
     color: var(--black-deep);
@@ -10290,12 +10292,12 @@ h1, h2, h3, h4, h5, h6 {
 /* ===== PORTRAIT D'ENTREPRENEURS - MODERN REVOLUTIONARY DESIGN ===== */
 .entrepreneurs-modern {
     padding: 80px 0;
-    background: #ffffff;
+    background: #000;
     position: relative;
 }
 
 .entrepreneurs-background {
-    background: linear-gradient(135deg, #F8F9FA 0%, #ffffff 50%, #F8F9FA 100%);
+
     position: relative;
 }
 
@@ -10325,7 +10327,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 200;
     font-size: 3.2rem;
-    color: #0D0D0D;
+    color: #FFF;
     letter-spacing: 3px;
     text-transform: uppercase;
     margin: 0;
@@ -13195,10 +13197,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ===== WEB TV ULTRA MODERN SECTION ===== */
 .webtv-ultra-section {
     padding: var(--spacing-xxl) 0;
-    background: linear-gradient(135deg,
-        rgba(242, 203, 5, 0.02) 0%,
-        rgba(242, 185, 12, 0.03) 50%,
-        rgba(217, 153, 35, 0.02) 100%);
+    background: #cc9933;
     position: relative;
     overflow: hidden;
 }
@@ -13277,14 +13276,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title-accent-webtv {
-    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+    background: #FFF;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .title-separator-webtv {
-    color: var(--tertiary-gold);
+    color: #F5ECDB;
     font-size: 0.6em;
     animation: rotate-separator 3s ease-in-out infinite;
 }
@@ -13316,7 +13315,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .subtitle-separator-webtv {
-    color: var(--tertiary-gold);
+    color: #FFF;
     font-weight: 300;
 }
 
@@ -13722,10 +13721,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Newsletter CTA */
 .webtv-newsletter-cta {
-    background: linear-gradient(135deg,
-        rgba(242, 203, 5, 0.1) 0%,
-        rgba(242, 185, 12, 0.05) 50%,
-        rgba(217, 153, 35, 0.1) 100%);
+    background: #fff;
     border-radius: 20px;
     padding: var(--spacing-xl);
     border: 2px solid rgba(242, 203, 5, 0.2);
