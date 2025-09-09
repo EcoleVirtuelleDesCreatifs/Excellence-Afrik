@@ -12,12 +12,30 @@ class Webtv extends Model
 
     protected $table = 'webtvs';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'titre',
+        'description',
+        'type_programme',
+        'categorie',
+        'duree_estimee',
+        'date_programmee',
+        'statut',
+        'est_actif',
+        'code_embed_vimeo',
+        'code_integration_vimeo',
+    ];
 
     protected $casts = [
         'est_actif' => 'boolean',
         'date_programmee' => 'datetime',
     ];
+
+    // Relations
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     // Accessors used in the Blade
     public function getStatutCouleurAttribute(): string

@@ -424,6 +424,7 @@
                                 <p class="mb-4 text-light">Recevez chaque semaine les meilleures actualités économiques et entrepreneuriales d'Afrique directement dans votre boîte mail.</p>
                                 <form class="newsletter-form-centered" action="{{ route('newsletter.subscribe') }}" method="POST">
                                     @csrf
+                                    <input type="hidden" name="source" value="home">
                                     <div class="input-group input-group-lg">
                                         <input type="email" class="form-control newsletter-input" name="email" placeholder="Votre adresse e-mail" required>
                                         <button type="submit" class="btn btn-primary newsletter-btn">

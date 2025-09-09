@@ -215,10 +215,12 @@
                         <td>{{ $article->created_at->format('d M Y') }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <!-- Bouton modifier - Visible pour tous les utilisateurs authentifiés -->
-                                <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn btn-outline-primary" title="Modifier">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <!-- Bouton modifier - Permissions selon le rôle -->
+                                @if(auth()->check() && auth()->user()->peutModifierArticle($article))
+                                    <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn btn-outline-primary" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                @endif
                                 <button class="btn btn-outline-info" onclick="viewArticle({{ $article->id }})" title="Voir">
                                     <i class="fas fa-eye"></i>
                                 </button>

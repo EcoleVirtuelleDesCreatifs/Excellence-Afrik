@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\User;
 use App\Models\Category;
 use App\Models\Article;
 use Illuminate\Support\Facades\Storage;
@@ -300,7 +301,13 @@ class DashboardController extends Controller
         $utilisateur = Auth::user();
         $article = Article::with('category')->findOrFail($id);
         
-        // Pas de restriction d'édition - tous peuvent éditer tous les articles
+        // Vérification des permissions d'édition
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes peuvent éditer seulement leurs propres articles
+            if ($article->user_id !== $utilisateur->id) {
+                abort(403, 'Vous ne pouvez modifier que vos propres articles.');
+            }
+        }
         
         $categories = Category::where('status', 'active')->orderBy('name')->get();
 
@@ -318,7 +325,13 @@ class DashboardController extends Controller
         $utilisateur = Auth::user();
         $article = Article::findOrFail($id);
         
-        // Pas de restriction d'édition - tous peuvent éditer tous les articles
+        // Vérification des permissions d'édition
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes peuvent éditer seulement leurs propres articles
+            if ($article->user_id !== $utilisateur->id) {
+                abort(403, 'Vous ne pouvez modifier que vos propres articles.');
+            }
+        }
 
         // Validation adaptée selon le rôle
         $statusValidation = 'required|in:draft,published,archived';
@@ -787,5 +800,179 @@ class DashboardController extends Controller
         // }
 
         return $slug;
+    }
+
+    /**
+     * Show user profile page.
+     */
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('dashboard.profile', compact('user'));
+    }
+
+    /**
+     * Update user profile.
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|confirmed',
+        ]);
+
+        // Mise à jour des données de base
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        // Mise à jour du mot de passe si fourni
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('dashboard.profile')
+            ->with('success', 'Profil mis à jour avec succès !');
+    }
+
+    /**
+     * Get all users for settings management.
+     */
+    public function getUsers(Request $request)
+    {
+        $users = User::select('id', 'name', 'email', 'role_utilisateur', 'est_actif', 'derniere_connexion')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json(['users' => $users]);
+    }
+
+    /**
+     * Get specific user for editing.
+     */
+    public function getUser($id)
+    {
+        $user = User::findOrFail($id);
+        
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role_utilisateur' => $user->role_utilisateur,
+            'est_actif' => $user->est_actif
+        ]);
+    }
+
+    /**
+     * Create a new user.
+     */
+    public function createUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'role_utilisateur' => 'required|in:admin,directeur_publication,journaliste',
+            'password' => 'required|min:8',
+        ]);
+
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role_utilisateur' => $request->role_utilisateur,
+                'password' => bcrypt($request->password),
+                'est_actif' => $request->boolean('est_actif', true),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Utilisateur créé avec succès',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update an existing user.
+     */
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'role_utilisateur' => 'required|in:admin,directeur_publication,journaliste',
+        ]);
+
+        try {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role_utilisateur' => $request->role_utilisateur,
+                'est_actif' => $request->boolean('est_actif', false),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Utilisateur modifié avec succès',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la modification: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete a user.
+     */
+    public function deleteUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            
+            // Empêcher la suppression de son propre compte
+            if ($user->id === Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous ne pouvez pas supprimer votre propre compte'
+                ], 400);
+            }
+
+            // Empêcher la suppression du dernier admin
+            if ($user->role_utilisateur === 'admin') {
+                $adminCount = User::where('role_utilisateur', 'admin')->count();
+                if ($adminCount <= 1) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Impossible de supprimer le dernier administrateur'
+                    ], 400);
+                }
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Utilisateur supprimé avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

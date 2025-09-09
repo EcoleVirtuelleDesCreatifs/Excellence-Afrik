@@ -136,9 +136,12 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <form class="newsletter-form">
+                                <form class="newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="source" value="magazines">
                                     <div class="input-group">
                                         <input type="email" 
+                                               name="email"
                                                class="form-control" 
                                                placeholder="Votre adresse email"
                                                required>

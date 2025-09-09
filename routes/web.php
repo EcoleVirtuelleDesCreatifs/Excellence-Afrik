@@ -328,6 +328,10 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
     
     // === GESTION CATÉGORIES - Lecture pour tous, modification pour admin/directeur ===
     Route::get('/dashboard/categories', [App\Http\Controllers\DashboardController::class, 'categories'])->name('dashboard.categories.index');
+    
+    // === GESTION DU PROFIL - Accessible à tous les utilisateurs authentifiés ===
+    Route::get('/dashboard/profile', [App\Http\Controllers\DashboardController::class, 'profile'])->name('dashboard.profile');
+    Route::put('/dashboard/profile', [App\Http\Controllers\DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
 });
 
 // === ROUTES RÉSERVÉES ADMIN ET DIRECTEUR DE PUBLICATION ===
@@ -354,8 +358,10 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
     
     // Analytics complètes
     Route::get('/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics'])->name('dashboard.analytics');
+});
 
-    // Gestion complète WebTV
+// === ROUTES WEBTV - ACCESSIBLE À TOUS LES UTILISATEURS AUTHENTIFIÉS ===
+Route::middleware(['auth', 'verifier.role'])->group(function () {
     Route::prefix('dashboard/webtv')->name('dashboard.webtv.')->group(function () {
         Route::get('/', [App\Http\Controllers\WebtvController::class, 'index'])->name('index');
         Route::get('/media/create', function() {
@@ -378,6 +384,25 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
 Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
     // Paramètres système
     Route::get('/dashboard/settings', [App\Http\Controllers\DashboardController::class, 'settings'])->name('dashboard.settings');
+    
+    // Gestion des utilisateurs dans les paramètres
+    Route::get('/dashboard/settings/users', [App\Http\Controllers\DashboardController::class, 'getUsers'])->name('dashboard.settings.users');
+    Route::post('/dashboard/settings/users', [App\Http\Controllers\DashboardController::class, 'createUser'])->name('dashboard.settings.users.create');
+    Route::get('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'getUser'])->name('dashboard.settings.users.show');
+    Route::put('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'updateUser'])->name('dashboard.settings.users.update');
+    Route::post('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'updateUser'])->name('dashboard.settings.users.update.post');
+    Route::delete('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'deleteUser'])->name('dashboard.settings.users.delete');
+    
+    // === GESTION DES NEWSLETTERS - Admin et Directeur uniquement ===
+    Route::middleware('verifier.role:admin,directeur_publication')->group(function () {
+        Route::get('/dashboard/newsletter', [App\Http\Controllers\NewsletterController::class, 'index'])->name('dashboard.newsletter.index');
+        Route::get('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'show'])->name('dashboard.newsletter.show');
+        Route::post('/dashboard/newsletter', [App\Http\Controllers\NewsletterController::class, 'store'])->name('dashboard.newsletter.store');
+        Route::put('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'update'])->name('dashboard.newsletter.update');
+        Route::post('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'update'])->name('dashboard.newsletter.update.post');
+        Route::delete('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'destroy'])->name('dashboard.newsletter.destroy');
+        Route::get('/dashboard/newsletter/export/csv', [App\Http\Controllers\NewsletterController::class, 'export'])->name('dashboard.newsletter.export');
+    });
     
     // Routes de test et développement
     Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
@@ -422,9 +447,10 @@ Route::prefix('webtv')->name('webtv.')->group(function () {
 });
 
 // Newsletter route
-Route::post('/newsletter/subscribe', function () {
-    return redirect()->back()->with('success', 'Merci pour votre inscription !');
-})->name('newsletter.subscribe');
+// Newsletter routes (public)
+Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('/newsletter/unsubscribe/{token}', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::get('/newsletter/verify/{token}', [App\Http\Controllers\NewsletterController::class, 'verify'])->name('newsletter.verify');
 
 // Weather API route
 Route::get('/api/weather', function () {

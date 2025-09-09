@@ -5,12 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Webtv;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class WebtvController extends Controller
 {
     public function index()
     {
-        $webtvs = Webtv::latest('created_at')->paginate(12);
+        $utilisateur = Auth::user();
+        
+        // Récupération des webtvs selon les règles de permissions
+        $webtvQuery = Webtv::with('user');
+        
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes voient seulement leurs propres webtvs
+            $webtvQuery->where('user_id', $utilisateur->id);
+        }
+        // Admin et Directeur voient toutes les webtvs
+        
+        $webtvs = $webtvQuery->latest('created_at')->paginate(12);
         return view('webtv.index', compact('webtvs'));
     }
 
@@ -38,6 +50,7 @@ class WebtvController extends Controller
         $validated = $request->validate($rules);
 
         $payload = [
+            'user_id' => Auth::id(), // Associer l'utilisateur créateur
             'type_programme' => $type,
             'titre' => $validated['titre'],
             'description' => $validated['description'] ?? null,
@@ -96,11 +109,25 @@ class WebtvController extends Controller
 
     public function edit(Webtv $webtv)
     {
+        $utilisateur = Auth::user();
+        
+        // Vérification des permissions d'édition
+        if (!$utilisateur->peutModifierWebtv($webtv)) {
+            abort(403, 'Vous ne pouvez modifier que vos propres événements WebTV.');
+        }
+        
         return view('webtv.edit', compact('webtv'));
     }
 
     public function update(Request $request, Webtv $webtv)
     {
+        $utilisateur = Auth::user();
+        
+        // Vérification des permissions d'édition
+        if (!$utilisateur->peutModifierWebtv($webtv)) {
+            abort(403, 'Vous ne pouvez modifier que vos propres événements WebTV.');
+        }
+        
         $type = $request->input('type_programme', $webtv->type_programme);
 
         $rules = [
@@ -173,6 +200,13 @@ class WebtvController extends Controller
 
     public function destroy(Webtv $webtv)
     {
+        $utilisateur = Auth::user();
+        
+        // Vérification des permissions de suppression
+        if (!$utilisateur->peutModifierWebtv($webtv)) {
+            abort(403, 'Vous ne pouvez supprimer que vos propres événements WebTV.');
+        }
+        
         $webtv->delete();
         return redirect()->route('dashboard.webtv.index')->with('status', 'WebTV supprimé');
     }

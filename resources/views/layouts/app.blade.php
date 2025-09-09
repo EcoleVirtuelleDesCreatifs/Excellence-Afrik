@@ -526,6 +526,7 @@
                     <p>Restez informé de nos dernières actualités.</p>
                     <form class="newsletter-form d-flex" action="{{ route('newsletter.subscribe') }}" method="POST">
                         @csrf
+                        <input type="hidden" name="source" value="footer">
                         <input type="email" class="form-control me-2" name="email" placeholder="Votre e-mail" required>
                         <button type="submit" class="btn btn-primary">S'abonner</button>
                     </form>
@@ -1068,7 +1069,83 @@
     }
     </style>
 
+    <!-- Notifications System -->
+    <div id="notification-container" class="position-fixed top-0 end-0 p-3" style="z-index: 9999; max-width: 400px;">
+        <!-- Les notifications seront ajoutées ici dynamiquement -->
+    </div>
+
     @stack('scripts')
+
+    <!-- Notification System Script -->
+    <script>
+        // Système de notifications global
+        function showNotification(message, type = 'info', duration = 5000) {
+            const container = document.getElementById('notification-container');
+            const notificationId = 'notification-' + Date.now();
+            
+            const notificationHTML = `
+                <div id="${notificationId}" class="toast align-items-center text-bg-${type} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas ${getNotificationIcon(type)} me-2"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', notificationHTML);
+            
+            const toastElement = document.getElementById(notificationId);
+            const toast = new bootstrap.Toast(toastElement, {
+                autohide: true,
+                delay: duration
+            });
+            
+            toast.show();
+            
+            // Nettoyer après disparition
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                this.remove();
+            });
+        }
+        
+        function getNotificationIcon(type) {
+            const icons = {
+                'success': 'fa-check-circle',
+                'danger': 'fa-exclamation-triangle',
+                'warning': 'fa-exclamation-circle',
+                'info': 'fa-info-circle'
+            };
+            return icons[type] || icons['info'];
+        }
+        
+        // Afficher les messages de session Laravel
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                showNotification("{{ session('success') }}", 'success');
+            @endif
+            
+            @if(session('error'))
+                showNotification("{{ session('error') }}", 'danger');
+            @endif
+            
+            @if(session('warning'))
+                showNotification("{{ session('warning') }}", 'warning');
+            @endif
+            
+            @if(session('info'))
+                showNotification("{{ session('info') }}", 'info');
+            @endif
+            
+            @if($errors->any())
+                @foreach($errors->all() as $error)
+                    showNotification("{{ $error }}", 'danger');
+                @endforeach
+            @endif
+        });
+    </script>
 </body>
 
 </html>

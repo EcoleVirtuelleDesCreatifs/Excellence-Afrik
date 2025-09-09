@@ -285,10 +285,17 @@
                         Recevez chaque semaine les meilleures histoires d'entrepreneurs africains directement dans votre boîte mail.
                     </p>
                 </div>
-                <div class="col-lg-4 text-lg-end">
-                    <a href="{{ route('newsletter.subscribe') }}" class="btn btn-light btn-lg">
-                        <i class="fas fa-envelope me-2"></i>S'abonner
-                    </a>
+                <div class="col-lg-4">
+                    <form class="newsletter-form-articles d-flex" action="{{ route('newsletter.subscribe') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="source" value="articles">
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Votre email" required>
+                            <button type="submit" class="btn btn-light">
+                                <i class="fas fa-envelope me-2"></i>S'abonner
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

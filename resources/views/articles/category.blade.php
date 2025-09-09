@@ -484,13 +484,17 @@
                             </div>
                             <div class="col-lg-4">
                                 <div class="newsletter-form-video">
-                                    <div class="input-group-video">
-                                        <input type="email" class="form-control-video" placeholder="Votre email">
-                                        <button class="btn-subscribe-video">
-                                            <i class="fas fa-bell"></i>
-                                            <span>S'abonner</span>
-                                        </button>
-                                    </div>
+                                    <form class="newsletter-form-articles" action="{{ route('newsletter.subscribe') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="source" value="articles">
+                                        <div class="input-group-video">
+                                            <input type="email" name="email" class="form-control-video" placeholder="Votre email" required>
+                                            <button type="submit" class="btn-subscribe-video">
+                                                <i class="fas fa-bell"></i>
+                                                <span>S'abonner</span>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

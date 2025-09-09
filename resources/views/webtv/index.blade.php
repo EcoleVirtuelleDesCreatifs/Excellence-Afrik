@@ -345,16 +345,24 @@
                         <button type="button" class="btn-action btn-view" title="Lire" data-embed-container-id="embed-src-{{ $webtv->id }}">
                             <i class="fas fa-play"></i>
                         </button>
-                        <a href="{{ route('dashboard.webtv.edit', $webtv) }}" class="btn-action btn-edit" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form class="d-inline delete-form" action="{{ route('dashboard.webtv.destroy', $webtv) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-action btn-delete" title="Supprimer">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        
+                        <!-- Bouton modifier - Permissions selon le rôle -->
+                        @if(auth()->check() && auth()->user()->peutModifierWebtv($webtv))
+                            <a href="{{ route('dashboard.webtv.edit', $webtv) }}" class="btn-action btn-edit" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        @endif
+                        
+                        <!-- Bouton supprimer - Permissions selon le rôle -->
+                        @if(auth()->check() && auth()->user()->peutModifierWebtv($webtv))
+                            <form class="d-inline delete-form" action="{{ route('dashboard.webtv.destroy', $webtv) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-action btn-delete" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
 

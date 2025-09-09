@@ -110,6 +110,42 @@ class User extends Authenticatable
     }
 
     /**
+     * Vérifier si l'utilisateur peut modifier un article spécifique
+     */
+    public function peutModifierArticle($article): bool
+    {
+        // Admin et Directeur peuvent modifier tous les articles
+        if ($this->estAdmin() || $this->estDirecteurPublication()) {
+            return true;
+        }
+        
+        // Journalistes peuvent modifier seulement leurs propres articles
+        if ($this->estJournaliste()) {
+            return $article->user_id === $this->id;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Vérifier si l'utilisateur peut modifier une webtv spécifique
+     */
+    public function peutModifierWebtv($webtv): bool
+    {
+        // Admin et Directeur peuvent modifier toutes les webtvs
+        if ($this->estAdmin() || $this->estDirecteurPublication()) {
+            return true;
+        }
+        
+        // Journalistes peuvent modifier seulement leurs propres webtvs
+        if ($this->estJournaliste()) {
+            return $webtv->user_id === $this->id;
+        }
+        
+        return false;
+    }
+
+    /**
      * Obtenir le nom du rôle en français
      */
     public function getNomRoleAttribute(): string
