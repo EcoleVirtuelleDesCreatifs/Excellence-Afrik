@@ -353,6 +353,19 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::delete('/{id}', [App\Http\Controllers\MagazineController::class, 'destroy'])->name('destroy');
     });
     
+    // Gestion complète des publicités
+    Route::prefix('dashboard/advertisements')->name('dashboard.advertisements.')->group(function () {
+        Route::get('/', [App\Http\Controllers\AdvertisementController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\AdvertisementController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\AdvertisementController::class, 'store'])->name('store');
+        Route::get('/{advertisement}', [App\Http\Controllers\AdvertisementController::class, 'show'])->name('show');
+        Route::get('/{advertisement}/edit', [App\Http\Controllers\AdvertisementController::class, 'edit'])->name('edit');
+        Route::put('/{advertisement}', [App\Http\Controllers\AdvertisementController::class, 'update'])->name('update');
+        Route::delete('/{advertisement}', [App\Http\Controllers\AdvertisementController::class, 'destroy'])->name('destroy');
+        Route::post('/{advertisement}/toggle-status', [App\Http\Controllers\AdvertisementController::class, 'toggleStatus'])->name('toggle-status');
+        Route::get('/subcategories', [App\Http\Controllers\AdvertisementController::class, 'getSubcategories'])->name('subcategories');
+    });
+    
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
     
@@ -542,3 +555,6 @@ Route::get('/api/brvm', function () {
         ], 200);
     }
 })->name('api.brvm');
+
+// Advertisement click tracking route (public)
+Route::get('/ad/click/{id}', [App\Http\Controllers\AdvertisementController::class, 'click'])->name('advertisement.click');

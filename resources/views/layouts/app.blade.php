@@ -275,10 +275,28 @@
                         <div class="ad-modern">
                             <div class="ad-container">
                                 <div class="ad-content">
-
-                                    <div class="ad-placeholder">
-                                        <img src="{{ asset('assets/banner-ads/ad-banner.jpg') }}" alt="Publicité" class="ad-image">
-                                    </div>
+                                    @php
+                                        $topAd = \App\Helpers\AdvertisementHelper::getCurrentAd('top_banner');
+                                    @endphp
+                                    
+                                    @if($topAd)
+                                        <div class="ad-placeholder">
+                                            <a href="{{ $topAd->getTrackableUrl() }}" target="_blank" rel="noopener">
+                                                <img src="{{ asset('storage/' . $topAd->image) }}" 
+                                                     alt="{{ $topAd->title }}" 
+                                                     class="ad-image"
+                                                     style="width: 100%; height: auto; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="ad-placeholder">
+                                            <div class="ad-fallback" style="background: #f8f9fa; padding: 20px; text-align: center; border: 2px dashed #dee2e6;">
+                                                <i class="fas fa-bullhorn fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">Espace publicitaire disponible</p>
+                                                <small class="text-muted">1000x305px</small>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

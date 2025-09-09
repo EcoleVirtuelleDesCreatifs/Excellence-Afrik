@@ -267,8 +267,16 @@
                 @endif
             </section>
 
-
-
+            <!-- Publicité Middle -->
+            <section class="advertisement-section my-5">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-10">
+                            <x-advertisement position="middle" class="text-center" />
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- Portrait d'Entrepreneurs - Modern Revolutionary Design -->
             <section class="entrepreneurs-modern">
@@ -477,6 +485,17 @@
                     <div class="col-lg-2 col-md-4 col-6">
                         <div class="partner-logo">
                             <img src="https://via.placeholder.com/120x60/f8f9fa/6c757d?text=Partner+6" alt="Partenaire 6" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Publicité Bottom -->
+            <section class="advertisement-section my-5">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-10">
+                            <x-advertisement position="bottom" class="text-center" />
                         </div>
                     </div>
                 </div>

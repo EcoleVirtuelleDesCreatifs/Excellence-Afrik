@@ -265,6 +265,31 @@
                         </li>
                         @endif
 
+                        <!-- Gestion des Publicités - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu {{ request()->routeIs('dashboard.advertisements.*') ? 'active' : '' }}">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-bullhorn"></i>
+                                    <span class="nav-text">Gestion des Publicités</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.advertisements.index') }}" class="nav-sublink" data-section="list-advertisements">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des publicités</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.advertisements.create') }}" class="nav-sublink" data-section="add-advertisement">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Nouvelle publicité</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
                         <!-- Gestion des Utilisateurs - Seulement Admin et Directeur -->
                         @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
                             <li class="nav-item has-submenu {{ request()->routeIs('dashboard.users') ? 'active' : '' }}">
