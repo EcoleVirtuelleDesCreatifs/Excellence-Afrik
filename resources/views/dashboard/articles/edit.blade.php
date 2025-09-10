@@ -497,9 +497,20 @@
             <label for="status" class="form-label required">Statut</label>
             <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>
                 <option value="draft" {{ old('status', $article->status) == 'draft' ? 'selected' : '' }}>Brouillon</option>
-                <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Publié</option>
-                <option value="archived" {{ old('status', $article->status) == 'archived' ? 'selected' : '' }}>Archivé</option>
+                @if(auth()->user()->estJournaliste())
+                    <option value="pending" {{ old('status', $article->status) == 'pending' ? 'selected' : '' }}>Soumettre pour validation</option>
+                @else
+                    <option value="pending" {{ old('status', $article->status) == 'pending' ? 'selected' : '' }}>En attente de validation</option>
+                    <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Publié</option>
+                    <option value="archived" {{ old('status', $article->status) == 'archived' ? 'selected' : '' }}>Archivé</option>
+                @endif
             </select>
+            @if(auth()->user()->estJournaliste())
+                <small class="text-muted mt-1">
+                    <i class="fas fa-info-circle"></i>
+                    Choisir "Soumettre pour validation" enverra votre article aux administrateurs pour révision et déclenchera une notification par email.
+                </small>
+            @endif
             @error('status')
                 <div class="text-danger mt-1">{{ $message }}</div>
             @enderror

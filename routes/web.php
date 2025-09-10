@@ -322,6 +322,11 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
          ->name('dashboard.articles.approve')
          ->middleware('verifier.role:admin|directeur_publication');
     
+    // === REJET ARTICLES - Seulement directeur et admin ===
+    Route::post('/dashboard/articles/{id}/reject', [App\Http\Controllers\DashboardController::class, 'rejectArticle'])
+         ->name('dashboard.articles.reject')
+         ->middleware('verifier.role:admin|directeur_publication');
+    
     // === ACTIONS GROUPÉES SUR ARTICLES - Seulement directeur et admin pour publication ===
     Route::post('/dashboard/articles/bulk-action', [App\Http\Controllers\DashboardController::class, 'bulkAction'])
          ->name('dashboard.articles.bulk-action');
@@ -419,6 +424,7 @@ Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
     
     // Routes de test et développement
     Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
+    
 });
 
 // WebTV routes

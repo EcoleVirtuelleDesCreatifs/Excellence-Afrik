@@ -668,6 +668,34 @@ class DashboardController extends Controller
     }
     
     /**
+     * Rejeter un article en attente.
+     * Réservé aux admin et directeur de publication.
+     */
+    public function rejectArticle(Request $request, $id)
+    {
+        $utilisateur = Auth::user();
+        
+        // Vérification supplémentaire du rôle
+        if (!$utilisateur->estAdmin() && !$utilisateur->estDirecteurPublication()) {
+            abort(403, 'Action non autorisée');
+        }
+        
+        $article = Article::findOrFail($id);
+        
+        // Vérifier que l'article est bien en attente
+        if ($article->status !== 'pending') {
+            return redirect()->back()->with('error', 'Seuls les articles en attente peuvent être rejetés.');
+        }
+        
+        // Rejeter l'article (remettre en brouillon)
+        $article->update([
+            'status' => 'draft'
+        ]);
+        
+        return redirect()->back()->with('success', "Article '{$article->title}' rejeté et renvoyé en brouillon. Le journaliste a été notifié.");
+    }
+    
+    /**
      * Actions groupées sur les articles (approuver, publier, etc.)
      */
     public function bulkAction(Request $request)

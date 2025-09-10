@@ -233,6 +233,15 @@
                                             <i class="fas fa-check"></i>
                                         </button>
                                     </form>
+                                    
+                                    <!-- Bouton refuser -->
+                                    <form method="POST" action="{{ route('dashboard.articles.reject', $article->id) }}" style="display: inline;" onsubmit="return confirm('Refuser cet article et le renvoyer en brouillon ?')">
+                                        @csrf
+                                        <input type="hidden" name="reason" value="">
+                                        <button type="submit" class="btn btn-outline-danger" title="Refuser l'article">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
                                 @endif
                                 
                                 <!-- Bouton supprimer - Admin/Directeur (tous) ou Journaliste (ses articles non-publiés) -->
