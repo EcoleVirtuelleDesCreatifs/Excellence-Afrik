@@ -269,21 +269,9 @@
                                 </a>
                                 <ul class="nav-submenu">
                                     <li class="nav-subitem">
-                                        <a href="#create-newsletter" class="nav-sublink" data-section="create-newsletter">
-                                            <i class="nav-subicon fas fa-plus"></i>
-                                            <span class="nav-subtext">Créer Newsletter</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
                                         <a href="{{ route('dashboard.newsletter.index') }}" class="nav-sublink">
                                             <i class="nav-subicon fas fa-users"></i>
                                             <span class="nav-subtext">Abonnés</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
-                                        <a href="#newsletter-campaigns" class="nav-sublink" data-section="newsletter-campaigns">
-                                            <i class="nav-subicon fas fa-paper-plane"></i>
-                                            <span class="nav-subtext">Campagnes</span>
                                         </a>
                                     </li>
                                 </ul>
