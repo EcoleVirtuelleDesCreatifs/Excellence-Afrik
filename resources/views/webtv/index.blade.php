@@ -4,7 +4,7 @@
 @section('page-title', 'Gestion WebTV')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('webtv/webtv.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/webtv.css') }}">
     <style>
         /* Variables CSS pour la cohérence */
         :root {

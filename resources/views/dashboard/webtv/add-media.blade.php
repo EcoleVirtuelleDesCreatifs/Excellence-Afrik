@@ -4,7 +4,7 @@
 
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('webtv/webtv.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/webtv.css') }}">
     <style>
         /* Variables CSS pour la cohérence */
         :root {
@@ -108,7 +108,7 @@
             font-size: 0.8rem;
         }
         
-        /* Boutons d'actions du header */
+        /* Boutons d\'actions du header */
         .header-actions {
             display: flex;
             gap: 1rem;
@@ -137,7 +137,7 @@
             text-decoration: none;
         }
         
-        /* Messages d'alerte */
+        /* Messages d\'alerte */
         .alert-modern {
             padding: 1rem 1.5rem;
             border-radius: 10px;
@@ -370,12 +370,12 @@
                             <i class="fas fa-broadcast-tower"></i>
                             Code Embed Live Vimeo
                         </h3>
-                        <p class="section-description">Collez le code d'intégration de votre live Vimeo</p>
+                        <p class="section-description">Collez le code d\'intégration de votre live Vimeo</p>
                     </div>
 
                     <div class="form-fields">
                         <div class="form-field">
-                            <label for="code_embed_vimeo" class="form-label required">Code d'Intégration Live</label>
+                            <label for="code_embed_vimeo" class="form-label required">Code d\'Intégration Live</label>
                             <textarea id="code_embed_vimeo"
                                       name="code_embed_vimeo"
                                       class="form-textarea code-textarea @error('code_embed_vimeo') error @enderror"
@@ -391,26 +391,26 @@
                                     <ol>
                                         <li>Connectez-vous à votre compte Vimeo</li>
                                         <li>Créez votre événement live</li>
-                                        <li>Allez dans l'onglet "Embed"</li>
+                                        <li>Allez dans l\'onglet "Embed"</li>
                                         <li>Copiez le code complet et collez-le ici</li>
                                     </ol>
                                 </div>
                             </div>
                         </div>
                 @else
-                <!-- Code d'Intégration Vimeo Programme -->
+                <!-- Code d\'Intégration Vimeo Programme -->
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
                             <i class="fab fa-vimeo-v"></i>
-                            Code d'Intégration Vidéo Vimeo
+                            Code d\'Intégration Vidéo Vimeo
                         </h3>
-                        <p class="section-description">Collez le code d'intégration de votre vidéo Vimeo</p>
+                        <p class="section-description">Collez le code d\'intégration de votre vidéo Vimeo</p>
                     </div>
 
                     <div class="form-fields">
                         <div class="form-field">
-                            <label for="code_integration_vimeo" class="form-label required">Code d'Intégration Vidéo</label>
+                            <label for="code_integration_vimeo" class="form-label required">Code d\'Intégration Vidéo</label>
                             <textarea id="code_integration_vimeo"
                                       name="code_integration_vimeo"
                                       class="form-textarea code-textarea @error('code_integration_vimeo') error @enderror"
@@ -427,7 +427,7 @@
                                         <li>Uploadez votre vidéo sur Vimeo</li>
                                         <li>Allez sur la page de votre vidéo</li>
                                         <li>Cliquez sur le bouton "Partager"</li>
-                                        <li>Copiez le code d'intégration complet</li>
+                                        <li>Copiez le code d\'intégration complet</li>
                                     </ol>
                                 </div>
                             </div>
@@ -538,9 +538,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validateEmbedCode(code) {
         if (type === 'programme') {
-            // Pour les programmes, validation simple du code d'intégration
+            // Pour les programmes, validation simple du code d\'intégration
             if (code.includes('vimeo.com/video/') && code.includes('iframe')) {
-                // Extraction de l'ID vidéo pour les programmes
+                // Extraction de l\'ID vidéo pour les programmes
                 const match = code.match(/vimeo\.com\/video\/(\d+)/);
                 const videoId = match ? match[1] : null;
 
@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 resetValidation();
             }
         } else {
-            // Pour les lives, utiliser l'API existante
+            // Pour les lives, utiliser l\'API existante
             fetch('{{ route("dashboard.webtv.preview-embed") }}', {
                 method: 'POST',
                 headers: {
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         codeTextarea.classList.add('error');
 
-        // Créer ou mettre à jour le message d'erreur
+        // Créer ou mettre à jour le message d\'erreur
         let errorSpan = codeTextarea.parentElement.querySelector('.error-message');
         if (!errorSpan) {
             errorSpan = document.createElement('span');
