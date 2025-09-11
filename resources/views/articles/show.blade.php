@@ -95,11 +95,6 @@
                                     </div>
                                 @endif
 
-                                <!-- Publicité Sidebar -->
-                                <div class="mt-4">
-                                    <x-advertisement position="sidebar" />
-                                </div>
-
                             </div>
                         </div>
 
