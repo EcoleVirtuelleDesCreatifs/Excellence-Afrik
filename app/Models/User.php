@@ -129,6 +129,7 @@ class User extends Authenticatable
 
     /**
      * Vérifier si l'utilisateur peut modifier une webtv spécifique
+     * Note: La table webtvs n'a pas de colonne user_id, donc tous les utilisateurs autorisés peuvent modifier
      */
     public function peutModifierWebtv($webtv): bool
     {
@@ -137,9 +138,10 @@ class User extends Authenticatable
             return true;
         }
         
-        // Journalistes peuvent modifier seulement leurs propres webtvs
+        // Pour l'instant, les journalistes peuvent aussi modifier toutes les webtvs
+        // (car il n'y a pas de système de propriété dans la table webtvs)
         if ($this->estJournaliste()) {
-            return $webtv->user_id === $this->id;
+            return true;
         }
         
         return false;

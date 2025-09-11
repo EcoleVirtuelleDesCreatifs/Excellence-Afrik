@@ -13,7 +13,6 @@ class Webtv extends Model
     protected $table = 'webtvs';
 
     protected $fillable = [
-        'user_id',
         'titre',
         'description',
         'type_programme',
@@ -24,6 +23,8 @@ class Webtv extends Model
         'est_actif',
         'code_embed_vimeo',
         'code_integration_vimeo',
+        'video_id',
+        'vimeo_event_id',
     ];
 
     protected $casts = [
@@ -31,11 +32,7 @@ class Webtv extends Model
         'date_programmee' => 'datetime',
     ];
 
-    // Relations
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    // Note: Pas de relation user car la table webtvs n'a pas de colonne user_id
 
     // Accessors used in the Blade
     public function getStatutCouleurAttribute(): string

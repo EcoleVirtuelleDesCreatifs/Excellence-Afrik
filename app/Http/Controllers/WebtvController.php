@@ -13,14 +13,9 @@ class WebtvController extends Controller
     {
         $utilisateur = Auth::user();
         
-        // Récupération des webtvs selon les règles de permissions
-        $webtvQuery = Webtv::with('user');
-        
-        if ($utilisateur->estJournaliste()) {
-            // Journalistes voient seulement leurs propres webtvs
-            $webtvQuery->where('user_id', $utilisateur->id);
-        }
-        // Admin et Directeur voient toutes les webtvs
+        // Récupération des webtvs - tous les utilisateurs voient toutes les webtvs
+        // (La table webtvs n'a pas de colonne user_id)
+        $webtvQuery = Webtv::query();
         
         $webtvs = $webtvQuery->latest('created_at')->paginate(12);
         return view('webtv.index', compact('webtvs'));
@@ -50,7 +45,6 @@ class WebtvController extends Controller
         $validated = $request->validate($rules);
 
         $payload = [
-            'user_id' => Auth::id(), // Associer l'utilisateur créateur
             'type_programme' => $type,
             'titre' => $validated['titre'],
             'description' => $validated['description'] ?? null,
