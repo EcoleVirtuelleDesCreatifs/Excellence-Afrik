@@ -373,9 +373,6 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
     
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
-    
-    // Analytics complètes
-    Route::get('/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics'])->name('dashboard.analytics');
 });
 
 // === ROUTES WEBTV - ACCESSIBLE À TOUS LES UTILISATEURS AUTHENTIFIÉS ===

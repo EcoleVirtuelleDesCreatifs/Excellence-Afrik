@@ -193,14 +193,6 @@ class DashboardController extends Controller
     }
 
     /**
-     * Show analytics page.
-     */
-    public function analytics()
-    {
-        return view('dashboard.analytics');
-    }
-
-    /**
      * Show create article page.
      */
     public function createArticle()
