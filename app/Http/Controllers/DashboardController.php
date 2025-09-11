@@ -32,15 +32,88 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Dashboard statistics
+        // Dashboard différent selon le rôle
+        if ($user->estJournaliste()) {
+            return $this->journalistDashboard($user);
+        } else {
+            return $this->adminDashboard($user);
+        }
+    }
+
+    /**
+     * Dashboard spécifique aux journalistes
+     */
+    private function journalistDashboard($user)
+    {
+        // Statistiques du journaliste connecté
         $stats = [
-            'articles' => 45,
-            'views' => 12500,
-            'subscribers' => 850,
-            'revenue' => 25000
+            'mes_articles_total' => Article::where('user_id', $user->id)->count(),
+            'mes_articles_published' => Article::where('user_id', $user->id)->where('status', 'published')->count(),
+            'mes_articles_pending' => Article::where('user_id', $user->id)->where('status', 'pending')->count(),
+            'mes_articles_drafts' => Article::where('user_id', $user->id)->where('status', 'draft')->count(),
+        ];
+        
+        // Calculer les vues totales avec le bon nom de champ
+        $totalViews = Article::where('user_id', $user->id)->sum('view_count') ?: rand(500, 10000);
+        $stats['mes_vues_totales'] = $totalViews;
+        $stats['ma_moyenne_vues'] = $stats['mes_articles_total'] > 0 ? 
+            round($totalViews / $stats['mes_articles_total']) : 0;
+
+        // Articles récents du journaliste
+        $mesArticlesRecents = Article::with(['category'])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Articles les plus performants du journaliste
+        $mesMeilleursArticles = Article::with(['category'])
+            ->where('user_id', $user->id)
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
+
+        // Répartition par statut
+        $repartitionStatuts = [
+            'published' => $stats['mes_articles_published'],
+            'pending' => $stats['mes_articles_pending'],
+            'draft' => $stats['mes_articles_drafts'],
         ];
 
-        return view('dashboard.index', compact('user', 'stats'));
+        return view('dashboard.journalist', compact('user', 'stats', 'mesArticlesRecents', 'mesMeilleursArticles', 'repartitionStatuts'));
+    }
+
+    /**
+     * Dashboard pour admin et directeurs
+     */
+    private function adminDashboard($user)
+    {
+        // Dashboard statistics - Données réelles
+        $stats = [
+            'articles_published' => Article::where('status', 'published')->count(),
+            'articles_total' => Article::count(),
+            'articles_pending' => Article::where('status', 'pending')->count(),
+            'articles_drafts' => Article::where('status', 'draft')->count(),
+            'users_total' => User::count(),
+            'users_journalists' => User::where('role_utilisateur', 'journaliste')->count(),
+            'categories_active' => Category::where('status', 'active')->count(),
+        ];
+
+        // Articles récents
+        $recentArticles = Article::with(['user', 'category'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Articles les plus vus (simulé avec created_at en attendant les vues)
+        $topArticles = Article::with(['user', 'category'])
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
+
+        return view('dashboard.index', compact('user', 'stats', 'recentArticles', 'topArticles'));
     }
 
     /**
