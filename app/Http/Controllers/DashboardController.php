@@ -24,9 +24,10 @@ class DashboardController extends Controller
 
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if (method_exists($user, 'estJournaliste') && $user->estJournaliste()) {
+        if ($user->estJournaliste()) {
             return $this->journalistDashboard($user);
         } else {
             return $this->adminDashboard($user);
@@ -125,10 +126,11 @@ class DashboardController extends Controller
 
     public function articles()
     {
+        /** @var \App\Models\User $utilisateur */
         $utilisateur = Auth::user();
         $articlesQuery = Article::with(['category', 'user']);
 
-        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
+        if ($utilisateur->estJournaliste()) {
             $articlesQuery->where(function($query) use ($utilisateur) {
                 $query->where('user_id', $utilisateur->id)
                       ->orWhere('status', '!=', 'draft');
@@ -174,9 +176,10 @@ class DashboardController extends Controller
 
     public function storeArticle(Request $request)
     {
+        /** @var \App\Models\User $utilisateur */
         $utilisateur = Auth::user();
         $statusValidation = 'required|in:draft,published';
-        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
+        if ($utilisateur->estJournaliste()) {
             $statusValidation = 'required|in:draft,pending';
         }
 
@@ -210,41 +213,83 @@ class DashboardController extends Controller
         $articleData = [
             'title' => $validatedData['title'],
             'slug' => $validatedData['slug'],
+            'category_id' => $validatedData['category_id'],
+            'user_id' => $utilisateur->id,
+            'excerpt' => $validatedData['excerpt'],
+            'content' => $validatedData['content'],
+            'meta_title' => $validatedData['meta_title'] ?? null,
+            'meta_description' => $validatedData['meta_description'] ?? null,
+            'sector' => $validatedData['sector'] ?? null,
+            'theme' => $validatedData['theme'] ?? null,
+            'status' => $validatedData['status'],
+            'published_at' => $validatedData['published_at'] ?? null,
+            'is_featured' => $request->boolean('featured'),
+            'is_top_article' => $request->boolean('is_top_article'),
+            'reading_time' => $this->calculateReadingTime($validatedData['content']),
+        ];
+
+        if ($request->hasFile('featured_image')) {
+            $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
+        }
+
+        $article = Article::create($articleData);
+
+        if ($article->is_featured) {
+            $this->ensureFeaturedUniqueness($article);
+        }
+
+        return redirect()->route('dashboard.articles')->with('success', 'Article créé avec succès !');
     }
 
-    $validatedData = $request->validate([
-        'title' => 'required|string|max:200',
-        'slug' => 'nullable|string|max:255|unique:articles,slug',
-        'category_id' => 'required|integer|exists:categories,id',
-        'excerpt' => 'required|string|max:500',
-        'content' => 'required|string',
-        'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_description' => 'nullable|string|max:500',
-        'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
-        'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
-        'status' => $statusValidation,
-        'published_at' => 'nullable|date',
-        'featured' => 'boolean',
-        'is_top_article' => 'boolean',
-    ]);
+    public function editArticle($id)
+    {
+        $article = Article::findOrFail($id);
+        $categories = Category::where('status', 'active')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
+        $utilisateur = Auth::user();
 
-    if (empty($validatedData['slug'])) {
-        $slug = Str::slug($validatedData['title']);
-        $originalSlug = $slug;
-        $counter = 1;
-        while (Article::where('slug', $slug)->exists()) {
+        if ($utilisateur->estJournaliste() && $article->user_id !== $utilisateur->id) {
+            return redirect()->route('dashboard.articles')->with('error', 'Vous ne pouvez modifier que vos propres articles.');
+        }
 
-if ($request->hasFile('featured_image')) {
-    $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
-}
+        return view('dashboard.articles.edit', compact('article', 'categories'));
+    }
 
-$article = Article::create($articleData);
+    public function updateArticle(Request $request, $id)
+    {
+        $article = Article::findOrFail($id);
+        $utilisateur = Auth::user();
 
-if ($article->is_featured) {
-    $this->ensureFeaturedUniqueness($article);
-}
-        $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
+        $statusValidation = 'required|in:draft,published';
+        if ($utilisateur->estJournaliste()) {
+            $statusValidation = 'required|in:draft,pending';
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:200',
+            'slug' => 'nullable|string|max:255|unique:articles,slug,' . $id,
+            'category_id' => 'required|integer|exists:categories,id',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
+            'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
+            'status' => $statusValidation,
+            'published_at' => 'nullable|date',
+            'featured' => 'boolean',
+            'is_top_article' => 'boolean',
+        ]);
+
+        $updateData = $validatedData;
+        $updateData['is_featured'] = $request->boolean('featured');
+        $updateData['is_top_article'] = $request->boolean('is_top_article');
+        $updateData['reading_time'] = $this->calculateReadingTime($validatedData['content']);
+
+        if ($request->hasFile('featured_image')) {
+            $updateData['featured_image_path'] = $this->processImage($request->file('featured_image'), $article->featured_image_path);
+        }
+
         $article->update($updateData);
 
         if ($article->is_featured) {
@@ -259,13 +304,13 @@ if ($article->is_featured) {
         $utilisateur = Auth::user();
         $article = Article::findOrFail($id);
 
-        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
-            if ($article->user_id !== $utilisateur->id) {
-                return redirect()->back()->with('error', 'Vous ne pouvez supprimer que vos propres articles.');
-            }
-            if ($article->status === 'published') {
-                return redirect()->back()->with('error', 'Impossible de supprimer un article déjà publié.');
-            }
+        if ($utilisateur->estJournaliste() && $article->user_id !== $utilisateur->id) {
+             return redirect()->back()->with('error', 'Vous ne pouvez supprimer que vos propres articles.');
+        }
+
+        // Additional check for journalists trying to delete a published article
+        if ($utilisateur->estJournaliste() && $article->status === 'published') {
+            return redirect()->back()->with('error', 'Impossible de supprimer un article déjà publié.');
         }
 
         if ($article->featured_image_path && Storage::disk('public')->exists($article->featured_image_path)) {
@@ -342,8 +387,9 @@ if ($article->is_featured) {
 
     public function approveArticle($id)
     {
+        /** @var \App|Models\User $utilisateur */
         $utilisateur = Auth::user();
-        if (!method_exists($utilisateur, 'peutPublier') || !$utilisateur->peutPublier()) {
+        if (!$utilisateur->peutPublier()) {
             abort(403, 'Action non autorisée');
         }
 
@@ -358,8 +404,9 @@ if ($article->is_featured) {
 
     public function rejectArticle(Request $request, $id)
     {
+        /** @var \App\Models\User $utilisateur */
         $utilisateur = Auth::user();
-        if (!method_exists($utilisateur, 'peutPublier') || !$utilisateur->peutPublier()) {
+        if (!$utilisateur->peutPublier()) {
             abort(403, 'Action non autorisée');
         }
 
@@ -374,6 +421,7 @@ if ($article->is_featured) {
 
     public function bulkAction(Request $request)
     {
+        /** @var \App\Models\User $utilisateur */
         $utilisateur = Auth::user();
         $action = $request->input('action');
         $articleIds = $request->input('articles', []);
@@ -383,7 +431,7 @@ if ($article->is_featured) {
         }
 
         $count = 0;
-        $canPerformAction = method_exists($utilisateur, 'peutPublier') && $utilisateur->peutPublier();
+        $canPerformAction = $utilisateur->peutPublier();
 
         switch ($action) {
             case 'approve':
@@ -397,9 +445,9 @@ if ($article->is_featured) {
                 $message = "{$count} article(s) mis en brouillon.";
                 break;
             case 'submit':
-                $query = Article::whereIn('id', $articleIds)->where('status', 'draft');
-                if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
-                    $query->where('user_id', $utilisateur->id);
+                $query = Article::whereIn('id', $articleIds);
+                if ($utilisateur->estJournaliste()) {
+                    $query->where('user_id', $utilisateur->id)->where('status', '!=', 'published');
                 }
                 $count = $query->update(['status' => 'pending']);
                 $message = "{$count} article(s) soumis pour validation.";

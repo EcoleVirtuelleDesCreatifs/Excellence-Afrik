@@ -2,8 +2,155 @@
 
 @push('styles')
 <style>
+    .page-banner-area .page-title-bar {
+        background: linear-gradient(to right, #996633, #f7c807);
+    }
+    .page-banner-area .page-title-bar h1 {
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .live-video-section {
+        background-color: #1a1a1a;
+        padding: 60px 0;
+    }
+    .video-player-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        background: #000;
+        border-radius: 10px;
+    }
+    .video-player-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .live-video-info {
+        color: #fff;
+    }
+    .live-badge {
+        background-color: #e53e3e;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+        }
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px 15px rgba(229, 62, 62, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+        }
+    }
     .news-area {
         background: linear-gradient(to right, #996633, #f7c807);
+    }
+
+    .portrait-card {
+        background: #fff;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    .portrait-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .portrait-card__image img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        object-position: top; /* Prioritise le haut de l'image */
+    }
+    .portrait-card__content {
+        padding: 25px 30px;
+    }
+    .portrait-card__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    .portrait-card__title a {
+        color: #222;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .portrait-card__title a:hover {
+        color: #c1933e;
+    }
+    .portrait-card__excerpt {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.6;
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .portrait-card__image--small img {
+        height: 200px;
+        object-fit: cover;
+        object-position: top;
+    }
+    .portrait-card__content--small {
+        padding: 15px 20px;
+    }
+    .portrait-card__title--small {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .breaking__meta .positive {
+        color: #28a745;
+        font-weight: 600;
+    }
+    .breaking__meta .negative {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    /* Ticker styles */
+    .breaking__meta {
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        background: #f1f1f1;
+        padding: 10px 0;
+        border-radius: 5px;
+    }
+    .breaking__meta ul {
+        display: inline-block;
+        padding-left: 100%;
+        animation: ticker 40s linear infinite;
+        margin: 0;
+    }
+    .breaking__meta ul li {
+        display: inline-block;
+        padding: 0 2rem;
+        font-size: 0.9rem;
+    }
+    @keyframes ticker {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
     }
 </style>
 @endpush
@@ -32,6 +179,47 @@
             </div>
         </section>
         <!-- breaking end -->
+
+        <div class="page-banner-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-bar text-center pt-60 pb-60">
+                            <h1>WebTV</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if($featuredWebtv)
+        <section class="live-video-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="video-player-wrapper">
+                            @if(!empty($featuredWebtv->code_embed_vimeo))
+                                {!! $featuredWebtv->code_embed_vimeo !!}
+                            @else
+                                <img src="{{ $featuredWebtv->image_path ? asset('storage/' . $featuredWebtv->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $featuredWebtv->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-lg-4 d-flex align-items-center">
+                        <div class="live-video-info">
+                            @if($featuredWebtv->statut == 'en_direct')
+                                <span class="live-badge mb-3 d-inline-block">En Direct</span>
+                            @endif
+                            <h2 class="h3 fw-bold text-white mb-3">{{ $featuredWebtv->titre }}</h2>
+                            <p class="text-white-50">{{ Str::limit($featuredWebtv->description, 150) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+
+        <br/>
+        <br/>
 
         <!-- ============================================================== -->
         <!-- Section Principale (Hero Area) -->
@@ -267,35 +455,68 @@
         <!-- ============================================================== -->
         <!-- Section 'Portrait d'Entrepreneurs' -->
         <!-- ============================================================== -->
-        <section class="portrait-area pb-30">
+        <section class="portrait-area pb-30 pt-60 bg-light">
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="section-title mb-30">
-                            <h2>Portrait d'Entrepreneurs</h2>
+                        <div class="section-title mb-50 text-center">
+                            <h2>Portraits d'Entrepreneurs</h2>
+                            <p>Découvrez les parcours inspirants de ceux qui façonnent l'économie.</p>
                         </div>
                     </div>
                 </div>
 
                 @if(isset($entrepreneurArticles) && $entrepreneurArticles->count() > 0)
-                    @foreach($entrepreneurArticles as $article)
-                        <div class="row align-items-center portrait-item mb-50">
-                            <div class="col-lg-6 @if($loop->odd) order-lg-2 @endif wow fadeInUp">
-                                <a href="{{ route('articles.show', $article->slug) }}">
-                                    <img src="{{ $article->image_url ?? asset('styles/img/video/video-2.jpg') }}" alt="{{ $article->title }}" class="img-fluid">
-                                </a>
-                            </div>
-                            <div class="col-lg-6 @if($loop->odd) order-lg-1 @endif wow fadeInUp">
-                                <div class="portrait-text">
-                                    <h3>{{ $article->title }}</h3>
-                                    <p>{{ Str::limit(strip_tags($article->content), 150) }}</p>
-                                    <a href="{{ route('articles.show', $article->slug) }}" class="btn btn-link">Lire la suite</a>
+                    @php
+                        $mainArticles = $entrepreneurArticles->slice(0, 3);
+                        $secondaryArticles = $entrepreneurArticles->slice(3, 4);
+                    @endphp
+
+                    <!-- Grands Blocs -->
+                    <div class="row">
+                        @foreach($mainArticles as $article)
+                            <div class="col-lg-4 mb-4">
+                                <div class="portrait-card h-100 wow fadeInUp">
+                                    <div class="portrait-card__image">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('styles/img/video/video-2.jpg') }}" alt="{{ $article->title }}">
+                                        </a>
+                                    </div>
+                                    <div class="portrait-card__content">
+                                        <h3 class="portrait-card__title">
+                                            <a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a>
+                                        </h3>
+                                        <p class="portrait-card__excerpt">{{ Str::limit(strip_tags($article->excerpt), 100) }}</p>
+                                        <a href="{{ route('articles.show', $article->slug) }}" class="btn btn-link p-0">Lire le portrait <i class="fas fa-arrow-right"></i></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
+
+                    <!-- Petits Blocs -->
+                    @if($secondaryArticles->count() > 0)
+                    <div class="row mt-4">
+                        @foreach($secondaryArticles as $article)
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="portrait-card portrait-card--small h-100 wow fadeInUp">
+                                    <div class="portrait-card__image portrait-card__image--small">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('styles/img/video/video-2.jpg') }}" alt="{{ $article->title }}">
+                                        </a>
+                                    </div>
+                                    <div class="portrait-card__content portrait-card__content--small">
+                                        <h4 class="portrait-card__title portrait-card__title--small">
+                                            <a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 50) }}</a>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @endif
                 @else
-                    <div class="col-12">
+                    <div class="col-12 text-center">
                         <p>Aucun portrait d'entrepreneur à afficher pour le moment.</p>
                     </div>
                 @endif
@@ -303,6 +524,8 @@
         </section>
 
 
+        <br />
+        <br />
         <!-- ============================================================== -->
         <!-- Section des Magazines -->
         <!-- ============================================================== -->
@@ -314,25 +537,27 @@
                             <h2>Magazines</h2>
                         </div>
 
-                        @if(isset($latestMagazine))
+                        @if(isset($latestMagazines) && $latestMagazines->count() > 0)
                             <div class="row">
-                                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay=".3s">
-                                    <div class="hero pos-relative mb-30">
-                                        <div class="hero__thumb" data-overlay="dark-gradient">
-                                            <a href="{{ route('magazines.show', $latestMagazine->slug) }}">
-                                                <img src="{{ Storage::url($latestMagazine->cover_image_path) ?? asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $latestMagazine->title }}">
-                                            </a>
-                                        </div>
-                                        <div class="hero__text hero__text-small">
-                                            <span class="post-cat mb-10">
-                                                <a href="{{ route('magazines.index') }}">Magazine</a>
-                                            </span>
-                                            <h3 class="pr-0">
-                                                <a href="{{ route('magazines.show', $latestMagazine->slug) }}">{{ $latestMagazine->title }}</a>
-                                            </h3>
+                                @foreach($latestMagazines as $magazine)
+                                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 0.1 }}s">
+                                        <div class="hero pos-relative mb-30">
+                                            <div class="hero__thumb" data-overlay="dark-gradient">
+                                                <a href="{{ route('magazines.show', $magazine->slug) }}">
+                                                    <img src="{{ $magazine->cover_image_path ? Storage::url($magazine->cover_image_path) : asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $magazine->title }}">
+                                                </a>
+                                            </div>
+                                            <div class="hero__text hero__text-small">
+                                                <span class="post-cat mb-10">
+                                                    <a href="{{ route('magazines.index') }}">Magazine</a>
+                                                </span>
+                                                <h3 class="pr-0">
+                                                    <a href="{{ route('magazines.show', $magazine->slug) }}">{{ $magazine->title }}</a>
+                                                </h3>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
                         @else
                             <p>Aucun magazine à afficher pour le moment.</p>
@@ -374,50 +599,82 @@
     <!-- ============================================================== -->
     <!-- FIN DU CONTENU PRINCIPAL -->
     <!-- ============================================================== -->
+
+
+@endsection
+
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const weatherEl = document.getElementById('weather-info');
-        const brvmEl = document.getElementById('brvm-info');
-        const eurEl = document.getElementById('eur-currency-info');
-        const usdEl = document.getElementById('usd-currency-info');
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Ticker Animation ---
+        const tickerList = document.querySelector('.breaking__meta ul');
+        if (tickerList) {
+            const listContent = tickerList.innerHTML;
+            tickerList.innerHTML += listContent; // Duplicate content for seamless loop
+        }
 
-        // Fetch Weather
-        fetch('{{ route('api.weather') }}')
-            .then(response => response.json())
-            .then(data => {
-                const info = data.success ? data.data : data.fallback;
-                weatherEl.innerHTML = `<i class="fas fa-cloud-sun"></i> <span>${info.city}: ${info.temp}°C, ${info.description}</span>`;
-            })
-            .catch(() => {
-                weatherEl.innerHTML = `<i class="fas fa-cloud-sun"></i> <span>Météo indisponible</span>`;
-            });
+        // --- Weather Data ---
+        function fetchWeather() {
+            const lat = 5.34; // Abidjan Latitude
+            const lon = -4.04; // Abidjan Longitude
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
 
-        // Fetch BRVM
-        fetch('{{ route('api.brvm') }}')
-            .then(response => response.json())
-            .then(data => {
-                const info = data.success ? data.data : data.fallback;
-                brvmEl.innerHTML = `<i class="fas fa-chart-line"></i> <span>${info.index_name}: ${info.value} <span class="${info.change_class}">(${info.change_display})</span></span>`;
-            })
-            .catch(() => {
-                brvmEl.innerHTML = `<i class="fas fa-chart-line"></i> <span>Bourse indisponible</span>`;
-            });
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const temp = data.current_weather.temperature;
+                    const weatherElement = document.querySelector('#weather-info span');
+                    if (weatherElement) {
+                        weatherElement.textContent = `Abidjan: ${temp}°C`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    const weatherElement = document.querySelector('#weather-info span');
+                    if (weatherElement) weatherElement.textContent = 'Météo indisponible';
+                });
+        }
 
-        // Fetch Currency
-        fetch('{{ route('api.currency') }}')
-            .then(response => response.json())
-            .then(data => {
-                const info = data.success ? data.data : data.fallback;
-                eurEl.innerHTML = `<i class="fas fa-euro-sign"></i> <span>1 EUR = ${info.eur_xof} XOF</span>`;
-                usdEl.innerHTML = `<i class="fas fa-dollar-sign"></i> <span>1 USD = ${info.usd_xof} XOF</span>`;
-            })
-            .catch(() => {
-                eurEl.innerHTML = `<i class="fas fa-euro-sign"></i> <span>EUR/XOF indisponible</span>`;
-                usdEl.innerHTML = `<i class="fas fa-dollar-sign"></i> <span>USD/XOF indisponible</span>`;
-            });
+        // --- Currency Exchange Data (using currency-api, no key, XOF support) ---
+        function fetchCurrencies() {
+            const url = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json';
+            const eurElement = document.querySelector('#eur-currency-info span');
+            const usdElement = document.querySelector('#usd-currency-info span');
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.usd && data.usd.xof && data.usd.eur) {
+                        const usdToXof = parseFloat(data.usd.xof).toFixed(2);
+                        const usdToEur = parseFloat(data.usd.eur);
+                        const eurToXof = (usdToXof / usdToEur).toFixed(2);
+
+                        if (eurElement) eurElement.textContent = `1 EUR = ${eurToXof} XOF`;
+                        if (usdElement) usdElement.textContent = `1 USD = ${usdToXof} XOF`;
+                    } else {
+                        throw new Error('Invalid or incomplete data structure from API');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching currencies:', error);
+                    if (eurElement) eurElement.textContent = 'Taux EUR indisponible';
+                    if (usdElement) usdElement.textContent = 'Taux USD indisponible';
+                });
+        }
+
+        // --- BRVM Data (Static) ---
+        function displayBrvm() {
+            const brvmElement = document.querySelector('#brvm-info span');
+            if (brvmElement) {
+                // Valeur statique en attendant une API
+                brvmElement.innerHTML = 'BRVM10: 162.29 <span class="positive">(+0.49%)</span>';
+            }
+        }
+
+        // Fetch all data
+        fetchWeather();
+        fetchCurrencies();
+        displayBrvm();
     });
 </script>
 @endpush
-
-@endsection

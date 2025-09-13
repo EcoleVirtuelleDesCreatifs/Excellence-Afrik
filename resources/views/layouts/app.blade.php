@@ -135,7 +135,7 @@ try {
                 <div class="row">
                     <div class="col-lg-4 col-md-3 d-flex align-items-center justify-content-md-start justify-content-center">
                         <div class="header__logo text-center text-md-left mb-20">
-                            <a href="index.html">
+                            <a href="{{ route('home') }}">
                                 <img src="{{ asset('styles/img/logo/logo.png') }}" alt="Header Logo">
                             </a>
                         </div>
@@ -192,15 +192,13 @@ try {
                                     <li class="has-dropdown">
                 <a href="#">DIASPORA</a>
                 <ul class="submenu">
-                    @foreach ($diasporaParents as $category)
-                        <li>
-                            <a href="{{ route('articles.category', ['slug' => $category->slug]) }}">{{ $category->name }}</a>
-                        </li>
-                    @endforeach
+                    <li><a href="{{ route('articles.category', 'startups-diaspora') }}">Start Ups de la Diaspora</a></li>
+                    <li><a href="{{ route('articles.category', 'opportunites') }}">Opportunités</a></li>
                 </ul>
             </li>
 
                                     <li><a href="{{ route('magazines.index') }}">MAGAZINE</a></li>
+                                     <li><a href="{{ route('pages.awards') }}">PRIX</a></li>
                                     <li class="webtv-menu-item"><a href="{{ route('webtv.index') }}"><i class="fas fa-tv"></i> WEBTV <span class="live-indicator">Live</span></a></li>
 
                                 </ul>
@@ -320,10 +318,9 @@ try {
                                         <h3>QUI SOMMES-NOUS</h3>
                                         <ul>
                                             <li><a href="{{ route('pages.presentation') }}">A propos</a></li>
-                                            <li><a href="#">Mentions légales</a></li>
-                                            <li><a href="#">Conditions d'utilisation</a></li>
-                                            <li><a href="#">Politique de confidentialité</a></li>
-                                            <li><a href="#">Plan du site</a></li>
+                                            <li><a href="{{ route('pages.legal') }}">Mentions légales</a></li>
+                                            <li><a href="{{ route('pages.terms') }}">Conditions d'utilisation</a></li>
+                                            <li><a href="{{ route('pages.privacy') }}">Politique de confidentialité</a></li>
                                         </ul>
                                     </div>
                                 </div>

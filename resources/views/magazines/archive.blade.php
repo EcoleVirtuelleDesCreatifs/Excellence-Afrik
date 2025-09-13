@@ -6,98 +6,61 @@
 @section('page_title', 'Archives du Magazine')
 @section('page_subtitle', 'Retrouvez tous nos numéros depuis la création du magazine')
 
+@push('styles')
+<style>
+    .magazine-card {
+        transition: all 0.3s ease;
+        border: 1px solid #eee;
+    }
+    .magazine-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: transparent;
+    }
+    .magazine-card .card-img-top {
+        height: 350px;
+        object-fit: cover;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-10">
-
-            <!-- Archive Stats -->
-            <section class="archive-stats mb-5">
-                <div class="row text-center">
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-book text-primary"></i>
-                            </div>
-                            <div class="stat-number">24</div>
-                            <div class="stat-label">Numéros publiés</div>
-                        </div>
+    <div class="row">
+        @forelse($magazines as $magazine)
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 magazine-card">
+                    <a href="{{ route('magazines.show', $magazine->slug) }}">
+                        <img src="{{ $magazine->cover_image_path ? Storage::url($magazine->cover_image_path) : 'https://via.placeholder.com/300x400' }}" class="card-img-top" alt="{{ $magazine->title }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ route('magazines.show', $magazine->slug) }}" class="text-dark text-decoration-none">{{ $magazine->title }}</a></h5>
+                        <p class="card-text text-muted">{{ $magazine->created_at->format('F Y') }}</p>
                     </div>
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar text-success"></i>
-                            </div>
-                            <div class="stat-number">3</div>
-                            <div class="stat-label">Années d'archives</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <div class="stat-number">6</div>
-                            <div class="stat-label">Éditions spéciales</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-download text-info"></i>
-                            </div>
-                            <div class="stat-number">150K+</div>
-                            <div class="stat-label">Téléchargements</div>
-                        </div>
+                    <div class="card-footer bg-white border-0">
+                         <a href="{{ route('magazines.show', $magazine->slug) }}" class="btn btn-primary btn-sm">Lire</a>
+                         @if($magazine->pdf_path)
+                            <a href="{{ route('magazines.download', $magazine->id) }}" class="btn btn-outline-secondary btn-sm">Télécharger</a>
+                         @endif
                     </div>
                 </div>
-            </section>
-
-            <!-- Archive by Year -->
-            <section class="archive-by-year">
-                <!-- 2024 -->
-                <div class="year-section mb-5">
-                    <div class="year-header">
-                        <h2 class="year-title">2024</h2>
-                        <span class="year-count">12 numéros</span>
-                    </div>
-                    <div class="row g-3">
-                        @for($i = 24; $i >= 13; $i--)
-                        <div class="col-lg-2 col-md-3 col-sm-4 col-6">
-                            <div class="archive-item">
-                                <div class="archive-cover">
-                                    <img src="https://images.unsplash.com/photo-{{ 1611224923853 + $i }}?w=200&h=250&fit=crop" 
-                                         alt="Numéro {{ $i }}" class="img-fluid">
-                                    @if($i >= 21)
-                                    <div class="archive-badge">Nouveau</div>
-                                    @endif
-                                </div>
-                                <div class="archive-info">
-                                    <div class="archive-number">N° {{ $i }}</div>
-                                    <div class="archive-date">
-                                        {{ ['Déc', 'Nov', 'Oct', 'Sep', 'Août', 'Juil', 'Juin', 'Mai', 'Avr', 'Mar', 'Fév', 'Jan'][24 - $i] }} 2024
-                                    </div>
-                                    <div class="archive-actions">
-                                        <a href="{{ route('magazines.show', $i) }}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('magazines.download', $i) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
+            </div>
+        @empty
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <p class="text-muted">Aucun magazine n'a été publié pour le moment.</p>
                 </div>
+            </div>
+        @endforelse
+    </div>
 
-                <!-- 2023 -->
-                <div class="year-section mb-5">
-                    <div class="year-header">
-                        <h2 class="year-title">2023</h2>
-                        <span class="year-count">12 numéros</span>
-                    </div>
+    <!-- Pagination -->
+    @if($magazines->hasPages())
+        <div class="mt-5">
+            {{ $magazines->links('vendor.pagination.excellence-pagination') }}
+        </div>
+    @endif
+</div>
                     <div class="row g-3">
                         @for($i = 12; $i >= 1; $i--)
                         <div class="col-lg-2 col-md-3 col-sm-4 col-6">

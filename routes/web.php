@@ -76,12 +76,12 @@ Route::get('/', function () {
         })
         ->where('status', 'published')
         ->latest()
-        ->take(2)
+        ->take(7)
         ->get();
 
-    $latestMagazine = \App\Models\Magazine::latest()->first();
+    $latestMagazines = \App\Models\Magazine::latest()->take(4)->get();
 
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'entrepreneurArticles', 'latestMagazine'));
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'entrepreneurArticles', 'latestMagazines'));
 })->name('home');
 
 // Pages routes
@@ -92,6 +92,10 @@ Route::prefix('pages')->name('pages.')->group(function () {
     Route::post('/contact', [App\Http\Controllers\PageController::class, 'sendContact']);
     Route::get('/advertise', function () { return view('pages.advertise'); })->name('advertise');
     Route::get('/sponsor', function () { return view('pages.sponsor'); })->name('sponsor');
+    Route::get('/mentions-legales', function () { return view('pages.legal'); })->name('legal');
+    Route::get('/conditions-utilisation', function () { return view('pages.terms'); })->name('terms');
+    Route::get('/politique-de-confidentialite', function () { return view('pages.privacy'); })->name('privacy');
+    Route::get('/prix', function () { return view('pages.awards'); })->name('awards');
 });
 
 // Articles routes
@@ -123,6 +127,13 @@ Route::prefix('articles')->name('articles.')->group(function () {
         // Robust resolution for "Portrait de l'entrepreneur" page
         if (!$category && in_array($slug, ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])) {
             $category = \App\Models\Category::whereIn('slug', ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])
+                ->where('status', 'active')
+                ->first();
+        }
+
+        // Robust resolution for "Startup de la diaspora" page
+        if (!$category && in_array($slug, ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])) {
+            $category = \App\Models\Category::whereIn('slug', ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])
                 ->where('status', 'active')
                 ->first();
         }
@@ -311,7 +322,8 @@ Route::prefix('magazines')->name('magazines.')->group(function () {
         return redirect()->back()->with('info', 'Téléchargement du PDF N° ' . $id);
     })->name('download')->where('id', '[0-9]+');
     Route::get('/archive', function () { 
-        return view('magazines.archive'); 
+        $magazines = \App\Models\Magazine::latest()->paginate(12);
+        return view('magazines.archive', compact('magazines')); 
     })->name('archive');
     Route::get('/subscribe', function () { 
         return view('magazines.subscribe'); 
@@ -320,6 +332,33 @@ Route::prefix('magazines')->name('magazines.')->group(function () {
         return view('newsletter.subscribe');
     })->name('newsletter.subscribe');
 });
+
+// WebTV Page Route
+Route::get('/webtv', function () {
+    // Vidéo principale (en direct ou la plus récente programmée)
+    $featuredWebtv = \App\Models\Webtv::query()
+        ->where('est_actif', true)
+        ->whereIn('statut', ['en_direct', 'programme', 'termine'])
+        ->orderByRaw("CASE statut WHEN 'en_direct' THEN 0 WHEN 'programme' THEN 1 ELSE 2 END")
+        ->orderByDesc('date_programmee')
+        ->orderByDesc('created_at')
+        ->first();
+
+    // Grille des programmes récents (tous sauf le principal s'il est affiché)
+    $recentProgramsQuery = \App\Models\Webtv::query()
+        ->where('est_actif', true)
+        ->where('type_programme', 'programme') // Uniquement les VOD
+        ->where('statut', '!=', 'draft')
+        ->latest();
+
+    if ($featuredWebtv) {
+        $recentProgramsQuery->where('id', '!=', $featuredWebtv->id);
+    }
+
+    $recentPrograms = $recentProgramsQuery->take(12)->get();
+
+    return view('pages.webtv', compact('featuredWebtv', 'recentPrograms'));
+})->name('webtv.index');
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -457,11 +496,23 @@ Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
 // WebTV routes
 Route::prefix('webtv')->name('webtv.')->group(function () {
     Route::get('/', function () {
-        $query = \App\Models\Webtv::query()
-            ->where('est_actif', true)
-            ->whereIn('statut', ['en_direct', 'programme', 'termine'])
-            // Prioritize live first, then programme, then others
-            ->orderByRaw("CASE statut WHEN 'en_direct' THEN 0 WHEN 'programme' THEN 1 ELSE 2 END")
+        $query = \App\Models\Webtv::query()->where('est_actif', true);
+
+        // Gestion des filtres de statut
+        $filter = request('filter');
+        if ($filter === 'live') {
+            $query->where('statut', 'en_direct');
+        } elseif ($filter === 'upcoming') {
+            $query->where('statut', 'programme');
+        } elseif ($filter === 'replay') {
+            $query->where('statut', 'termine');
+        } else {
+            // Si aucun filtre n'est appliqué, on récupère tous les statuts pertinents
+            $query->whereIn('statut', ['en_direct', 'programme', 'termine']);
+        }
+
+        // Prioritize live first, then programme, then others
+        $query->orderByRaw("CASE statut WHEN 'en_direct' THEN 0 WHEN 'programme' THEN 1 ELSE 2 END")
             // Within same statut, show scheduled most recent first, nulls last
             ->orderByRaw('CASE WHEN date_programmee IS NULL THEN 1 ELSE 0 END')
             ->orderByDesc('date_programmee')
