@@ -276,6 +276,20 @@
                                     </li>
                                 </ul>
                             </li>
+
+                            <!-- Gestion des Contacts -->
+                            <li class="nav-item {{ request()->routeIs('dashboard.contacts.*') ? 'active' : '' }}">
+                                <a href="{{ route('dashboard.contacts.index') }}" class="nav-link" data-section="contacts">
+                                    <i class="nav-icon fas fa-message"></i>
+                                    <span class="nav-text">Messages de Contact</span>
+                                    @php
+                                        $nouveauxContacts = \App\Models\Contact::nouveaux()->count();
+                                    @endphp
+                                    @if($nouveauxContacts > 0)
+                                        <span class="nav-badge">{{ $nouveauxContacts }}</span>
+                                    @endif
+                                </a>
+                            </li>
                         @endif
                     </ul>
                 </div>

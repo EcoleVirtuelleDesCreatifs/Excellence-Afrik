@@ -373,6 +373,16 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
     
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
+
+    // Gestion des contacts
+    Route::prefix('dashboard/contacts')->name('dashboard.contacts.')->group(function () {
+        Route::get('/', [App\Http\Controllers\ContactController::class, 'index'])->name('index');
+        Route::get('/{contact}', [App\Http\Controllers\ContactController::class, 'show'])->name('show');
+        Route::put('/{contact}', [App\Http\Controllers\ContactController::class, 'update'])->name('update');
+        Route::delete('/{contact}', [App\Http\Controllers\ContactController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-action', [App\Http\Controllers\ContactController::class, 'bulkAction'])->name('bulk-action');
+        Route::get('/export/csv', [App\Http\Controllers\ContactController::class, 'export'])->name('export');
+    });
 });
 
 // === ROUTES WEBTV - ACCESSIBLE À TOUS LES UTILISATEURS AUTHENTIFIÉS ===
