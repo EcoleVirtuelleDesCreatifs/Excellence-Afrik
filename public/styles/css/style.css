@@ -1335,7 +1335,7 @@ label {
   text-transform: uppercase;
   position: relative;
   line-height: 1;
-  padding-left: 10px; }
+  padding-left: 5px; }
   .section-title h2::before {
     background: #f4c700;
     height: 25px;

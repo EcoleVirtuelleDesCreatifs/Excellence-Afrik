@@ -79,6 +79,7 @@ try {
     <link rel="stylesheet" href="{{ asset('styles/css/meanmenu.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/slick.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/style.css') }}">
+    @stack('styles')
 </head>
 
 <body>

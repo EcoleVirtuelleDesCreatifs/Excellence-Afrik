@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@push('styles')
+<style>
+    .news-area {
+        background: linear-gradient(to right, #996633, #f7c807);
+    }
+</style>
+@endpush
+
 @section('content')
     <!-- ============================================================== -->
     <!-- DEBUT DU CONTENU PRINCIPAL -->
