@@ -210,41 +210,137 @@ class DashboardController extends Controller
         $articleData = [
             'title' => $validatedData['title'],
             'slug' => $validatedData['slug'],
+            'excerpt' => $validatedData['excerpt'],
+            'content' => $validatedData['content'],
+            'author_id' => Auth::id(),
+            'user_id' => Auth::id(),
+            'category_id' => $validatedData['category_id'],
+            'seo_title' => $validatedData['meta_title'],
+            'seo_description' => $validatedData['meta_description'],
+            'status' => $validatedData['status'],
+            'is_featured' => $validatedData['featured'] ?? false,
+            'is_trending' => false,
+            'priority' => 0,
+            'reading_time' => $this->calculateReadingTime($validatedData['content']),
+            'language' => 'fr',
+        ];
+
+        if ($request->hasFile('featured_image')) {
+            $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
+        }
+
+        $article = Article::create($articleData);
+
+        if ($article->is_featured) {
+            $this->ensureFeaturedUniqueness($article);
+        }
+
+        $message = '';
+        switch ($validatedData['status']) {
+            case 'published':
+                $message = 'Article publié avec succès !';
+                break;
+            case 'pending':
+                $message = 'Article soumis pour validation. Il sera examiné par un administrateur ou directeur de publication.';
+                break;
+            default:
+                $message = 'Article enregistré comme brouillon.';
+        }
+
+        return redirect()->route('dashboard.articles')->with('success', $message);
     }
 
-    $validatedData = $request->validate([
-        'title' => 'required|string|max:200',
-        'slug' => 'nullable|string|max:255|unique:articles,slug',
-        'category_id' => 'required|integer|exists:categories,id',
-        'excerpt' => 'required|string|max:500',
-        'content' => 'required|string',
-        'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_description' => 'nullable|string|max:500',
-        'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
-        'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
-        'status' => $statusValidation,
-        'published_at' => 'nullable|date',
-        'featured' => 'boolean',
-        'is_top_article' => 'boolean',
-    ]);
+    public function editArticle($id)
+    {
+        $utilisateur = Auth::user();
+        $article = Article::with('category')->findOrFail($id);
+        
+        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
+            if ($article->user_id !== $utilisateur->id) {
+                abort(403, 'Vous ne pouvez modifier que vos propres articles.');
+            }
+        }
+        
+        $categories = Category::where('status', 'active')->orderBy('name')->get();
 
-    if (empty($validatedData['slug'])) {
-        $slug = Str::slug($validatedData['title']);
-        $originalSlug = $slug;
-        $counter = 1;
-        while (Article::where('slug', $slug)->exists()) {
+        return view('dashboard.articles.edit', compact('article', 'categories'));
+    }
 
-if ($request->hasFile('featured_image')) {
-    $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
-}
+    public function updateArticle(Request $request, $id)
+    {
+        $utilisateur = Auth::user();
+        $article = Article::findOrFail($id);
+        
+        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
+            if ($article->user_id !== $utilisateur->id) {
+                abort(403, 'Vous ne pouvez modifier que vos propres articles.');
+            }
+        }
 
-$article = Article::create($articleData);
+        $statusValidation = 'required|in:draft,published,archived';
+        if (method_exists($utilisateur, 'estJournaliste') && $utilisateur->estJournaliste()) {
+            $statusValidation = 'required|in:draft,pending';
+        }
 
-if ($article->is_featured) {
-    $this->ensureFeaturedUniqueness($article);
-}
-        $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'featured_image_url' => 'nullable|url',
+            'tags' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
+            'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
+            'status' => $statusValidation,
+            'featured' => 'sometimes|boolean'
+        ]);
+
+        $slug = Str::slug($request->title);
+        if ($slug !== $article->slug) {
+            $originalSlug = $slug;
+            $counter = 1;
+            while (Article::where('slug', $slug)->where('id', '!=', $id)->exists()) {
+                $slug = $originalSlug . '-' . $counter++;
+            }
+        } else {
+            $slug = $article->slug;
+        }
+
+        $updateData = [
+            'title' => $request->title,
+            'slug' => $slug,
+            'excerpt' => $request->excerpt,
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+            'featured_image_url' => $request->featured_image_url,
+            'tags' => $request->tags,
+            'meta_title' => $request->meta_title ?: $request->title,
+            'meta_description' => $request->meta_description ?: $request->excerpt,
+        ];
+
+        if ($request->filled('sector')) {
+            $updateData['sector'] = strtolower($request->sector);
+        } else {
+            $updateData['sector'] = null;
+        }
+
+        if (!empty($request->theme)) {
+            $updateData['theme'] = strtolower($request->theme);
+        } else {
+            $updateData['theme'] = null;
+        }
+
+        $updateData['status'] = $request->status;
+        $updateData['reading_time'] = $this->calculateReadingTime($request->content);
+        $updateData['is_featured'] = $request->boolean('featured');
+
+        if ($request->hasFile('featured_image')) {
+            $updateData['featured_image_path'] = $this->processImage($request->file('featured_image'), $article->featured_image_path);
+        }
+
         $article->update($updateData);
 
         if ($article->is_featured) {
