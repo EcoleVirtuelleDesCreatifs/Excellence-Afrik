@@ -32,7 +32,7 @@ body {
   font-family: "Open Sans", sans-serif;
   font-weight: normal;
   font-style: normal;
-  color: #666666; }
+  color: #ffffff; }
 
 
 
@@ -136,7 +136,7 @@ h5,
 h6 {
   font-family: "Poppins", sans-serif;
   font-weight: normal;
-  color: #212428;
+  color: #ffffff;
   margin-top: 0px;
   font-style: normal;
   font-weight: 400;
@@ -181,7 +181,7 @@ p {
   font-size: 14px;
   font-weight: normal;
   line-height: 26px;
-  color: #666666;
+  color: #ffffff;
   margin-bottom: 15px; }
 
 hr {

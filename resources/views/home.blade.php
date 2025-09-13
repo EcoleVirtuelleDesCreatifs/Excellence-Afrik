@@ -3,7 +3,7 @@
 @push('styles')
 <style>
     .page-banner-area .page-title-bar {
-        background: linear-gradient(to right, #996633, #f7c807);
+        background: #000000;
     }
     .page-banner-area .page-title-bar h1 {
         color: #fff;
@@ -93,10 +93,31 @@
     .portrait-card__title a:hover {
         color: #c1933e;
     }
+    .portrait-card__content, .portrait-card__content p, .portrait-card__content a {
+        color: #666; /* Assurer la lisibilité sur fond blanc */
+    }
+    .portrait-card__title a {
+        color: #222;
+    }
     .portrait-card__excerpt {
         font-size: 0.95rem;
         color: #666;
         line-height: 1.6;
+    }
+    .portrait-card .btn-link {
+        font-weight: 600;
+        color: #c1933e;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .portrait-card .btn-link i {
+        transition: transform 0.3s ease;
+    }
+    .portrait-card .btn-link:hover {
+        color: #996633;
+    }
+    .portrait-card .btn-link:hover i {
+        transform: translateX(5px);
     }
     .bg-light {
         background-color: #f8f9fa !important;
@@ -564,15 +585,12 @@
 
 
 
-        <br />
-        <br />
-        <br />
-        <br />
+
 
         <!-- ============================================================== -->
         <!-- Section 'Portrait d'Entrepreneurs' -->
         <!-- ============================================================== -->
-        <section class="portrait-area pb-30 pt-60 bg-light">
+        <section class="portrait-area pb-30 pt-60">
             <div class="container">
                 <div class="row">
                     <div class="col-12">
@@ -603,7 +621,7 @@
                                         <h3 class="portrait-card__title">
                                             <a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a>
                                         </h3>
-                                        <p class="portrait-card__excerpt">{{ Str::limit(strip_tags($article->excerpt), 100) }}</p>
+
                                         <a href="{{ route('articles.show', $article->slug) }}" class="btn btn-link p-0">Lire le portrait <i class="fas fa-arrow-right"></i></a>
                                     </div>
                                 </div>

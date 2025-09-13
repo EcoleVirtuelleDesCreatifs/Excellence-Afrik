@@ -80,6 +80,11 @@ try {
     <link rel="stylesheet" href="{{ asset('styles/css/meanmenu.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/slick.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/style.css') }}">
+    <style>
+        main {
+            background: linear-gradient(to right, #996633, #f7c807);
+        }
+    </style>
     @stack('styles')
 </head>
 
