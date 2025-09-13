@@ -3,7 +3,7 @@
 @php
     $ad = \App\Helpers\AdvertisementHelper::getCurrentAd($position);
     $dimensions = [
-        'top_banner' => '1000x305px',
+        'top_banner' => '730x90px',
         'sidebar' => '300x250px', 
         'middle' => '728x90px',
         'bottom' => '970x250px'
@@ -48,6 +48,17 @@
 
 .ad-container {
     margin-bottom: 20px;
+}
+
+.advertisement-top-banner {
+    margin: 15px auto;
+    text-align: center;
+    max-width: 730px;
+}
+
+.advertisement-top-banner .ad-image {
+    max-width: 730px;
+    max-height: 90px;
 }
 
 .advertisement-sidebar {

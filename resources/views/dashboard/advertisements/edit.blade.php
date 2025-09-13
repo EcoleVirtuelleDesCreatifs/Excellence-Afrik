@@ -124,7 +124,7 @@
                                         <select class="form-select @error('position_in_page') is-invalid @enderror" 
                                                 id="position_in_page" name="position_in_page" required>
                                             <option value="top_banner" {{ old('position_in_page', $advertisement->position_in_page) == 'top_banner' ? 'selected' : '' }}>
-                                                Bannière haute (1000x305px)
+                                                Bannière haute (730x90px)
                                             </option>
                                             <option value="sidebar" {{ old('position_in_page', $advertisement->position_in_page) == 'sidebar' ? 'selected' : '' }}>
                                                 Barre latérale (300x250px)
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDimensionsPreview() {
         const position = positionSelect.value;
         const dimensions = {
-            'top_banner': '1000x305px',
+            'top_banner': '730x90px',
             'sidebar': '300x250px',
             'middle': '728x90px',
             'bottom': '970x250px'

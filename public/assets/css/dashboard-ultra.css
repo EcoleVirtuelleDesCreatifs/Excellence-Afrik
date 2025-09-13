@@ -4368,13 +4368,15 @@
 }
 
 .data-table-card .card-header {
-    background: linear-gradient(135deg, var(--deep-black) 0%, var(--rich-brown) 100%);
-    color: var(--pure-white);
+    background: var(--pure-white);
+    color: var(--deep-black);
     padding: var(--spacing-lg) var(--spacing-xl);
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 3px solid var(--primary-gold);
+    min-height: 80px;
+    height: 80px;
 }
 
 .data-table-card .card-title {

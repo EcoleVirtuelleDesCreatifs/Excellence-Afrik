@@ -296,7 +296,7 @@ class AdvertisementController extends Controller
     private function getImageDimensions($position)
     {
         $dimensions = [
-            'top_banner' => ['width' => 1000, 'height' => 305],
+            'top_banner' => ['width' => 730, 'height' => 90],
             'sidebar' => ['width' => 300, 'height' => 250],
             'middle' => ['width' => 728, 'height' => 90],
             'bottom' => ['width' => 970, 'height' => 250]

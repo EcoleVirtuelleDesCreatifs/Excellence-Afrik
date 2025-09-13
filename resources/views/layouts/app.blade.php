@@ -293,7 +293,7 @@
                                             <div class="ad-fallback" style="background: #f8f9fa; padding: 20px; text-align: center; border: 2px dashed #dee2e6;">
                                                 <i class="fas fa-bullhorn fa-2x text-muted mb-2"></i>
                                                 <p class="text-muted mb-0">Espace publicitaire disponible</p>
-                                                <small class="text-muted">1000x305px</small>
+                                                <small class="text-muted">730x90px</small>
                                             </div>
                                         </div>
                                     @endif
