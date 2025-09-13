@@ -25,7 +25,7 @@ class AdvertisementController extends Controller
         $advertisements = Advertisement::orderBy('priority', 'desc')
                                      ->orderBy('created_at', 'desc')
                                      ->paginate(15);
-
+        
         return view('dashboard.advertisements.index', compact('advertisements'));
     }
 
@@ -38,7 +38,7 @@ class AdvertisementController extends Controller
                              ->where('is_active', 1)
                              ->orderBy('name')
                              ->get();
-
+                             
         return view('dashboard.advertisements.create', compact('categories'));
     }
 
@@ -48,22 +48,22 @@ class AdvertisementController extends Controller
     public function getSubcategories(Request $request)
     {
         $parentSlug = $request->get('parent_slug');
-
+        
         $parent = Category::where('slug', $parentSlug)
                          ->where('status', 'active')
                          ->where('is_active', 1)
                          ->first();
-
+        
         if (!$parent) {
             return response()->json([]);
         }
-
+        
         $subcategories = Category::where('parent_id', $parent->id)
                                 ->where('status', 'active')
                                 ->where('is_active', 1)
                                 ->orderBy('name')
                                 ->get(['id', 'name', 'slug']);
-
+        
         return response()->json($subcategories);
     }
 
@@ -103,7 +103,7 @@ class AdvertisementController extends Controller
 
             return redirect()->route('dashboard.advertisements.index')
                             ->with('success', 'Publicité créée avec succès!');
-
+                            
         } catch (\Exception $e) {
             return redirect()->back()
                             ->withInput()
@@ -128,7 +128,7 @@ class AdvertisementController extends Controller
                              ->where('is_active', 1)
                              ->orderBy('name')
                              ->get();
-
+                             
         return view('dashboard.advertisements.edit', compact('advertisement', 'categories'));
     }
 
@@ -168,7 +168,7 @@ class AdvertisementController extends Controller
             if ($advertisement->image && Storage::disk('public')->exists($advertisement->image)) {
                 Storage::disk('public')->delete($advertisement->image);
             }
-
+            
             $updateData['image'] = $this->handleImageUpload($request->file('image'), $request->position_in_page);
         } 
         // Si la position change sans nouvelle image, redimensionner l'image existante
@@ -222,9 +222,9 @@ class AdvertisementController extends Controller
             'ip' => request()->ip(),
             'user_agent' => request()->userAgent()
         ]);
-
+        
         $advertisement = Advertisement::findOrFail($id);
-
+        
         \Log::info('Advertisement found', [
             'title' => $advertisement->title,
             'url' => $advertisement->url,
@@ -233,14 +233,14 @@ class AdvertisementController extends Controller
             'start_date' => $advertisement->start_date,
             'end_date' => $advertisement->end_date
         ]);
-
+        
         if ($advertisement->isCurrentlyActive()) {
             $advertisement->incrementClickCount();
-
+            
             \Log::info('Advertisement click count incremented', [
                 'new_count' => $advertisement->fresh()->click_count
             ]);
-
+            
             // Vérifier si l'URL est valide
             if (filter_var($advertisement->url, FILTER_VALIDATE_URL)) {
                 \Log::info('Redirecting to advertisement URL', ['url' => $advertisement->url]);
@@ -250,12 +250,12 @@ class AdvertisementController extends Controller
                 return redirect('/')->with('error', 'URL de destination invalide.');
             }
         }
-
+        
         \Log::warning('Advertisement not active', [
             'status' => $advertisement->status,
             'is_currently_active' => $advertisement->isCurrentlyActive()
         ]);
-
+        
         return redirect('/')->with('error', 'Publicité expirée ou inactive.');
     }
 
@@ -265,22 +265,22 @@ class AdvertisementController extends Controller
     private function handleImageUpload($image, $position)
     {
         $filename = 'ad_' . time() . '.' . $image->getClientOriginalExtension();
-
+        
         // Définir les dimensions selon la position
         $dimensions = $this->getImageDimensions($position);
-
+        
         try {
             // Créer le manager d'image avec le driver GD
             $manager = new ImageManager(new Driver());
-
+            
             // Créer et redimensionner l'image
             $img = $manager->read($image->getRealPath());
             $img = $img->resize($dimensions['width'], $dimensions['height']);
-
+            
             // Sauvegarder
             $path = 'advertisements/' . $filename;
             Storage::disk('public')->put($path, (string) $img->encode());
-
+            
             return $path;
         } catch (\Exception $e) {
             // En cas d'erreur avec Intervention Image, on sauvegarde l'image sans redimensionnement
@@ -296,12 +296,12 @@ class AdvertisementController extends Controller
     private function getImageDimensions($position)
     {
         $dimensions = [
-            'top_banner' => ['width' => 1000, 'height' => 305],
+            'top_banner' => ['width' => 730, 'height' => 90],
             'sidebar' => ['width' => 300, 'height' => 250],
             'middle' => ['width' => 728, 'height' => 90],
             'bottom' => ['width' => 970, 'height' => 250]
         ];
-
+        
         return $dimensions[$position] ?? $dimensions['sidebar'];
     }
 
@@ -312,24 +312,24 @@ class AdvertisementController extends Controller
     {
         try {
             $imagePath = Storage::disk('public')->path($advertisement->image);
-
+            
             if (!file_exists($imagePath)) {
                 return; // Image n'existe pas, ne rien faire
             }
-
+            
             // Définir les nouvelles dimensions
             $dimensions = $this->getImageDimensions($newPosition);
-
+            
             // Créer le manager d'image avec le driver GD
             $manager = new ImageManager(new Driver());
-
+            
             // Charger et redimensionner l'image existante
             $img = $manager->read($imagePath);
             $img = $img->resize($dimensions['width'], $dimensions['height']);
-
+            
             // Sauvegarder par-dessus l'image existante
             Storage::disk('public')->put($advertisement->image, (string) $img->encode());
-
+            
         } catch (\Exception $e) {
             // En cas d'erreur, on ne fait rien (garde l'image originale)
             // Optionnel: log l'erreur

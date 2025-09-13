@@ -13,6 +13,7 @@
     <!-- Main Content -->
     <main class="main-content">
 
+
         <div class="page-title-banner">
             <div class="container-fluid">
                 <div class="row justify-content-center">
@@ -328,6 +329,15 @@
                 </section>
                 @endif
 
+                <!-- Middle Advertisement -->
+                <div class="container">
+                    <div class="row justify-content-center my-4">
+                        <div class="col-lg-10">
+                            <x-advertisement position="middle" />
+                        </div>
+                    </div>
+                </div>
+
                 <section class="articles-grid-section fade-in py-5">
                     <div class="container">
 
@@ -463,6 +473,15 @@
 
 
 
+
+            <!-- Bottom Advertisement -->
+            <div class="container">
+                <div class="row justify-content-center my-4">
+                    <div class="col-lg-10">
+                        <x-advertisement position="bottom" />
+                    </div>
+                </div>
+            </div>
 
             <!-- Video Newsletter CTA -->
             <section class="video-newsletter-section fade-in">

@@ -6,74 +6,232 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/webtv.css') }}">
     <style>
-      :root{--ea-gold:#D4AF37;--ea-gold-2:#F2CB05;--ea-blue:#2563eb;--ea-green:#10b981;--ea-soft:rgba(148,163,184,.08);--ea-soft-2:rgba(148,163,184,.05);--ea-card:rgba(15,23,42,.30);--ea-card-border:rgba(148,163,184,.14)}
-      /* Toolbar modern styles */
-      .webtv-toolbar {display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin:8px 0 4px;padding:6px 0;border-radius:12px;background:transparent;border:none}
-      .toolbar-left,.toolbar-right{display:flex;align-items:center;gap:12px}
-      .search-group{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(255,255,255,0.08);border-radius:10px;background:rgba(255,255,255,0.03)}
-      .search-group i{color:#94a3b8}
-      .search-input{background:transparent;border:none;outline:none;color:#e2e8f0;min-width:260px}
-      .filters-group{display:none}
-      .filter-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.02)}
-      .filter-item i{color:#94a3b8}
-      .filter-select,.sort-select{background:transparent;border:none;color:#e2e8f0}
-      .sort-group{display:none}
-      .view-toggle{display:none}
-      .toggle-btn{border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e2e8f0;padding:7px 10px;border-radius:12px}
-      .toggle-btn.active{border-color:var(--ea-blue);background:rgba(37,99,235,0.12);color:#bfdbfe}
-
-      /* Minor tweaks for status cards spacing */
-      .webtv-status-cards{margin-top:16px}
-
-      /* Modern full-width list, two-column cards */
-      .webtv-list-modern{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
-      .webtv-card-modern{position:relative;background:var(--ea-card);border:1px solid var(--ea-card-border);border-radius:14px;padding:12px;transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;display:grid;grid-template-columns: 4fr 8fr;gap:14px;align-items:start}
-      .webtv-card-modern:before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(135deg, rgba(212,175,55,.35), rgba(37,99,235,.35));-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.55}
-      .webtv-card-modern:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.22);border-color:rgba(148,163,184,.22)}
-      .webtv-preview{position:relative}
-      .embed-preview,.no-preview{width:100%;height:620px;aspect-ratio:auto;margin:0;border-radius:12px;overflow:hidden;background:#0b1220;border:1px solid var(--ea-card-border)}
-      .embed-container-preview{position:relative;width:100%;height:100%;}
-      /* Force any inner responsive wrapper to fill the box */
-      .embed-container-preview [style*="padding"]{padding:0 !important;height:100% !important;width:100% !important;position:static !important}
-      .embed-container-preview iframe,.embed-container-preview object,.embed-container-preview embed{position:static !important;width:100% !important;height:100% !important;inset:auto !important}
-      .preview-overlay{display:none}
-      /* Status badges (top-left over preview) */
-      .status-badge{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:.3px;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px)}
-      .status-badge{background:rgba(148,163,184,0.15);color:#e5e7eb;border-color:rgba(148,163,184,.35)}
-      .status-programme{background:rgba(37,99,235,0.15);color:#bfdbfe;border-color:rgba(37,99,235,.45)}
-      .status-en_direct{background:linear-gradient(90deg, rgba(212,175,55,.18), rgba(37,99,235,.18));color:#fde68a;border-color:rgba(212,175,55,.45)}
-      .status-termine,.status-archived{background:rgba(16,185,129,0.15);color:#bbf7d0;border-color:rgba(16,185,129,.45)}
-      /* Details column */
-      .webtv-details{padding:0}
-      .webtv-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-      .webtv-title{font-size:1.06rem;margin:0 0 4px 0;font-weight:800;letter-spacing:.1px;background:linear-gradient(90deg,var(--ea-gold),var(--ea-blue));-webkit-background-clip:text;background-clip:text;color:transparent}
-      .webtv-meta{display:flex;flex-wrap:wrap;gap:6px;color:#9fb0c6;font-size:.9rem}
-      .webtv-meta .meta-item{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid rgba(255,255,255,0.06);border-radius:999px;background:rgba(255,255,255,0.02)}
-      .webtv-description{color:#cbd5e1;margin:4px 0 0 0;max-height:2.8em;overflow:hidden}
-      .webtv-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-      .status-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-      .action-buttons{display:flex;gap:8px}
-      /* Responsive stacking */
-      @media (max-width: 992px){
-        .webtv-card-modern{grid-template-columns:1fr}
-      }
-      .live-badge{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:8px;background:rgba(220,53,69,.15);color:#ff6b6b;border:1px solid rgba(220,53,69,.35);padding:6px 10px;border-radius:999px;font-weight:600;letter-spacing:.4px}
-      .live-dot{width:10px;height:10px;background:#ff3b3b;border-radius:50%;box-shadow:0 0 0 0 rgba(255,59,59,0.7);animation:pulse 1.2s infinite}
-      @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,59,59,.7)}70%{box-shadow:0 0 0 10px rgba(255,59,59,0)}100%{box-shadow:0 0 0 0 rgba(255,59,59,0)}}
-      .webtv-details{padding:12px 6px}
-      .webtv-title{font-size:1.05rem;margin:0 0 6px 0}
-      .webtv-meta{display:flex;gap:12px;color:#93a4b8;font-size:.9rem}
-      .webtv-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-      .action-buttons{display:flex;gap:8px}
-      .btn-action{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;border:1px solid var(--ea-card-border);background:rgba(255,255,255,0.02);color:#e2e8f0;transition:all .14s ease}
-      .btn-action:hover{background:rgba(37,99,235,0.12);border-color:var(--ea-blue);color:#cfe3ff;transform:translateY(-1px)}
-      .btn-delete:hover{background:rgba(239,68,68,.12);border-color:#ef4444;color:#fecaca}
-
-      /* Header buttons brand styling */
-      .btn-primary-modern{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(212,175,55,.45);background:linear-gradient(90deg, rgba(212,175,55,.22), rgba(37,99,235,.22));color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;letter-spacing:.2px;transition:all .15s ease}
-      .btn-primary-modern:hover{transform:translateY(-1px);background:linear-gradient(90deg, rgba(212,175,55,.32), rgba(37,99,235,.32));border-color:var(--ea-gold)}
-      .btn-secondary-modern{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(37,99,235,.45);background:rgba(37,99,235,.10);color:#eaf2ff;padding:10px 14px;border-radius:12px;font-weight:700;letter-spacing:.2px;transition:all .15s ease}
-      .btn-secondary-modern:hover{transform:translateY(-1px);background:rgba(37,99,235,.18);border-color:var(--ea-blue)}
+        /* Variables CSS pour la cohérence */
+        :root {
+            --ea-gold: #F2CB05;
+            --ea-blue: #2563eb;
+            --ea-green: #10b981;
+            --ea-danger: #dc3545;
+            --card-bg: #ffffff;
+            --card-border: #e9ecef;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        
+        /* Layout principal */
+        .modern-webtv-section {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        /* Header amélioré */
+        .page-header-modern {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--ea-gold), var(--ea-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin: 0.25rem 0 0 0;
+        }
+        
+        .breadcrumb-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .breadcrumb-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--ea-gold);
+            font-weight: 600;
+        }
+        
+        /* Boutons d'actions du header */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--ea-gold), #e6b800);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .btn-secondary-modern {
+            background: var(--ea-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Toolbar simplifié */
+        .webtv-toolbar {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .search-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            background: #f8f9fa;
+            min-width: 300px;
+        }
+        
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            width: 100%;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .filter-select {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        /* Messages d'alerte */
+        .alert-modern {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-modern.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--ea-green);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header-modern {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-group {
+                min-width: 100%;
+            }
+        }
     </style>
 @endpush
 
@@ -125,55 +283,22 @@
     </div>
     @endif
 
-    <!-- Toolbar: Search, Filters, Sorting, View Toggle -->
+    <!-- Toolbar simplifié -->
     <div class="webtv-toolbar">
-        <div class="toolbar-left">
-            <div class="search-group">
-                <i class="fas fa-search"></i>
-                <input type="text" class="search-input" placeholder="Rechercher un live ou programme..." />
-            </div>
-            <div class="filters-group">
-                <div class="filter-item">
-                    <i class="fas fa-filter"></i>
-                    <select class="filter-select" aria-label="Filtrer par statut">
-                        <option value="all" selected>Tous les statuts</option>
-                        <option value="en_direct">En direct</option>
-                        <option value="programme">Programmé</option>
-                        <option value="draft">Brouillon</option>
-                        <option value="termine">Terminé</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <i class="fas fa-tags"></i>
-                    <select class="filter-select" aria-label="Filtrer par type">
-                        <option value="all" selected>Tous les types</option>
-                        <option value="live">Live</option>
-                        <option value="programme">Programme</option>
-                    </select>
-                </div>
-            </div>
+        <div class="search-group">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" placeholder="Rechercher un live ou programme..." />
         </div>
-        <div class="toolbar-right">
-            <div class="sort-group">
-                <i class="fas fa-sort"></i>
-                <select class="sort-select" aria-label="Trier">
-                    <option value="recent" selected>Plus récents</option>
-                    <option value="views">Plus vus</option>
-                    <option value="duration">Durée</option>
-                    <option value="date">Date programmée</option>
+        <div class="toolbar-actions">
+            <div class="filter-item">
+                <i class="fas fa-filter"></i>
+                <select class="filter-select" aria-label="Filtrer par statut">
+                    <option value="all" selected>Tous les statuts</option>
+                    <option value="en_direct">En direct</option>
+                    <option value="programme">Programmé</option>
+                    <option value="draft">Brouillon</option>
+                    <option value="termine">Terminé</option>
                 </select>
-            </div>
-            <div class="size-selector" title="Taille des previews">
-                <i class="fas fa-expand-arrows-alt"></i>
-                <select id="preview-size-select" aria-label="Taille des aperçus">
-                    <option value="420">420 px</option>
-                    <option value="500" selected>500 px</option>
-                    <option value="560">560 px</option>
-                </select>
-            </div>
-            <div class="view-toggle" role="group" aria-label="Affichage">
-                <button class="toggle-btn active" title="Cartes"><i class="fas fa-th-large"></i></button>
-                <button class="toggle-btn" title="Liste"><i class="fas fa-list"></i></button>
             </div>
         </div>
     </div>

@@ -22,7 +22,7 @@ Route::get('/', function () {
         });
     }
     $dailyNewsCategory = $dailyQuery->first();
-
+    
     $dailyNews = collect();
     if ($dailyNewsCategory) {
         // Récupérer les articles de la catégorie "Actualité du jour"
@@ -33,7 +33,7 @@ Route::get('/', function () {
             ->limit(6)
             ->get();
     }
-
+    
     // Récupérer la catégorie "Figures de l'Economie"
     $figuresQuery = \App\Models\Category::where('status', 'active')->where('is_active', 1);
     if ($figuresIdEnv) {
@@ -48,7 +48,7 @@ Route::get('/', function () {
         });
     }
     $figuresCategory = $figuresQuery->first();
-
+    
     $figuresArticles = collect();
     if ($figuresCategory) {
         // Récupérer les articles de la catégorie "Figures de l'Economie"
@@ -59,7 +59,7 @@ Route::get('/', function () {
             ->limit(4)
             ->get();
     }
-
+    
     // Featured WebTV for homepage (À la une)
     $featuredWebtv = \App\Models\Webtv::query()
         ->where('est_actif', true)
@@ -70,26 +70,14 @@ Route::get('/', function () {
         ->orderByDesc('created_at')
         ->first();
 
-    $entrepreneurArticles = \App\Models\Article::with('category')
-        ->whereHas('category', function ($query) {
-            $query->where('slug', 'portrait-de-l-entrepreneur');
-        })
-        ->where('status', 'published')
-        ->latest()
-        ->take(2)
-        ->get();
-
-    $latestMagazine = \App\Models\Magazine::latest()->first();
-
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'entrepreneurArticles', 'latestMagazine'));
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv'));
 })->name('home');
 
 // Pages routes
 Route::prefix('pages')->name('pages.')->group(function () {
     Route::get('/presentation', function () { return view('pages.presentation'); })->name('presentation');
     Route::get('/editorial', function () { return view('pages.editorial'); })->name('editorial');
-    Route::get('/contact', [App\Http\Controllers\PageController::class, 'contact'])->name('contact');
-    Route::post('/contact', [App\Http\Controllers\PageController::class, 'sendContact']);
+    Route::get('/contact', function () { return view('pages.contact'); })->name('contact');
     Route::get('/advertise', function () { return view('pages.advertise'); })->name('advertise');
     Route::get('/sponsor', function () { return view('pages.sponsor'); })->name('sponsor');
 });
@@ -101,15 +89,15 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->where('status', 'published')
             ->orderBy('created_at', 'desc')
             ->paginate(12);
-
+            
         $categories = \App\Models\Category::where('status', 'active')
             ->withCount('articles')
             ->orderBy('name')
             ->get();
-
+        
         return view('articles.index', compact('articles', 'categories')); 
     })->name('index');
-
+    
     Route::get('/category/{slug}', function ($slug) {
         $category = \App\Models\Category::where('slug', $slug)->first();
 
@@ -166,11 +154,11 @@ Route::prefix('articles')->name('articles.')->group(function () {
             }
         }
         }
-
+        
         if (!$category) {
             abort(404, 'Catégorie non trouvée');
         }
-
+        
         $query = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $category->id)
             ->where('status', 'published')
@@ -236,7 +224,7 @@ Route::prefix('articles')->name('articles.')->group(function () {
         }
 
         $articles = $query->paginate(12)->appends(request()->query());
-
+            
         $relatedCategories = \App\Models\Category::where('status', 'active')
             ->where('id', '!=', $category->id)
             ->withCount('articles')
@@ -252,20 +240,20 @@ Route::prefix('articles')->name('articles.')->group(function () {
                 ->pluck('sector')
                 ->filter();
         }
-
+        
         return view('articles.category', compact('category', 'articles', 'relatedCategories', 'slug', 'availableSectors', 'isFigures', 'isEntreprisesImpacts', 'isContributionsAnalyses', 'isPortraitEntrepreneur', 'sector', 'isGrandsGenres', 'allowedSectors', 'featuredArticle'))
             ->with(['theme' => $theme, 'allowedThemes' => $allowedThemes]); 
     })->name('category');
-
+    
     Route::get('/{slug}', function ($slug) {
         $article = \App\Models\Article::with(['category', 'user'])
             ->where('slug', $slug)
             ->where('status', 'published')
             ->firstOrFail();
-
+            
         // Increment view count
         $article->increment('view_count');
-
+        
         // Get related articles from same category
         $relatedArticles = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $article->category_id)
@@ -274,10 +262,10 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->orderBy('created_at', 'desc')
             ->limit(4)
             ->get();
-
+        
         return view('articles.show', compact('article', 'relatedArticles')); 
     })->name('show');
-
+    
     Route::get('/search', function () { 
         return view('articles.search'); 
     })->name('search');
@@ -313,11 +301,10 @@ Route::prefix('auth')->group(function () {
 
 // Dashboard Routes (Protected avec vérification des rôles)
 Route::middleware(['auth', 'verifier.role'])->group(function () {
-
+    
     // === ACCÈS POUR TOUS LES UTILISATEURS AUTHENTIFIÉS ===
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/analytics', [App\Http\Controllers\DashboardController::class, 'analytics'])->name('dashboard.analytics');
-
+    
     // === GESTION DES ARTICLES - Tous peuvent créer et éditer ===
     Route::get('/dashboard/articles', [App\Http\Controllers\DashboardController::class, 'articles'])->name('dashboard.articles');
     Route::get('/dashboard/mes-articles', [App\Http\Controllers\DashboardController::class, 'mesArticles'])->name('dashboard.mes-articles');
@@ -325,28 +312,28 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
     Route::post('/dashboard/articles', [App\Http\Controllers\DashboardController::class, 'storeArticle'])->name('dashboard.articles.store');
     Route::get('/dashboard/articles/{id}/edit', [App\Http\Controllers\DashboardController::class, 'editArticle'])->name('dashboard.articles.edit');
     Route::put('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'updateArticle'])->name('dashboard.articles.update');
-
+    
     // === SUPPRESSION ARTICLES - Permissions gérées dans le contrôleur ===
     Route::delete('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'deleteArticle'])
          ->name('dashboard.articles.delete');
-
+    
     // === APPROBATION ARTICLES - Seulement directeur et admin ===
     Route::post('/dashboard/articles/{id}/approve', [App\Http\Controllers\DashboardController::class, 'approveArticle'])
          ->name('dashboard.articles.approve')
          ->middleware('verifier.role:admin|directeur_publication');
-
+    
     // === REJET ARTICLES - Seulement directeur et admin ===
     Route::post('/dashboard/articles/{id}/reject', [App\Http\Controllers\DashboardController::class, 'rejectArticle'])
          ->name('dashboard.articles.reject')
          ->middleware('verifier.role:admin|directeur_publication');
-
+    
     // === ACTIONS GROUPÉES SUR ARTICLES - Seulement directeur et admin pour publication ===
     Route::post('/dashboard/articles/bulk-action', [App\Http\Controllers\DashboardController::class, 'bulkAction'])
          ->name('dashboard.articles.bulk-action');
-
+    
     // === GESTION CATÉGORIES - Lecture pour tous, modification pour admin/directeur ===
     Route::get('/dashboard/categories', [App\Http\Controllers\DashboardController::class, 'categories'])->name('dashboard.categories.index');
-
+    
     // === GESTION DU PROFIL - Accessible à tous les utilisateurs authentifiés ===
     Route::get('/dashboard/profile', [App\Http\Controllers\DashboardController::class, 'profile'])->name('dashboard.profile');
     Route::put('/dashboard/profile', [App\Http\Controllers\DashboardController::class, 'updateProfile'])->name('dashboard.profile.update');
@@ -360,7 +347,7 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
     Route::get('/dashboard/categories/{id}/edit', [App\Http\Controllers\DashboardController::class, 'editCategory'])->name('dashboard.categories.edit');
     Route::put('/dashboard/categories/{id}', [App\Http\Controllers\DashboardController::class, 'updateCategory'])->name('dashboard.categories.update');
     Route::delete('/dashboard/categories/{id}', [App\Http\Controllers\DashboardController::class, 'deleteCategory'])->name('dashboard.categories.delete');
-
+    
     // Gestion complète des magazines
     Route::prefix('dashboard/magazines')->name('dashboard.magazines.')->group(function () {
         Route::get('/', [App\Http\Controllers\MagazineController::class, 'index'])->name('index');
@@ -370,7 +357,7 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::put('/{id}', [App\Http\Controllers\MagazineController::class, 'update'])->name('update');
         Route::delete('/{id}', [App\Http\Controllers\MagazineController::class, 'destroy'])->name('destroy');
     });
-
+    
     // Gestion complète des publicités
     Route::prefix('dashboard/advertisements')->name('dashboard.advertisements.')->group(function () {
         Route::get('/', [App\Http\Controllers\AdvertisementController::class, 'index'])->name('index');
@@ -383,9 +370,19 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::post('/{advertisement}/toggle-status', [App\Http\Controllers\AdvertisementController::class, 'toggleStatus'])->name('toggle-status');
         Route::get('/subcategories', [App\Http\Controllers\AdvertisementController::class, 'getSubcategories'])->name('subcategories');
     });
-
+    
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
+
+    // Gestion des contacts
+    Route::prefix('dashboard/contacts')->name('dashboard.contacts.')->group(function () {
+        Route::get('/', [App\Http\Controllers\ContactController::class, 'index'])->name('index');
+        Route::get('/{contact}', [App\Http\Controllers\ContactController::class, 'show'])->name('show');
+        Route::put('/{contact}', [App\Http\Controllers\ContactController::class, 'update'])->name('update');
+        Route::delete('/{contact}', [App\Http\Controllers\ContactController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-action', [App\Http\Controllers\ContactController::class, 'bulkAction'])->name('bulk-action');
+        Route::get('/export/csv', [App\Http\Controllers\ContactController::class, 'export'])->name('export');
+    });
 });
 
 // === ROUTES WEBTV - ACCESSIBLE À TOUS LES UTILISATEURS AUTHENTIFIÉS ===
@@ -412,7 +409,7 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
 Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
     // Paramètres système
     Route::get('/dashboard/settings', [App\Http\Controllers\DashboardController::class, 'settings'])->name('dashboard.settings');
-
+    
     // Gestion des utilisateurs dans les paramètres
     Route::get('/dashboard/settings/users', [App\Http\Controllers\DashboardController::class, 'getUsers'])->name('dashboard.settings.users');
     Route::post('/dashboard/settings/users', [App\Http\Controllers\DashboardController::class, 'createUser'])->name('dashboard.settings.users.create');
@@ -420,7 +417,7 @@ Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
     Route::put('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'updateUser'])->name('dashboard.settings.users.update');
     Route::post('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'updateUser'])->name('dashboard.settings.users.update.post');
     Route::delete('/dashboard/settings/users/{id}', [App\Http\Controllers\DashboardController::class, 'deleteUser'])->name('dashboard.settings.users.delete');
-
+    
     // === GESTION DES NEWSLETTERS - Admin et Directeur uniquement ===
     Route::middleware('verifier.role:admin,directeur_publication')->group(function () {
         Route::get('/dashboard/newsletter', [App\Http\Controllers\NewsletterController::class, 'index'])->name('dashboard.newsletter.index');
@@ -431,10 +428,10 @@ Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
         Route::delete('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'destroy'])->name('dashboard.newsletter.destroy');
         Route::get('/dashboard/newsletter/export/csv', [App\Http\Controllers\NewsletterController::class, 'export'])->name('dashboard.newsletter.export');
     });
-
+    
     // Routes de test et développement
     Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
-
+    
 });
 
 // WebTV routes
@@ -486,20 +483,20 @@ Route::get('/api/weather', function () {
     $apiKey = 'f66a0e148241fe356827681a7ea53ad3';
     $city = 'Abidjan';
     $countryCode = 'CI';
-
+    
     try {
         $url = "https://api.openweathermap.org/data/2.5/weather?q={$city},{$countryCode}&units=metric&lang=fr&appid={$apiKey}";
-
+        
         $response = file_get_contents($url);
         if ($response === false) {
             throw new Exception('Failed to fetch weather data');
         }
-
+        
         $data = json_decode($response, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception('Invalid JSON response');
         }
-
+        
         return response()->json([
             'success' => true,
             'data' => [
@@ -508,7 +505,7 @@ Route::get('/api/weather', function () {
                 'city' => $data['name'] ?? 'Abidjan'
             ]
         ]);
-
+        
     } catch (Exception $e) {
         return response()->json([
             'success' => false,
@@ -529,18 +526,18 @@ Route::get('/api/brvm', function () {
         $baseValue = 161.50;
         $variation = (rand(-200, 200) / 100); // Variation de -2% à +2%
         $currentValue = round($baseValue + $variation, 2);
-
+        
         $changePercent = round(($variation / $baseValue) * 100, 2);
         $changePoints = round($variation, 2);
-
+        
         // Formatage de la variation avec couleur
         $changeDisplay = ($changePercent >= 0 ? '+' : '') . $changePercent . '%';
         $changeClass = $changePercent >= 0 ? 'positive' : 'negative';
-
+        
         // Simulation horaire de la bourse (ouverte 9h-15h UTC, soit 9h-15h Abidjan)
         $currentHour = (int)date('H');
         $isMarketOpen = $currentHour >= 9 && $currentHour < 15;
-
+        
         return response()->json([
             'success' => true,
             'data' => [
@@ -554,7 +551,7 @@ Route::get('/api/brvm', function () {
                 'last_update' => now()->format('H:i')
             ]
         ]);
-
+        
     } catch (Exception $e) {
         return response()->json([
             'success' => false,
@@ -574,41 +571,3 @@ Route::get('/api/brvm', function () {
 
 // Advertisement click tracking route (public)
 Route::get('/ad/click/{id}', [App\Http\Controllers\AdvertisementController::class, 'click'])->name('advertisement.click');
-
-// Currency API route (simulation)
-Route::get('/api/currency', function () {
-    try {
-        // Simulation des taux de change par rapport à l'Euro
-        $rates = [
-            'XOF' => 655.957, // Franc CFA
-            'USD' => 1.08,    // Dollar Américain
-            'NGN' => 1600.50, // Naira Nigérian
-            'GHS' => 15.75,   // Cedi Ghanéen
-        ];
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'base' => 'EUR',
-                'rates' => $rates,
-                'last_update' => now()->format('H:i')
-            ]
-        ]);
-
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'fallback' => [
-                'base' => 'EUR',
-                'rates' => [
-                    'XOF' => 655.96,
-                    'USD' => 1.08,
-                    'NGN' => 1600,
-                    'GHS' => 15.7
-                ],
-                'last_update' => 'N/A'
-            ]
-        ], 200);
-    }
-})->name('api.currency');
