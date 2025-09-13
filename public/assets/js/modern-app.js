@@ -1007,6 +1007,8 @@ class ExcellenceAfrikApp {
                 navCollapse.classList.toggle('show');
             });
         }
+        
+        
     }
 
     initSearchToggle() {
