@@ -210,48 +210,32 @@ class DashboardController extends Controller
         $articleData = [
             'title' => $validatedData['title'],
             'slug' => $validatedData['slug'],
-    }
+            'category_id' => $validatedData['category_id'],
+            'excerpt' => $validatedData['excerpt'],
+            'content' => $validatedData['content'],
+            'meta_title' => $validatedData['meta_title'],
+            'meta_description' => $validatedData['meta_description'],
+            'sector' => $validatedData['sector'],
+            'theme' => $validatedData['theme'],
+            'status' => $validatedData['status'],
+            'published_at' => $validatedData['status'] === 'published' ? ($validatedData['published_at'] ?? now()) : null,
+            'is_featured' => $request->boolean('featured'),
+            'is_top_article' => $request->boolean('is_top_article'),
+            'user_id' => $utilisateur->id,
+            'reading_time' => $this->calculateReadingTime($validatedData['content']),
+        ];
 
-    $validatedData = $request->validate([
-        'title' => 'required|string|max:200',
-        'slug' => 'nullable|string|max:255|unique:articles,slug',
-        'category_id' => 'required|integer|exists:categories,id',
-        'excerpt' => 'required|string|max:500',
-        'content' => 'required|string',
-        'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_description' => 'nullable|string|max:500',
-        'sector' => 'nullable|in:agriculture,technologie,industrie,services,energie',
-        'theme' => 'nullable|in:reportages,interviews,documentaires,temoignages',
-        'status' => $statusValidation,
-        'published_at' => 'nullable|date',
-        'featured' => 'boolean',
-        'is_top_article' => 'boolean',
-    ]);
+        if ($request->hasFile('featured_image')) {
+            $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
+        }
 
-    if (empty($validatedData['slug'])) {
-        $slug = Str::slug($validatedData['title']);
-        $originalSlug = $slug;
-        $counter = 1;
-        while (Article::where('slug', $slug)->exists()) {
-
-if ($request->hasFile('featured_image')) {
-    $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
-}
-
-$article = Article::create($articleData);
-
-if ($article->is_featured) {
-    $this->ensureFeaturedUniqueness($article);
-}
-        $articleData['featured_image_path'] = $this->processImage($request->file('featured_image'));
-        $article->update($updateData);
+        $article = Article::create($articleData);
 
         if ($article->is_featured) {
             $this->ensureFeaturedUniqueness($article);
         }
 
-        return redirect()->route('dashboard.articles')->with('success', 'Article mis à jour avec succès !');
+        return redirect()->route('dashboard.articles')->with('success', 'Article créé avec succès !');
     }
 
     public function deleteArticle($id)
