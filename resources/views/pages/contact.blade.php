@@ -10,149 +10,107 @@
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-10">
-            
-            <!-- Contact Hero -->
-            <section class="contact-hero mb-5">
-                <div class="row align-items-center">
-                    <div class="col-lg-6">
-                        <div class="contact-content">
-                            <h1 class="contact-title">Parlons de votre projet</h1>
-                            <p class="contact-description">
-                                Excellence Afrik est toujours à la recherche de nouvelles histoires inspirantes 
-                                d'entrepreneurs africains. Partagez votre expérience ou proposez-nous un sujet.
-                            </p>
-                            <div class="contact-stats">
-                                <div class="stat-item">
-                                    <i class="fas fa-clock text-primary"></i>
-                                    <span>Réponse sous 24h</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-globe-africa text-success"></i>
-                                    <span>Couverture panafricaine</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fas fa-handshake text-warning"></i>
-                                    <span>Partenariats ouverts</span>
+
+
+            <main>
+                <!-- hero-area start -->
+                <div class="page-banner-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-bar text-center pt-60 pb-60" style="background-image: url(assets/img/bg/page-itle.jpg)">
+                                    <h1>NOUS CONTACTER</h1>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="contact-image">
-                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop" 
-                                 alt="Contact Excellence Afrik" class="img-fluid rounded-3">
-                        </div>
-                    </div>
                 </div>
-            </section>
+                <!-- hero-area end -->
 
-            <!-- Contact Form & Info -->
-            <section class="contact-section">
-                <div class="row g-5">
-                    <div class="col-lg-8">
-                        <div class="contact-form-wrapper">
-                            <h2 class="form-title">Envoyez-nous un message</h2>
-                            <form class="contact-form" action="#" method="POST">
-                                @csrf
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="name" class="form-label">Nom complet *</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="email" class="form-label">Email *</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="phone" class="form-label">Téléphone</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="subject" class="form-label">Sujet *</label>
-                                        <select class="form-select" id="subject" name="subject" required>
-                                            <option value="">Choisissez un sujet</option>
-                                            <option value="portrait">Proposer un portrait d'entrepreneur</option>
-                                            <option value="partenariat">Partenariat média</option>
-                                            <option value="publicite">Publicité et sponsoring</option>
-                                            <option value="presse">Demande de presse</option>
-                                            <option value="autre">Autre</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="message" class="form-label">Message *</label>
-                                        <textarea class="form-control" id="message" name="message" rows="6" 
-                                                  placeholder="Décrivez votre projet, votre demande ou votre histoire..." required></textarea>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
-                                            <label class="form-check-label" for="newsletter">
-                                                Je souhaite recevoir la newsletter d'Excellence Afrik
-                                            </label>
+                <!-- blog-area start -->
+                <div class="contact-area pt-110 pb-90">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xl-5 col-lg-6">
+                                <div class="contact-info mb-30">
+                                    <h2>NOUS CONTACTER</h2>
+                                    <div class="row">
+                                        <div class="col-xl-12">
+                                            <div class="contact-meta mb-30">
+                                                <div class="contact-meta-info">
+                                                    <h4>Téléphones</h4>
+                                                    <p>+225 07 10 83 43 45 </p>
+                                                    <p>+225 05 96 79 08 02 </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div class="contact-meta mb-30">
+                                                <div class="contact-meta-info">
+                                                    <h4>E-mail</h4>
+                                                    <p>contact@excellenceafrik.com;</p>
+                                                    <p>info@excellenceafrik.com</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12">
+                                            <div class="contact-meta">
+                                                <div class="contact-meta-info">
+                                                    <h4>Adresse</h4>
+                                                    <p>Abidjan, Côte d'Ivoire</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-paper-plane me-2"></i>Envoyer le message
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4">
-                        <div class="contact-info">
-                            <h3 class="info-title">Informations de contact</h3>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h4>Email</h4>
-                                    <p>contact@excellenceafrik.com</p>
-                                    <p>redaction@excellenceafrik.com</p>
                                 </div>
                             </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h4>Téléphone</h4>
-                                    <p>+33 1 23 45 67 89</p>
-                                    <p>+971 4 123 4567 (UAE)</p>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <div class="info-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="info-content">
-                                    <h4>Bureaux</h4>
-                                    <p>Paris, France</p>
-                                    <p>Dubaï, UAE</p>
-                                    <p>Abidjan, Côte d'Ivoire</p>
-                                </div>
-                            </div>
-                            
-                            <div class="social-links">
-                                <h4>Suivez-nous</h4>
-                                <div class="social-icons">
-                                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <div class="col-xl-7 col-lg-6">
+                                <div class="contact-form mb-30">
+                                    <h3>Avez vous une question ?</h3>
+
+                                    @if(session('success'))
+                                        <div class="alert alert-success">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
+
+                                    @if($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <form id="contact-form" action="{{ route('pages.contact') }}" method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-xl-6">
+                                                <input name="name" type="text" placeholder="Nom">
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <input name="email" type="email" placeholder="Email">
+                                            </div>
+                                            <div class="col-xl-12">
+                                                <input name="subject" type="text" placeholder="Objet">
+                                            </div>
+                                            <div class="col-xl-12">
+                                                <textarea name="message" id="mesage" cols="30" rows="10" placeholder="Message"></textarea>
+                                                <button class="btn brand-btn" type="submit">Envoyer</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <p class="ajax-response"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-            
+
+            </main>
+
         </div>
     </div>
 </div>
@@ -304,11 +262,11 @@
     .contact-title {
         font-size: 2rem;
     }
-    
+
     .contact-stats {
         margin-top: 2rem;
     }
-    
+
     .contact-form-wrapper,
     .contact-info {
         padding: 2rem;

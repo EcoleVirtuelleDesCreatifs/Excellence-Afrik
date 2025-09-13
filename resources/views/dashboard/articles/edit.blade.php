@@ -788,6 +788,24 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="is_top_article" id="is_top_article" value="1" {{ old('is_top_article', $article->is_top_article) ? 'checked' : '' }}>
+                <label class="form-check-label" for="is_top_article">
+                    Afficher en Top 3 de l'actualité du jour
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $article->featured) ? 'checked' : '' }}>
+                <label class="form-check-label" for="featured">
+                    Mettre en avant (featured)
+                </label>
+            </div>
+        </div>
+
         <!-- Actions -->
         <div class="form-actions">
             <div>
