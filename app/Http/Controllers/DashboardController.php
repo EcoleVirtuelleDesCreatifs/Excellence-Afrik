@@ -113,7 +113,9 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
-        return view('dashboard.index', compact('user', 'stats', 'recentArticles', 'topArticles'));
+        $activities = [];
+
+        return view('dashboard.index', compact('user', 'stats', 'recentArticles', 'topArticles', 'activities'));
     }
 
     /**
