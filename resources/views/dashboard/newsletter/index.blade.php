@@ -12,30 +12,18 @@
 @endsection
 
 @section('content')
-<!-- Modern Header Section -->
-<div class="page-header-modern">
-    <div class="header-content">
-        <div class="header-icon">
-            <i class="fas fa-envelope"></i>
-        </div>
-        <div class="header-text">
-            <h1 class="header-title">Gestion Newsletter</h1>
-            <p class="header-subtitle">Gérez vos abonnés newsletter et suivez les statistiques d'engagement</p>
-            <div class="header-breadcrumb">
-                <span class="breadcrumb-item"><i class="fas fa-home"></i> Dashboard</span>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-item active">Newsletter</span>
-            </div>
-        </div>
+<!-- Header Actions -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h4 mb-1">Gestion des abonnés newsletter</h2>
+        <p class="text-muted mb-0">Gérez les abonnés à votre newsletter</p>
     </div>
-    <div class="header-actions">
+    <div class="d-flex gap-2">
         <button class="btn btn-outline-success" onclick="exportSubscribers()">
-            <i class="fas fa-download"></i>
-            <span>Exporter</span>
+            <i class="fas fa-download me-2"></i>Exporter
         </button>
         <button class="btn btn-primary" onclick="showCreateSubscriberModal()">
-            <i class="fas fa-user-plus"></i>
-            <span>Ajouter abonné</span>
+            <i class="fas fa-user-plus me-2"></i>Ajouter abonné
         </button>
     </div>
 </div>
@@ -95,7 +83,7 @@
     </div>
 </div>
 
-<!-- Filters Section -->
+<!-- Filters -->
 <div class="dashboard-card mb-4">
     <div class="card-body">
         <div class="row g-3 align-items-end">
@@ -129,15 +117,12 @@
                 </select>
             </div>
             <div class="col-lg-4">
-                <label class="form-label">&nbsp;</label>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" onclick="resetFilters()">
-                        <i class="fas fa-undo me-1"></i>Reset
-                    </button>
-                    <button class="btn btn-primary" onclick="applyFilters()">
-                        <i class="fas fa-filter me-1"></i>Filtrer
-                    </button>
-                </div>
+                <button class="btn btn-outline-secondary me-2" onclick="resetFilters()">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </button>
+                <button class="btn btn-primary" onclick="applyFilters()">
+                    <i class="fas fa-filter me-1"></i>Filtrer
+                </button>
             </div>
         </div>
     </div>
@@ -385,136 +370,6 @@
 
 @push('styles')
 <style>
-/* Header moderne */
-.page-header-modern {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.header-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.header-text {
-    min-width: 0;
-}
-
-.header-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 0.25rem 0;
-    line-height: 1.2;
-}
-
-.header-subtitle {
-    color: #6b7280;
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-    line-height: 1.4;
-}
-
-.header-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-.breadcrumb-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.breadcrumb-item.active {
-    color: #2563eb;
-    font-weight: 500;
-}
-
-.breadcrumb-separator {
-    color: #d1d5db;
-    font-weight: 300;
-}
-
-.header-actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.header-actions .btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    padding: 0.625rem 1.25rem;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.header-actions .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.header-actions .btn i {
-    font-size: 0.875rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header-modern {
-        padding: 1.5rem;
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .header-title {
-        font-size: 1.5rem;
-    }
-    
-    .header-actions {
-        justify-content: flex-end;
-        margin-top: 1rem;
-    }
-    
-    .header-actions .btn span {
-        display: none;
-    }
-}
-
 .subscriber-avatar {
     width: 40px;
     height: 40px;

@@ -80,6 +80,10 @@ Route::prefix('pages')->name('pages.')->group(function () {
     Route::get('/contact', function () { return view('pages.contact'); })->name('contact');
     Route::get('/advertise', function () { return view('pages.advertise'); })->name('advertise');
     Route::get('/sponsor', function () { return view('pages.sponsor'); })->name('sponsor');
+    Route::get('/awards', function () { return view('pages.awards'); })->name('awards');
+    Route::get('/legal', function () { return view('pages.legal'); })->name('legal');
+    Route::get('/privacy', function () { return view('pages.privacy'); })->name('privacy');
+    Route::get('/terms', function () { return view('pages.terms'); })->name('terms');
 });
 
 // Articles routes

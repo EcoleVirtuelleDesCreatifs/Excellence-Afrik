@@ -4,207 +4,6 @@
 <link rel="stylesheet" href="{{ asset('assets/css/dashboard-ultra.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/dashboard-pages.css') }}">
 <style>
-/* Variables CSS pour la cohérence */
-:root {
-    --ea-gold: #F2CB05;
-    --ea-blue: #2563eb;
-    --ea-green: #10b981;
-    --ea-danger: #dc3545;
-    --card-bg: #ffffff;
-    --card-border: #e9ecef;
-    --text-primary: #2c3e50;
-    --text-secondary: #6c757d;
-    --shadow-light: 0 2px 10px rgba(0,0,0,0.08);
-    --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
-}
-
-/* Layout principal */
-.articles-management-section {
-    background: #f8f9fa;
-    min-height: 100vh;
-}
-
-/* Header moderne */
-.page-header-modern {
-    background: white;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.header-main {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.header-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--ea-gold), var(--ea-blue));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.page-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.page-subtitle {
-    color: var(--text-secondary);
-    margin: 0.25rem 0 0 0;
-}
-
-.breadcrumb-modern {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-}
-
-.breadcrumb-item {
-    color: var(--text-secondary);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.breadcrumb-item:hover {
-    color: var(--ea-gold);
-    text-decoration: none;
-}
-
-.breadcrumb-item.active {
-    color: var(--ea-gold);
-    font-weight: 600;
-}
-
-.breadcrumb-separator {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-}
-
-/* Boutons d'actions du header */
-.header-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.btn-primary-modern {
-    background: linear-gradient(135deg, var(--ea-gold), #e6b800);
-    color: #000;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.btn-primary-modern:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-    color: #000;
-    text-decoration: none;
-}
-
-/* Barre de recherche et filtres */
-.search-filters-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.form-label {
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.form-control, .form-select {
-    border: 2px solid var(--card-border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    outline: none;
-    border-color: var(--ea-gold);
-    box-shadow: 0 0 0 0.2rem rgba(242, 203, 5, 0.25);
-}
-
-.input-group-text {
-    background: #f8f9fa;
-    border: 2px solid var(--card-border);
-    border-right: none;
-    color: var(--text-secondary);
-}
-
-.input-group .form-control {
-    border-left: none;
-}
-
-.btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-secondary {
-    border: 2px solid var(--card-border);
-    color: var(--text-secondary);
-}
-
-.btn-outline-secondary:hover {
-    background: var(--text-secondary);
-    border-color: var(--text-secondary);
-    color: white;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--ea-gold), #e6b800);
-    border: 2px solid transparent;
-    color: #000;
-}
-
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-hover);
-    color: #000;
-}
-
-/* Status dots */
 .status-dot {
     width: 8px;
     height: 8px;
@@ -235,82 +34,38 @@
         transform: scale(1);
     }
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header-modern {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .header-actions {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .header-main {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .search-filters-card .row > div {
-        margin-bottom: 1rem;
-    }
-    
-    .d-flex.gap-2 {
-        justify-content: center;
-    }
-}
 </style>
 @endpush
 
 @section('title', 'Gestion des Articles')
 
 @section('content')
-<div class="articles-management-section">
-    <!-- Header moderne -->
-    <div class="page-header-modern">
-        <div class="header-content">
-            <div class="header-main">
-                <div class="header-icon">
-                    <i class="fas fa-newspaper"></i>
-                </div>
-                <div class="header-info">
-                    <h1 class="page-title">
-                        @if(auth()->check() && auth()->user()->estJournaliste())
-                            Mes Articles
-                        @else
-                            Gestion des Articles
-                        @endif
-                    </h1>
-                    <p class="page-subtitle">
-                        @if(auth()->check() && auth()->user()->estJournaliste())
-                            Créez et gérez vos articles personnels
-                        @else
-                            Créez, modifiez et gérez tous les articles
-                        @endif
-                    </p>
-                    <div class="breadcrumb-modern">
-                        <a href="{{ url('/dashboard') }}" class="breadcrumb-item">
-                            <i class="fas fa-home"></i>
-                            Dashboard
-                        </a>
-                        <i class="fas fa-chevron-right breadcrumb-separator"></i>
-                        <span class="breadcrumb-item active">Articles</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-actions">
-            <a href="{{ route('dashboard.articles.create') }}" class="btn-primary-modern">
-                <i class="fas fa-plus"></i>
-                <span>Nouvel article</span>
-            </a>
-        </div>
+<!-- Header Actions -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="h4 mb-1">
+            @if(auth()->check() && auth()->user()->estJournaliste())
+                Mes Articles
+            @else
+                Gestion des Articles
+            @endif
+        </h2>
+        <p class="text-muted mb-0">
+            @if(auth()->check() && auth()->user()->estJournaliste())
+                Créez et gérez vos articles personnels
+            @else
+                Créez, modifiez et gérez tous les articles
+            @endif
+        </p>
     </div>
+    <a href="{{ route('dashboard.articles.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nouvel article
+    </a>
+</div>
 
-    <!-- Barre de recherche et filtres -->
-    <div class="search-filters-card">
+<!-- Filters -->
+<div class="dashboard-card mb-4">
+    <div class="card-body">
         <div class="row g-3 align-items-end">
             <div class="col-lg-3">
                 <label class="form-label">Rechercher</label>
@@ -352,18 +107,16 @@
                 </select>
             </div>
             <div class="col-lg-3">
-                <label class="form-label">&nbsp;</label> <!-- Espace pour alignement -->
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" onclick="resetFilters()">
-                        <i class="fas fa-undo me-1"></i>Reset
-                    </button>
-                    <button class="btn btn-primary" onclick="applyFilters()">
-                        <i class="fas fa-filter me-1"></i>Filtrer
-                    </button>
-                </div>
+                <button class="btn btn-outline-secondary me-2" onclick="resetFilters()">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </button>
+                <button class="btn btn-primary" onclick="applyFilters()">
+                    <i class="fas fa-filter me-1"></i>Filtrer
+                </button>
             </div>
         </div>
     </div>
+</div>
 
 <!-- Articles Table -->
 <div class="dashboard-card">
@@ -480,15 +233,6 @@
                                             <i class="fas fa-check"></i>
                                         </button>
                                     </form>
-                                    
-                                    <!-- Bouton refuser -->
-                                    <form method="POST" action="{{ route('dashboard.articles.reject', $article->id) }}" style="display: inline;" onsubmit="return confirm('Refuser cet article et le renvoyer en brouillon ?')">
-                                        @csrf
-                                        <input type="hidden" name="reason" value="">
-                                        <button type="submit" class="btn btn-outline-danger" title="Refuser l'article">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </form>
                                 @endif
                                 
                                 <!-- Bouton supprimer - Admin/Directeur (tous) ou Journaliste (ses articles non-publiés) -->
@@ -586,7 +330,6 @@
         </div>
     </div>
 </div>
-</div> <!-- Fermeture de articles-management-section -->
 @endsection
 
 @push('styles')

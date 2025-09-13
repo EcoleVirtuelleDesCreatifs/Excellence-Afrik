@@ -8,6 +8,9 @@
     .page-banner-area {
         background-color: #f8f9fa;
     }
+    .page-title-bar {
+        background: linear-gradient(to right, #996633, #f7c807);
+    }
     .page-title-bar h1 {
         color: #fff;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
@@ -26,13 +29,28 @@
         font-size: 1.25rem;
         color: #555;
     }
+    .post-cat {
+        background-color: #D4AF37;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+        letter-spacing: 0.5px;
+    }
     .about-image {
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     .mission-vision-section {
         padding: 80px 0;
-        background-color: #f8f9fa;
+        background: linear-gradient(to right, #996633, #f7c807);
+    }
+    .mission-vision-section .section-title-center h2,
+    .mission-vision-section .section-title-center p {
+        color: #fff;
     }
     .section-title-center {
         text-align: center;
@@ -76,12 +94,14 @@
         background-color: #fff;
     }
     .founder-image {
-        width: 100%;
-        max-width: 300px;
-        border-radius: 50%;
+        width: 300px;
+
+        object-fit: cover; /* Assure que l'image remplit le carré sans être déformée */
+        border-radius: 15px; /* Applique les coins arrondis */
         margin: 0 auto;
         display: block;
         border: 5px solid #D4AF37;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     .founder-content h2 {
         font-size: 2.2rem;
@@ -103,7 +123,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-bar text-center pt-60 pb-60" style="background-image: url({{ asset('styles/img/bg/page-itle.jpg') }})">
+                    <div class="page-title-bar text-center pt-60 pb-60">
                         <h1>QUI SOMMES-NOUS ?</h1>
                     </div>
                 </div>
@@ -118,7 +138,11 @@
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <div class="about-content">
                         <span class="post-cat mb-10">Un média pionnier</span>
-                        <h2>Premier magazine panafricain dédié aux bâtisseurs de l'économie réelle.</h2>
+                        <h2>
+                            <span style="display: block;">PREMIER MAGAZINE PANAFRICAIN</span>
+                            <span style="display: block;">DÉDIÉ AUX BÂTISSEURS</span>
+                            <span style="display: block;">DE L'ÉCONOMIE RÉELLE.</span>
+                        </h2>
                         <p class="lead">
                             Fondé en 2021, Excellence AFRIK est le premier média panafricain entièrement consacré aux entreprises non cotées : TPE, PME, et startups qui forment le cœur de l'économie africaine.
                         </p>

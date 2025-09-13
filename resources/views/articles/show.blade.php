@@ -4,196 +4,172 @@
 @section('meta_description', $article->seo_description ?: $article->excerpt)
 
 @section('content')
-<div class="container-fluid px-0">
-    <!-- Article Header -->
-    <section class="article-header bg-dark text-white py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <!-- Breadcrumb -->
-                    <nav aria-label="breadcrumb" class="mb-4">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-warning">Accueil</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('articles.index') }}" class="text-warning">Articles</a></li>
-                            @if($article->category)
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('articles.category', $article->category->slug) }}" class="text-warning">
-                                        {{ $article->category->name }}
-                                    </a>
-                                </li>
-                            @endif
-                            <li class="breadcrumb-item active text-light" aria-current="page">{{ Str::limit($article->title, 50) }}</li>
-                        </ol>
-                    </nav>
-
-                    <!-- Article Meta -->
-                    <div class="article-meta mb-4">
+<main class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Colonne principale de l'article -->
+            <div class="col-lg-8">
+                <article>
+                    <!-- En-tête de l'article -->
+                    <header class="mb-4">
+                        <h1 class="fw-bolder mb-1">{{ $article->title }}</h1>
+                        <div class="text-muted fst-italic mb-2">Posté le {{ $article->created_at->format('d F Y') }} par {{ $article->user->name ?? 'Admin' }}</div>
                         @if($article->category)
-                            <span class="badge bg-warning text-dark me-3">{{ $article->category->name }}</span>
+                            <a class="badge bg-secondary text-decoration-none link-light" href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a>
                         @endif
+                    </header>
 
+                    <!-- Image à la une -->
+                    <figure class="mb-4">
+                        @if($article->featured_image_path)
+                            <img class="img-fluid rounded" src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}" />
+                        @endif
+                    </figure>
 
-                        <span class="text-muted-white">
-                            <i class="fas fa-calendar text-muted-white"></i> {{ $article->created_at->format('d M Y') }}
-                        </span>
+                    <!-- Contenu de l'article -->
+                    <section class="mb-5 article-content">
+                        {!! $article->content !!}
+                    </section>
+                </article>
+
+                <!-- Section de partage social -->
+                <div class="text-center my-5">
+                    <h4 class="mb-3">Partager cet article</h4>
+                    <div class="social-share">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="btn btn-primary btn-lg mx-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->title) }}" target="_blank" class="btn btn-info btn-lg mx-2 text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(request()->url()) }}" target="_blank" class="btn btn-secondary btn-lg mx-2"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://wa.me/?text={{ urlencode($article->title . ' ' . request()->url()) }}" target="_blank" class="btn btn-success btn-lg mx-2"><i class="fab fa-whatsapp"></i></a>
                     </div>
-
-                    <!-- Article Title -->
-                    <h1 class="display-4 fw-bold text-warning mb-3">{{ $article->title }}</h1>
-
-                    @if($article->subtitle)
-                        <p class="lead text-light mb-4">{{ $article->subtitle }}</p>
-                    @endif
-
-
                 </div>
+
             </div>
-        </div>
-    </section>
 
-
-
-
-    <!-- Main Content -->
-<main class="container">
-    <div class="row justify-content-center">
-        <div class="col-10">
-
-            <!-- Positioning Section -->
-            <section class="positioning-section fade-in">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="positioning-content">
-
-
-                                <p class="section-description">
-                                    {!! $article->content !!}
-                                </p>
-
-                            </div>
+            <!-- Barre latérale -->
+            <div class="col-lg-4">
+                <!-- Widget de recherche -->
+                <div class="card mb-4">
+                    <div class="card-header">Recherche</div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input class="form-control" type="text" placeholder="Entrez un terme..." aria-label="Entrez un terme..." aria-describedby="button-search" />
+                            <button class="btn btn-primary" id="button-search" type="button">Go!</button>
                         </div>
-
-                        <div class="col-lg-6">
-                            <div class="positioning-visual">
-                                <!-- Featured Image -->
-                                @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-
-
-                                    <div class="featured-image">
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}"
-                                             class="img-fluid rounded"
-                                             alt="{{ $article->featured_image_alt ?: $article->title }}"
-                                             style="width: 100%; height: auto;">
-                                    </div>
-                                @elseif($article->featured_image_url)
-                                    <div class="featured-image">
-                                        <img src="{{ $article->featured_image_url }}"
-                                             class="img-fluid rounded"
-                                             alt="{{ $article->featured_image_alt ?: $article->title }}"
-                                             style="width: 100%; height: auto;">
-                                    </div>
-                                @endif
-
-                            </div>
-                        </div>
-
-
                     </div>
                 </div>
-            </section>
 
+                <!-- Widget d'articles similaires -->
+                @if($relatedArticles->count() > 0)
+                <div class="card mb-4">
+                    <div class="card-header">À lire aussi</div>
+                    <div class="card-body">
+                        @foreach($relatedArticles as $related)
+                            <div class="d-flex mb-3 sidebar-article-card">
+                                <div class="flex-shrink-0">
+                                    <a href="{{ route('articles.show', $related->slug) }}">
+                                        <img src="{{ $related->featured_image_path ? asset('storage/' . $related->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $related->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                    </a>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="mb-1" style="font-size: 1rem;"><a href="{{ route('articles.show', $related->slug) }}" class="text-dark text-decoration-none">{{ $related->title }}</a></h5>
+                                    <div class="text-muted" style="font-size: 0.8rem;">{{ $related->created_at->format('d M Y') }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+            </div>
         </div>
     </div>
 </main>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@push('styles')
 <style>
-.article-header {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-}
+    /* Style général de la page */
+    body {
+        background-color: #f8f9fa;
+    }
 
-.breadcrumb-item + .breadcrumb-item::before {
-    color: #ffc107;
-}
+    /* Contenu de l'article */
+    .article-content {
+        font-family: 'Georgia', serif;
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #333;
+    }
+    .article-content p {
+        margin-bottom: 1.75rem;
+    }
+    .article-content h2, .article-content h3, .article-content h4 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: #222;
+    }
+    .article-content a {
+        color: #c1933e;
+        text-decoration: none;
+        border-bottom: 1px dotted #c1933e;
+        transition: all 0.3s ease;
+    }
+    .article-content a:hover {
+        color: #fff;
+        background-color: #c1933e;
+        border-bottom-color: #c1933e;
+    }
+    .article-content blockquote {
+        border-left: 3px solid #c1933e;
+        padding-left: 1.5rem;
+        margin: 2rem 0;
+        font-style: italic;
+        color: #666;
+        background-color: #fdfdfd;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 
-.article-body {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #333;
-}
+    /* Barre latérale */
+    .card {
+        border: none;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+    }
+    .card-header {
+        background-color: #1a1a1a;
+        color: #fff;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        border-bottom: 2px solid #c1933e;
+    }
+    .sidebar-article-card:hover h5 a {
+        color: #c1933e;
+    }
 
-.article-body h2,
-.article-body h3,
-.article-body h4 {
-    color: #D4AF37;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
+    /* Boutons de partage */
+    .social-share .btn {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    .social-share .btn:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
 
-.article-body p {
-    margin-bottom: 1.5rem;
-}
-
-.article-body blockquote {
-    border-left: 4px solid #D4AF37;
-    padding-left: 1.5rem;
-    margin: 2rem 0;
-    font-style: italic;
-    color: #666;
-}
-
-.article-body img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    margin: 1.5rem 0;
-}
-
-.related-article-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.related-article-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-}
-
-.social-share .btn {
-    transition: all 0.3s ease;
-}
-
-.social-share .btn:hover {
-    transform: translateY(-2px);
-}
+    /* Titre de l'article */
+    article header .fw-bolder {
+        color: #c1933e;
+    }
 </style>
+@endpush
 @endsection
 
 @push('head')
