@@ -24,8 +24,6 @@ class Article extends Model
         'featured_image_url',
         'featured_image_alt',
         'featured_image_path',
-        'seo_title',
-        'seo_description',
         'seo_keywords',
         'status',
         'published_at',

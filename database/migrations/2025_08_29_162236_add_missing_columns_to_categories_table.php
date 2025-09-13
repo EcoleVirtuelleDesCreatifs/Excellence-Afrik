@@ -31,25 +31,28 @@ return new class extends Migration
             if (!Schema::hasColumn('categories', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->after('status');
             }
+            if (!Schema::hasColumn('categories', 'is_active')) {
+                $table->boolean('is_active')->default(true)->after('status');
+            }
         });
         
         // Ajouter les contraintes de clés étrangères après avoir ajouté les colonnes
-        Schema::table('categories', function (Blueprint $table) {
-            if (Schema::hasColumn('categories', 'parent_id') && Schema::hasColumn('categories', 'user_id')) {
-                // Vérifier si les contraintes n'existent pas déjà
-                try {
-                    $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
-                } catch (\Exception $e) {
-                    // La contrainte existe déjà
-                }
-                
-                try {
-                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                } catch (\Exception $e) {
-                    // La contrainte existe déjà
-                }
-            }
-        });
+        // Schema::table('categories', function (Blueprint $table) {
+        //     if (Schema::hasColumn('categories', 'parent_id') && Schema::hasColumn('categories', 'user_id')) {
+        //         // Vérifier si les contraintes n'existent pas déjà
+        //         try {
+        //             $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
+        //         } catch (\Exception $e) {
+        //             // La contrainte existe déjà
+        //         }
+        //         
+        //         try {
+        //             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        //         } catch (\Exception $e) {
+        //             // La contrainte existe déjà
+        //         }
+        //     }
+        // });
     }
 
     /**
@@ -63,7 +66,7 @@ return new class extends Migration
             $table->dropForeign(['user_id']);
             
             // Supprimer les colonnes ajoutées
-            $table->dropColumn(['slug', 'description', 'parent_id', 'sort_order', 'status', 'user_id']);
+            $table->dropColumn(['slug', 'description', 'parent_id', 'sort_order', 'status', 'is_active', 'user_id']);
         });
     }
 };

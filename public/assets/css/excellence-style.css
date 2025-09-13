@@ -1,3 +1,148 @@
+/* New Modern Footer Styles */
+.site-footer {
+    background-color: #1a1a1a;
+    color: #ccc;
+    font-family: var(--font-primary);
+}
+
+.footer-main {
+    padding: 80px 0;
+}
+
+.footer-brand-col .footer-logo {
+    max-width: 260px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.footer-tagline {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #ccc;
+    font-size: 1.2rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.footer-nav-area {
+    padding-left: 40px;
+}
+
+.footer-nav-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white-pure);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.footer-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-nav-list a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-nav-list a:hover {
+    color: var(--primary);
+}
+
+.footer-newsletter {
+    padding: 60px 0;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    margin-top: 60px;
+}
+
+.footer-newsletter p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.newsletter-form input {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: 1px solid #444;
+    background-color: #222;
+    color: var(--white-pure);
+    border-radius: 50px;
+    font-size: 1rem;
+}
+
+.newsletter-form button {
+    padding: 12px 30px;
+    background-color: var(--primary);
+    color: var(--black-deep);
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer-bottom {
+    padding: 30px 0;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .footer-brand-col, .footer-nav-area {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .footer-social {
+        justify-content: center;
+    }
+    .footer-nav-area {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-bottom .container {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
 /* Excellence Afrik - Clean Minimalist Design with African Palette */
 
 :root {
@@ -37,7 +182,7 @@
 
     /* Typography */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-heading: 'Inter', Georgia, serif;
+    --font-heading: 'Poppins', Georgia, serif;
 
     /* Spacing for Clean Design */
     --spacing-xs: 0.5rem;
@@ -55,7 +200,7 @@
     --gradient-primary: linear-gradient(135deg, #FF6A5A 0%, #ff8a7a 100%);
     --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-display: 'Playfair Display', Georgia, serif;
+    --font-display: 'Poppins', Georgia, serif;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --border-radius: 12px;
     --border-radius-lg: 16px;
@@ -1364,7 +1509,7 @@ h1, h2, h3, h4, h5, h6 {
 .main-content {
     min-height: calc(100vh - 200px);
     margin-bottom: 0;
-    padding-bottom: 4rem;
+    padding-bottom: 0;
 }
 
 /* Footer */
@@ -2373,7 +2518,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #0D0D0D;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .hero-main-excerpt {
@@ -2485,7 +2630,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #0D0D0D;
     line-height: 1.3;
     margin-bottom: 1rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .hero-card-excerpt {
@@ -2807,7 +2952,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #0D0D0D;
     line-height: 1.3;
     margin-bottom: 1.5rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .edito-excerpt {
@@ -2935,7 +3080,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #0D0D0D;
     line-height: 1.4;
     margin-bottom: 1rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .edito-card-excerpt {
@@ -3438,7 +3583,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .daily-main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-weight: 600;
     font-size: 1.8rem;
     color: #0D0D0D;
@@ -3533,7 +3678,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .daily-side-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-weight: 600;
     font-size: 1.1rem;
     color: #0D0D0D;
@@ -3621,7 +3766,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .daily-grid-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-weight: 600;
     font-size: 1.2rem;
     color: #0D0D0D;
@@ -4020,6 +4165,8 @@ h1, h2, h3, h4, h5, h6 {
 .logo-brand-container {
     display: flex;
     align-items: center;
+    position: relative;
+    right:69px;
     gap: 15px;
 
 }
@@ -4027,8 +4174,6 @@ h1, h2, h3, h4, h5, h6 {
 .logo-brand-image {
     height: 250px;
     width: auto;
-    position: relative;
-    right: 90px;
     transition: all 0.3s ease;
 }
 
@@ -4042,7 +4187,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .logo-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-weight: 700;
     font-size: 1.8rem;
     color: #0D0D0D;
@@ -5142,7 +5287,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .featured-video-title {
-    font-family: var(--font-heading) !important;
+    font-family: var(--font-heading);
     font-weight: 600;
     font-size: 2rem;
     color: var(--black-deep);
@@ -9387,6 +9532,8 @@ h1, h2, h3, h4, h5, h6 {
     .logo-brand-container {
         flex-direction: column;
         text-align: center;
+        position: relative;
+        left: 5px;
         gap: 8px;
     }
 
@@ -9761,109 +9908,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
 }
 
-/* Responsive Design */
-@media (max-width: 992px) {
-    .nav-main {
-        gap: 0;
-    }
-
-    .nav-link-modern {
-        padding: 15px 16px;
-        font-size: 0.8rem;
-    }
-
-    .nav-submenu {
-        min-width: 220px;
-    }
-
-    .nav-search-btn {
-        padding: 8px 15px;
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 991px) {
-    .nav-mobile-toggle {
-        display: flex !important;
-    }
-
-    .navbar-collapse {
-        display: none !important;
-    }
-
-    .navbar-collapse.show {
-        display: flex !important;
-    }
-
-    .nav-layout {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .nav-main {
-        flex-direction: column;
-        width: 100%;
-        gap: 0;
-    }
-
-    .nav-item {
-        width: 100%;
-    }
-
-    .nav-link-modern {
-        justify-content: space-between;
-        padding: 15px 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .nav-submenu {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        border: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.2);
-        display: none;
-    }
-
-    .nav-dropdown:hover .nav-submenu {
-        display: block;
-    }
-
-    .nav-submenu-item {
-        color: #ffffff;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-left: 40px;
-    }
-
-    .nav-submenu-item:hover {
-        background: rgba(242, 203, 5, 0.2);
-        color: #F2CB05;
-        transform: none;
-    }
-
-    .nav-special {
-        margin-left: 0;
-        padding: 10px 20px;
-    }
-
-    .nav-link-webtv {
-        justify-content: center;
-        margin: 10px 0;
-    }
-
-    .nav-search {
-        padding: 15px 20px;
-        justify-content: center;
-    }
-
-    .nav-search-btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
 @media (max-width: 576px) {
     .nav-link-modern {
         padding: 12px 15px;
@@ -10093,7 +10137,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     line-height: 1.3;
 }
 
@@ -10206,7 +10250,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .startup-location {
@@ -10242,7 +10286,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.2rem;
     font-weight: 700;
     color: #D4AF37;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
 }
 
 .metric-label {
@@ -10297,7 +10341,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .entrepreneurs-background {
-
+    background: #000000;
     position: relative;
 }
 
@@ -10881,7 +10925,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .diaspora-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 3.5rem;
     font-weight: 700;
     color: #FFFFFF;
@@ -11536,7 +11580,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .analyse-experts-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 3.5rem;
     font-weight: 700;
     color: #FFFFFF;
@@ -11672,7 +11716,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .featured-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: #FFFFFF;
@@ -13197,7 +13241,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ===== WEB TV ULTRA MODERN SECTION ===== */
 .webtv-ultra-section {
     padding: var(--spacing-xxl) 0;
-    background: #cc9933;
+    background: linear-gradient(135deg, #F2C926, #9E6B32);
     position: relative;
     overflow: hidden;
 }
@@ -13256,7 +13300,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .webtv-hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: clamp(3rem, 8vw, 5rem);
     font-weight: 700;
     margin-bottom: var(--spacing-md);
@@ -13276,14 +13320,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title-accent-webtv {
-    background: #FFF;
+    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .title-separator-webtv {
-    color: #F5ECDB;
+    color: #FFF;
     font-size: 0.6em;
     animation: rotate-separator 3s ease-in-out infinite;
 }
@@ -13315,7 +13359,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .subtitle-separator-webtv {
-    color: #FFF;
+    color: var(--tertiary-gold);
     font-weight: 300;
 }
 
@@ -13451,7 +13495,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .featured-video-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--deep-black);
@@ -13550,7 +13594,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .grid-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--deep-black);
@@ -13721,7 +13765,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Newsletter CTA */
 .webtv-newsletter-cta {
-    background: #fff;
+    background: linear-gradient(135deg,
+        rgba(242, 203, 5, 0.1) 0%,
+        rgba(242, 185, 12, 0.05) 50%,
+        rgba(217, 153, 35, 0.1) 100%);
     border-radius: 20px;
     padding: var(--spacing-xl);
     border: 2px solid rgba(242, 203, 5, 0.2);
@@ -13974,7 +14021,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: clamp(3rem, 8vw, 5rem);
     font-weight: 700;
     line-height: 1.1;
@@ -14043,7 +14090,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--deep-black);
@@ -14270,7 +14317,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .values-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--deep-black);
@@ -14323,7 +14370,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .cta-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', serif;
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: var(--spacing-md);
@@ -15683,6 +15730,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ===== END MAGAZINES ULTRA SECTION ===== */
+
+/* ========================================
+   RESPONSIVE NAVIGATION - MOBILE MENU
+======================================== */
+
+
 
 /* ===== Global Frontend Image Normalization (500x500, no black bands) ===== */
 /* Scope ONLY to public frontend article/media components to avoid logos/admin */

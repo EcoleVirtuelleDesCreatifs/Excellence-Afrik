@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Cviebrock\EloquentSluggable\Sluggable;
+use Cocur\Slugify\Slugify;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, Sluggable;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +22,7 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'parent_id',
         'user_id',
         'sort_order',
         'status',
@@ -34,6 +37,31 @@ class Category extends Model
     protected $casts = [
         'sort_order' => 'integer',
     ];
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
+
+    /**
+     * @param Slugify $engine
+     * @param $attribute
+     * @return Slugify
+     */
+    public function customizeSlugEngine(Slugify $engine, $attribute): Slugify
+    {
+        $engine->addRule("'", '-');
+        return $engine;
+    }
 
     /**
      * Get the parent category.

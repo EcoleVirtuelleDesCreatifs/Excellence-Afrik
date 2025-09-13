@@ -95,13 +95,14 @@
                         <i class="fas fa-newspaper"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">127</div>
+                        <div class="stat-number">{{ number_format($stats['articles_total'] ?? 0) }}</div>
                         <div class="stat-label">Articles Publiés</div>
-                        <div class="stat-period">Ce mois</div>
+                        <div class="stat-value">{{ number_format($stats['articles_total'] ?? 0) }}</div>
+                        <div class="stat-label">Total Articles</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
-                        <span>+18.2%</span>
+                        <span>{{ number_format($stats['articles_published'] ?? 0) }} publiés</span>
                     </div>
                     <div class="stat-sparkline">
                         <div class="sparkline-bar" style="height: 40%"></div>
@@ -121,13 +122,13 @@
                         <i class="fas fa-eye"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">2.8M</div>
+                        <div class="stat-number">{{ number_format($stats['views_total'] ?? 0) }}</div>
                         <div class="stat-label">Vues Totales</div>
                         <div class="stat-period">Ce mois</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
-                        <span>+24.7%</span>
+                        <span>{{ number_format($stats['views_published'] ?? 0) }} vues</span>
                     </div>
                     <div class="stat-sparkline">
                         <div class="sparkline-bar" style="height: 60%"></div>
@@ -147,13 +148,13 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">189K</div>
+                        <div class="stat-number">{{ number_format($stats['visitors_total'] ?? 0) }}</div>
                         <div class="stat-label">Visiteurs Uniques</div>
                         <div class="stat-period">Ce mois</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
-                        <span>+15.3%</span>
+                        <span>{{ number_format($stats['visitors_published'] ?? 0) }} visiteurs</span>
                     </div>
                     <div class="stat-sparkline">
                         <div class="sparkline-bar" style="height: 50%"></div>
@@ -173,13 +174,13 @@
                         <i class="fas fa-envelope-open"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">47.2K</div>
+                        <div class="stat-number">{{ number_format($stats['newsletter_total'] ?? 0) }}</div>
                         <div class="stat-label">Abonnés Newsletter</div>
                         <div class="stat-period">Total</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
-                        <span>+9.8%</span>
+                        <span>{{ number_format($stats['newsletter_published'] ?? 0) }} abonnés</span>
                     </div>
                     <div class="stat-sparkline">
                         <div class="sparkline-bar" style="height: 70%"></div>
@@ -199,13 +200,13 @@
                         <i class="fas fa-user-plus"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">12.4K</div>
+                        <div class="stat-number">{{ number_format($stats['users_total'] ?? 0) }}</div>
                         <div class="stat-label">Utilisateurs Inscrits</div>
                         <div class="stat-period">Total</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
-                        <span>+12.1%</span>
+                        <span>{{ number_format($stats['users_published'] ?? 0) }} utilisateurs</span>
                     </div>
                     <div class="stat-sparkline">
                         <div class="sparkline-bar" style="height: 55%"></div>
@@ -253,141 +254,39 @@
                         </div>
                         <div class="card-content">
                             <div class="publications-list">
-                                <div class="publication-item">
-                                    <div class="publication-thumbnail">
-                                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
-                                        <div class="publication-type">Article</div>
-                                    </div>
-                                    <div class="publication-info">
-                                        <h4 class="publication-title">Innovation Fintech en Afrique de l'Ouest</h4>
-                                        <div class="publication-meta">
-                                            <span class="author">
-                                                <i class="fas fa-user"></i>
-                                                Deza Auguste César
-                                            </span>
-                                            <span class="date">
-                                                <i class="fas fa-calendar"></i>
-                                                Il y a 2h
-                                            </span>
+                                @forelse($recentArticles as $article)
+                                    <div class="publication-item">
+                                        <div class="publication-thumbnail">
+                                            <img src="{{ $article->image_url ?? 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces' }}" alt="Article thumbnail">
+                                            <div class="publication-type">{{ $article->category->name ?? 'N/A' }}</div>
                                         </div>
-                                        <div class="publication-stats">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                1.2K vues
-                                            </span>
-                                            <span class="comments">
-                                                <i class="fas fa-comment"></i>
-                                                24 commentaires
-                                            </span>
+                                        <div class="publication-info">
+                                            <h4 class="publication-title">{{ Str::limit($article->title, 40) }}</h4>
+                                            <div class="publication-meta">
+                                                <span class="author">
+                                                    <i class="fas fa-user"></i>
+                                                    {{ $article->user->name ?? 'N/A' }}
+                                                </span>
+                                                <span class="date">
+                                                    <i class="fas fa-calendar"></i>
+                                                    {{ $article->created_at->diffForHumans() }}
+                                                </span>
+                                            </div>
+                                            <div class="publication-stats">
+                                                <span class="views">
+                                                    <i class="fas fa-eye"></i>
+                                                    {{ number_format($article->view_count) }} vues
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="publication-status published">
-                                        <i class="fas fa-check-circle"></i>
-                                        Publié
-                                    </div>
-                                </div>
-
-                                <div class="publication-item">
-                                    <div class="publication-thumbnail">
-                                        <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
-                                        <div class="publication-type">Analyse</div>
-                                    </div>
-                                    <div class="publication-info">
-                                        <h4 class="publication-title">Économie Numérique : Défis et Opportunités</h4>
-                                        <div class="publication-meta">
-                                            <span class="author">
-                                                <i class="fas fa-user"></i>
-                                                Marie Kouassi
-                                            </span>
-                                            <span class="date">
-                                                <i class="fas fa-calendar"></i>
-                                                Il y a 5h
-                                            </span>
-                                        </div>
-                                        <div class="publication-stats">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                890 vues
-                                            </span>
-                                            <span class="comments">
-                                                <i class="fas fa-comment"></i>
-                                                18 commentaires
-                                            </span>
+                                        <div class="publication-status {{ $article->status }}">
+                                            <i class="fas fa-check-circle"></i>
+                                            {{ ucfirst($article->status) }}
                                         </div>
                                     </div>
-                                    <div class="publication-status draft">
-                                        <i class="fas fa-edit"></i>
-                                        Brouillon
-                                    </div>
-                                </div>
-
-                                <div class="publication-item">
-                                    <div class="publication-thumbnail">
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
-                                        <div class="publication-type">Interview</div>
-                                    </div>
-                                    <div class="publication-info">
-                                        <h4 class="publication-title">Startups Diasporiques : Retour aux Sources</h4>
-                                        <div class="publication-meta">
-                                            <span class="author">
-                                                <i class="fas fa-user"></i>
-                                                Kofi Asante
-                                            </span>
-                                            <span class="date">
-                                                <i class="fas fa-calendar"></i>
-                                                Il y a 1j
-                                            </span>
-                                        </div>
-                                        <div class="publication-stats">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                2.1K vues
-                                            </span>
-                                            <span class="comments">
-                                                <i class="fas fa-comment"></i>
-                                                31 commentaires
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="publication-status review">
-                                        <i class="fas fa-clock"></i>
-                                        En révision
-                                    </div>
-                                </div>
-
-                                <div class="publication-item">
-                                    <div class="publication-thumbnail">
-                                        <img src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=80&amp;h=60&amp;fit=crop&amp;crop=faces" alt="Article thumbnail">
-                                        <div class="publication-type">Podcast</div>
-                                    </div>
-                                    <div class="publication-info">
-                                        <h4 class="publication-title">Leadership Féminin en Entreprise</h4>
-                                        <div class="publication-meta">
-                                            <span class="author">
-                                                <i class="fas fa-user"></i>
-                                                Fatou Diallo
-                                            </span>
-                                            <span class="date">
-                                                <i class="fas fa-calendar"></i>
-                                                Il y a 2j
-                                            </span>
-                                        </div>
-                                        <div class="publication-stats">
-                                            <span class="views">
-                                                <i class="fas fa-headphones"></i>
-                                                1.8K écoutes
-                                            </span>
-                                            <span class="comments">
-                                                <i class="fas fa-comment"></i>
-                                                42 commentaires
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="publication-status published">
-                                        <i class="fas fa-check-circle"></i>
-                                        Publié
-                                    </div>
-                                </div>
+                                @empty
+                                    <p>Aucune publication récente.</p>
+                                @endforelse
                             </div>
                             <div class="card-footer">
                                 <button class="btn-view-all">
@@ -409,144 +308,28 @@
                         </div>
                         <div class="card-content">
                             <div class="top-articles-list">
-                                <div class="top-article-item rank-1">
-                                    <div class="article-rank">
-                                        <span class="rank-number">1</span>
-                                        <i class="fas fa-crown"></i>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Innovation Fintech : L'Afrique en Première Ligne</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                24.7K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                4.2K interactions
-                                            </span>
+                                @forelse($topArticles as $article)
+                                    <div class="top-article-item rank-{{ $loop->iteration }}">
+                                        <div class="article-rank">
+                                            <span class="rank-number">{{ $loop->iteration }}</span>
+                                            @if($loop->first)<i class="fas fa-crown"></i>@endif
+                                        </div>
+                                        <div class="article-details">
+                                            <h4 class="article-title">{{ Str::limit($article->title, 35) }}</h4>
+                                            <div class="article-metrics">
+                                                <span class="views">
+                                                    <i class="fas fa-eye"></i>
+                                                    {{ number_format($article->view_count) }} vues
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="article-growth positive">
+                                            <i class="fas fa-arrow-up"></i>
                                         </div>
                                     </div>
-                                    <div class="article-growth positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span>+18%</span>
-                                    </div>
-                                </div>
-
-                                <div class="top-article-item rank-2">
-                                    <div class="article-rank">
-                                        <span class="rank-number">2</span>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Startups Diasporiques : Retour aux Sources</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                18.3K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                3.1K interactions
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="article-growth positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span>+24%</span>
-                                    </div>
-                                </div>
-
-                                <div class="top-article-item rank-3">
-                                    <div class="article-rank">
-                                        <span class="rank-number">3</span>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Économie Circulaire en Afrique de l'Ouest</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                15.9K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                2.8K interactions
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="article-growth positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span>+31%</span>
-                                    </div>
-                                </div>
-
-                                <div class="top-article-item">
-                                    <div class="article-rank">
-                                        <span class="rank-number">4</span>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Leadership Féminin : Nouvelles Perspectives</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                12.4K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                2.3K interactions
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="article-growth positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span>+15%</span>
-                                    </div>
-                                </div>
-
-                                <div class="top-article-item">
-                                    <div class="article-rank">
-                                        <span class="rank-number">5</span>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Tech Africaine : Révolution Silencieuse</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                9.8K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                1.9K interactions
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="article-growth positive">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span>+22%</span>
-                                    </div>
-                                </div>
-
-                                <div class="top-article-item">
-                                    <div class="article-rank">
-                                        <span class="rank-number">6</span>
-                                    </div>
-                                    <div class="article-details">
-                                        <h4 class="article-title">Investissements Durables : Tendances 2024</h4>
-                                        <div class="article-metrics">
-                                            <span class="views">
-                                                <i class="fas fa-eye"></i>
-                                                8.2K vues
-                                            </span>
-                                            <span class="engagement">
-                                                <i class="fas fa-heart"></i>
-                                                1.5K interactions
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="article-growth neutral">
-                                        <i class="fas fa-minus"></i>
-                                        <span>+3%</span>
-                                    </div>
-                                </div>
+                                @empty
+                                    <p>Aucun article à afficher.</p>
+                                @endforelse
                             </div>
                             <div class="card-footer">
                                 <button class="btn-view-all">
@@ -576,7 +359,7 @@
                                         <i class="fas fa-users"></i>
                                     </div>
                                     <div class="stat-info">
-                                        <div class="stat-value">247</div>
+                                        <div class="stat-value">{{ number_format($stats['users_online'] ?? 0) }}</div>
                                         <div class="stat-label">Utilisateurs en ligne</div>
                                     </div>
                                 </div>
@@ -585,84 +368,24 @@
                                         <i class="fas fa-book-open"></i>
                                     </div>
                                     <div class="stat-info">
-                                        <div class="stat-value">89</div>
+                                        <div class="stat-value">{{ number_format($stats['reading_count'] ?? 0) }}</div>
                                         <div class="stat-label">Lectures actives</div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="activity-feed">
-                                <div class="activity-item">
-                                    <div class="activity-icon new-user">
-                                        <i class="fas fa-user-plus"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>Nouveau membre</strong> s'est inscrit
+                                @forelse($activities as $activity)
+                                    <div class="activity-item">
+                                        <i class="fas {{ $activity['icon'] }} activity-icon {{ $activity['color'] }}"></i>
+                                        <div class="activity-content">
+                                            <div class="activity-text">{!! $activity['description'] !!}</div>
+                                            <div class="activity-time">{{ $activity['time']->diffForHumans() }}</div>
                                         </div>
-                                        <div class="activity-time">Il y a 2 min</div>
                                     </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon comment">
-                                        <i class="fas fa-comment"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>Marie K.</strong> a commenté "Innovation Fintech"
-                                        </div>
-                                        <div class="activity-time">Il y a 5 min</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon view">
-                                        <i class="fas fa-eye"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>12 nouvelles vues</strong> sur "Startups Diasporiques"
-                                        </div>
-                                        <div class="activity-time">Il y a 8 min</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon share">
-                                        <i class="fas fa-share"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>Kofi A.</strong> a partagé un article
-                                        </div>
-                                        <div class="activity-time">Il y a 12 min</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon newsletter">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>8 nouveaux abonnés</strong> à la newsletter
-                                        </div>
-                                        <div class="activity-time">Il y a 15 min</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon like">
-                                        <i class="fas fa-heart"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <div class="activity-text">
-                                            <strong>24 nouveaux likes</strong> sur les articles récents
-                                        </div>
-                                        <div class="activity-time">Il y a 18 min</div>
-                                    </div>
-                                </div>
+                                @empty
+                                    <p>Aucune activité récente.</p>
+                                @endforelse
                             </div>
 
                             <div class="card-footer">
@@ -700,40 +423,21 @@
                         </h3>
                     </div>
                     <div class="card-content">
-                        <div class="top-articles">
-                            <div class="article-item">
-                                <div class="article-rank">1</div>
-                                <div class="article-info">
-                                    <div class="article-title">Économie Africaine 2025</div>
-                                    <div class="article-stats">24.7K vues</div>
+                        <div class="article-list">
+                            @forelse($topArticles as $article)
+                                <div class="article-item">
+                                    <div class="article-rank">{{ $loop->iteration }}</div>
+                                    <div class="article-info">
+                                        <div class="article-title">{{ Str::limit($article->title, 25) }}</div>
+                                        <div class="article-stats">{{ number_format($article->view_count) }} vues</div>
+                                    </div>
+                                    <div class="article-trend positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </div>
                                 </div>
-                                <div class="article-trend positive">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>+45%</span>
-                                </div>
-                            </div>
-                            <div class="article-item">
-                                <div class="article-rank">2</div>
-                                <div class="article-info">
-                                    <div class="article-title">Tech Startups Afrique</div>
-                                    <div class="article-stats">18.3K vues</div>
-                                </div>
-                                <div class="article-trend positive">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>+32%</span>
-                                </div>
-                            </div>
-                            <div class="article-item">
-                                <div class="article-rank">3</div>
-                                <div class="article-info">
-                                    <div class="article-title">Diaspora Investissements</div>
-                                    <div class="article-stats">15.9K vues</div>
-                                </div>
-                                <div class="article-trend positive">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>+28%</span>
-                                </div>
-                            </div>
+                            @empty
+                                <p>Aucun article à afficher.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>

@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('articles', function (Blueprint $table) {
+        if (!Schema::hasTable('articles')) {
+            Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->boolean('featured')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->integer('views_count')->default(0);
+            $table->integer('view_count')->default(0);
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
@@ -41,7 +42,8 @@ return new class extends Migration
             $table->index(['category_id']);
             $table->index(['user_id']);
             $table->index(['featured']);
-        });
+            });
+        }
     }
 
     /**
