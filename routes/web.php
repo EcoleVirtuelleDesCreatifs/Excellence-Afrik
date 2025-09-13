@@ -390,10 +390,10 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
     Route::prefix('dashboard/webtv')->name('dashboard.webtv.')->group(function () {
         Route::get('/', [App\Http\Controllers\WebtvController::class, 'index'])->name('index');
         Route::get('/media/create', function() {
-            return view('dashboard.webtv.add-media', ['type' => 'live']);
+            return view('webtv.create-live');
         })->name('media.create');
         Route::get('/programs/create', function() {
-            return view('dashboard.webtv.add-media', ['type' => 'programme']);
+            return view('webtv.create-program');
         })->name('programs.create');
         Route::post('/store', [App\Http\Controllers\WebtvController::class, 'store'])->name('store');
         Route::post('/preview-embed', [App\Http\Controllers\WebtvController::class, 'previewEmbed'])->name('preview-embed');
