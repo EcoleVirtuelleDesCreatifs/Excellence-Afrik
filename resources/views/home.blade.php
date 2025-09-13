@@ -124,32 +124,120 @@
         font-weight: 600;
     }
 
-    /* Ticker styles */
-    .breaking__meta {
+    /* Style horizontal comme l'exemple */
+    .breaking__horizontal {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 8px 0;
+        border: 1px solid #e9ecef;
+    }
+
+    /* Section ticker "En continu" */
+    .breaking__ticker-section {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+    }
+    .ticker__label {
+        background: #dc3545;
+        color: #fff;
+        padding: 8px 16px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+    .ticker__content {
         overflow: hidden;
         white-space: nowrap;
         position: relative;
-        background: #f1f1f1;
-        padding: 10px 0;
-        border-radius: 5px;
+        flex: 1;
     }
-    .breaking__meta ul {
+    .ticker__content ul {
         display: inline-block;
         padding-left: 100%;
-        animation: ticker 40s linear infinite;
+        animation: ticker 80s linear infinite;
         margin: 0;
+        list-style: none;
     }
-    .breaking__meta ul li {
+    .ticker__content ul li {
         display: inline-block;
-        padding: 0 2rem;
+        padding: 0 1rem;
         font-size: 0.9rem;
+        color: #333;
+        font-weight: 500;
+        position: relative;
+    }
+    .ticker__content ul li::before {
+        content: '•';
+        color: #dc3545;
+        font-weight: bold;
+        position: absolute;
+        left: -0.6rem;
+        font-size: 1.1rem;
+    }
+    .ticker__content ul li:first-child::before {
+        display: none;
     }
     @keyframes ticker {
-        0% {
-            transform: translateX(0);
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* Informations statiques à droite */
+    .breaking__static-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-right: 15px;
+        flex-shrink: 0;
+    }
+    .breaking__static-info .info__item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: #666;
+        white-space: nowrap;
+    }
+    .breaking__static-info .info__item i {
+        font-size: 0.8rem;
+        color: #999;
+    }
+
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .breaking__static-info {
+            gap: 15px;
         }
-        100% {
-            transform: translateX(-100%);
+    }
+    @media (max-width: 992px) {
+        .breaking__horizontal {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .breaking__ticker-section {
+            order: 1;
+        }
+        .breaking__static-info {
+            order: 2;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: #fff;
+            border-radius: 4px;
+            flex-wrap: wrap;
+        }
+    }
+    @media (max-width: 768px) {
+        .breaking__static-info {
+            gap: 10px;
         }
     }
 </style>
@@ -165,13 +253,42 @@
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
-                        <div class="breaking__meta mb-30">
-                            <ul>
-                                <li id="weather-info"><i class="fas fa-cloud-sun"></i> <span>Chargement...</span></li>
-                                <li id="brvm-info"><i class="fas fa-chart-line"></i> <span>Chargement...</span></li>
-                                <li id="eur-currency-info"><i class="fas fa-euro-sign"></i> <span>Chargement...</span></li>
-                                <li id="usd-currency-info"><i class="fas fa-dollar-sign"></i> <span>Chargement...</span></li>
-                            </ul>
+                        <div class="breaking__horizontal mb-30">
+                            <!-- Section "Flash Info" avec ticker -->
+                            <div class="breaking__ticker-section">
+                                <div class="ticker__label">
+                                    <i class="fas fa-bolt"></i> FLASH INFO
+                                </div>
+                                <div class="ticker__content">
+                                    <ul>
+                                        <li>CAN Maroc-2025: La vente des billets débute le 25 septembre</li>
+                                        <li>La BRVM enregistre une hausse de 2.3% aujourd'hui</li>
+                                        <li>Coupure d'électricité programmée dans plusieurs quartiers d'Abidjan</li>
+                                        <li>Le Président reçoit une délégation de la Banque Mondiale</li>
+                                        <li>Sommet de l'UA : La Côte d'Ivoire présente ses projets</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Informations statiques à droite -->
+                            <div class="breaking__static-info">
+                                <div class="info__item">
+                                    <i class="fas fa-cloud-sun"></i>
+                                    <span>Abidjan <span id="weather-display">26°C</span></span>
+                                </div>
+                                <div class="info__item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>BRVM10 <span id="brvm-display">162.29</span></span>
+                                </div>
+                                <div class="info__item">
+                                    <i class="fas fa-euro-sign"></i>
+                                    <span>EUR <span id="eur-display">655 XOF</span></span>
+                                </div>
+                                <div class="info__item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>USD <span id="usd-display">610 XOF</span></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -607,7 +724,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Ticker Animation ---
-        const tickerList = document.querySelector('.breaking__meta ul');
+        const tickerList = document.querySelector('.ticker__content ul');
         if (tickerList) {
             const listContent = tickerList.innerHTML;
             tickerList.innerHTML += listContent; // Duplicate content for seamless loop
@@ -623,23 +740,23 @@
                 .then(response => response.json())
                 .then(data => {
                     const temp = data.current_weather.temperature;
-                    const weatherElement = document.querySelector('#weather-info span');
+                    const weatherElement = document.querySelector('#weather-display');
                     if (weatherElement) {
-                        weatherElement.textContent = `Abidjan: ${temp}°C`;
+                        weatherElement.textContent = `${temp}°C`;
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching weather:', error);
-                    const weatherElement = document.querySelector('#weather-info span');
-                    if (weatherElement) weatherElement.textContent = 'Météo indisponible';
+                    const weatherElement = document.querySelector('#weather-display');
+                    if (weatherElement) weatherElement.textContent = 'Indisponible';
                 });
         }
 
         // --- Currency Exchange Data (using currency-api, no key, XOF support) ---
         function fetchCurrencies() {
             const url = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json';
-            const eurElement = document.querySelector('#eur-currency-info span');
-            const usdElement = document.querySelector('#usd-currency-info span');
+            const eurElement = document.querySelector('#eur-display');
+            const usdElement = document.querySelector('#usd-display');
 
             fetch(url)
                 .then(response => response.json())
@@ -664,10 +781,10 @@
 
         // --- BRVM Data (Static) ---
         function displayBrvm() {
-            const brvmElement = document.querySelector('#brvm-info span');
+            const brvmElement = document.querySelector('#brvm-display');
             if (brvmElement) {
                 // Valeur statique en attendant une API
-                brvmElement.innerHTML = 'BRVM10: 162.29 <span class="positive">(+0.49%)</span>';
+                brvmElement.innerHTML = '162.29 <span class="positive">(+0.49%)</span>';
             }
         }
 
