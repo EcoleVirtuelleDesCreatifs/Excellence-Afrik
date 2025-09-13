@@ -18,7 +18,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-12">
-                                <div class="page-title-bar text-center pt-60 pb-60" style="background-image: url(assets/img/bg/page-itle.jpg)">
+                                <div class="page-title-bar text-center pt-60 pb-60">
                                     <h1>NOUS CONTACTER</h1>
                                 </div>
                             </div>
@@ -118,6 +118,13 @@
 
 @push('styles')
 <style>
+.page-title-bar {
+    background: linear-gradient(to right, #996633, #f7c807);
+}
+.page-title-bar h1 {
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
 .contact-hero {
     padding: 3rem 0;
 }

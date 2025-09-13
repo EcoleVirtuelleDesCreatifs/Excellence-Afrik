@@ -22,7 +22,7 @@
     }
     .section-title p {
         font-size: 1.2rem;
-        color: #FFF;
+        color: #4a4a4a;
         max-width: 800px;
         margin: 0 auto;
     }

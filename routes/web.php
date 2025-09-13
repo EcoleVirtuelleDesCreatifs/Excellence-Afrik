@@ -113,6 +113,20 @@ Route::prefix('articles')->name('articles.')->group(function () {
     Route::get('/category/{slug}', function ($slug) {
         $category = \App\Models\Category::where('slug', $slug)->first();
 
+        // Robust resolution for "Figures de l'économie" page
+        if (!$category && in_array($slug, ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie'])) {
+            $category = \App\Models\Category::whereIn('slug', ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie'])
+                ->where('status', 'active')
+                ->first();
+        }
+
+        // Robust resolution for "Portrait de l'entrepreneur" page
+        if (!$category && in_array($slug, ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])) {
+            $category = \App\Models\Category::whereIn('slug', ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])
+                ->where('status', 'active')
+                ->first();
+        }
+
         // Robust resolution for "Parole d'experts" page
         if (!$category && in_array($slug, ['parole-experts', 'parole-d-experts'])) {
             $nameVariants = ["Parole d'experts", "Parole d’experts", "Parole D'Experts", "Parole D’Experts"];
@@ -177,7 +191,9 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->orderBy('created_at', 'desc');
 
         // Sector filtering for Figures de l'économie and Entreprises & Impacts
-        $isFigures = in_array($category->slug, ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie']);
+        // Unified slug detection for Figures de l'économie
+        $figuresSlugs = ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie'];
+        $isFigures = in_array($category->slug, $figuresSlugs);
         $isEntreprisesImpacts = ($category->slug === 'entreprises-impacts');
         $isContributionsAnalyses = ($category->slug === 'contributions-analyses');
         $isPortraitEntrepreneur = ($category->slug === 'portrait-entrepreneur');
@@ -235,6 +251,7 @@ Route::prefix('articles')->name('articles.')->group(function () {
             $featuredArticle = $featuredQuery->where('is_featured', true)->first();
         }
 
+        // Ensure all categories are paginated correctly
         $articles = $query->paginate(12)->appends(request()->query());
 
         $relatedCategories = \App\Models\Category::where('status', 'active')

@@ -40,6 +40,7 @@ try {
     // Parents for "DIASPORA"
     $diasporaParentSlugs = [
         'start-up-de-la-diaspora',
+        'startup-de-la-diaspora', // Ajout d'une variation pour plus de robustesse
         'opportunites',
     ];
     $diasporaParents = \App\Models\Category::whereIn('slug', $diasporaParentSlugs)
