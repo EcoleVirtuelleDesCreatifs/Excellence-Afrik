@@ -161,10 +161,13 @@
         align-items: center;
         flex: 1;
         min-width: 0;
+        width: 65%;
+        border-radius: 4px;
+        overflow: hidden;
     }
     .ticker__label {
-        background: #dc3545;
-        color: #fff;
+        background: #f1c40f;
+        color: #000;
         padding: 8px 16px;
         font-weight: 700;
         font-size: 0.85rem;
@@ -172,70 +175,116 @@
         white-space: nowrap;
         border-radius: 4px;
         margin-right: 15px;
+        position: relative;
+        z-index: 10;
     }
     .ticker__content {
         overflow: hidden;
-        white-space: nowrap;
         position: relative;
         flex: 1;
+        height: 40px;
+        display: flex;
+        align-items: center;
     }
     .ticker__content ul {
-        display: inline-block;
-        padding-left: 100%;
-        animation: ticker 80s linear infinite;
         margin: 0;
         list-style: none;
+        position: relative;
+        height: 100%;
+        width: 100%;
     }
     .ticker__content ul li {
-        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-100px);
         padding: 0 1rem;
         font-size: 0.9rem;
         color: #333;
         font-weight: 500;
-        position: relative;
+        white-space: nowrap;
+        opacity: 0;
+        animation: tickerVertical 15s infinite;
+        z-index: 1;
     }
-    .ticker__content ul li::before {
-        content: '•';
-        color: #dc3545;
-        font-weight: bold;
-        position: absolute;
-        left: -0.6rem;
-        font-size: 1.1rem;
-    }
-    .ticker__content ul li:first-child::before {
-        display: none;
-    }
-    @keyframes ticker {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
+    .ticker__content ul li:nth-child(1) { animation-delay: 0s; }
+    .ticker__content ul li:nth-child(2) { animation-delay: 3s; }
+    .ticker__content ul li:nth-child(3) { animation-delay: 6s; }
+    .ticker__content ul li:nth-child(4) { animation-delay: 9s; }
+    .ticker__content ul li:nth-child(5) { animation-delay: 12s; }
+    @keyframes tickerVertical {
+        0% {
+            opacity: 0;
+            transform: translateY(-100px);
+        }
+        6.67% {
+            opacity: 1;
+            transform: translateY(-50%);
+        }
+        13.33% {
+            opacity: 1;
+            transform: translateY(-50%);
+        }
+        20% {
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(100px);
+        }
     }
 
     /* Informations statiques à droite */
     .breaking__static-info {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 12px;
         padding-right: 15px;
         flex-shrink: 0;
+        width: 35%;
+        justify-content: space-evenly;
     }
     .breaking__static-info .info__item {
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 0.85rem;
-        color: #666;
+        font-size: 0.75rem;
+        color: #333;
         white-space: nowrap;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+        border-radius: 18px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        border-left: 3px solid #f1c40f;
+        transition: all 0.3s ease;
+        flex: 1;
+        justify-content: center;
+    }
+    .breaking__static-info .info__item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     .breaking__static-info .info__item i {
-        font-size: 0.8rem;
-        color: #999;
+        font-size: 0.85rem;
+        color: #f1c40f;
+        width: 14px;
+        text-align: center;
+    }
+    .breaking__static-info .info__item span {
+        font-weight: 500;
     }
 
 
     /* Responsive */
     @media (max-width: 1200px) {
         .breaking__static-info {
-            gap: 15px;
+            gap: 10px;
+        }
+        .breaking__static-info .info__item {
+            padding: 6px 10px;
+            font-size: 0.8rem;
         }
     }
     @media (max-width: 992px) {
@@ -258,7 +307,14 @@
     }
     @media (max-width: 768px) {
         .breaking__static-info {
-            gap: 10px;
+            gap: 8px;
+        }
+        .breaking__static-info .info__item {
+            padding: 5px 8px;
+            font-size: 0.75rem;
+        }
+        .breaking__static-info .info__item i {
+            font-size: 0.9rem;
         }
     }
 </style>
@@ -282,9 +338,7 @@
                                 </div>
                                 <div class="ticker__content">
                                     <ul>
-                                        <li>CAN Maroc-2025: La vente des billets débute le 25 septembre</li>
                                         <li>La BRVM enregistre une hausse de 2.3% aujourd'hui</li>
-                                        <li>Coupure d'électricité programmée dans plusieurs quartiers d'Abidjan</li>
                                         <li>Le Président reçoit une délégation de la Banque Mondiale</li>
                                         <li>Sommet de l'UA : La Côte d'Ivoire présente ses projets</li>
                                     </ul>
@@ -300,14 +354,6 @@
                                 <div class="info__item">
                                     <i class="fas fa-chart-line"></i>
                                     <span>BRVM10 <span id="brvm-display">162.29</span></span>
-                                </div>
-                                <div class="info__item">
-                                    <i class="fas fa-euro-sign"></i>
-                                    <span>EUR <span id="eur-display">655 XOF</span></span>
-                                </div>
-                                <div class="info__item">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    <span>USD <span id="usd-display">610 XOF</span></span>
                                 </div>
                             </div>
                         </div>
@@ -770,32 +816,6 @@
                 });
         }
 
-        // --- Currency Exchange Data (using currency-api, no key, XOF support) ---
-        function fetchCurrencies() {
-            const url = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json';
-            const eurElement = document.querySelector('#eur-display');
-            const usdElement = document.querySelector('#usd-display');
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.usd && data.usd.xof && data.usd.eur) {
-                        const usdToXof = parseFloat(data.usd.xof).toFixed(2);
-                        const usdToEur = parseFloat(data.usd.eur);
-                        const eurToXof = (usdToXof / usdToEur).toFixed(2);
-
-                        if (eurElement) eurElement.textContent = `1 EUR = ${eurToXof} XOF`;
-                        if (usdElement) usdElement.textContent = `1 USD = ${usdToXof} XOF`;
-                    } else {
-                        throw new Error('Invalid or incomplete data structure from API');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching currencies:', error);
-                    if (eurElement) eurElement.textContent = 'Taux EUR indisponible';
-                    if (usdElement) usdElement.textContent = 'Taux USD indisponible';
-                });
-        }
 
         // --- BRVM Data (Static) ---
         function displayBrvm() {
@@ -808,7 +828,6 @@
 
         // Fetch all data
         fetchWeather();
-        fetchCurrencies();
         displayBrvm();
     });
 </script>
