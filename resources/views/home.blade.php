@@ -56,6 +56,115 @@
             box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
         }
     }
+
+    /* Badge pour live programmé */
+    .scheduled-badge {
+        background-color: #f39c12;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        animation: scheduled-glow 2s infinite;
+    }
+
+    @keyframes scheduled-glow {
+        0% {
+            box-shadow: 0 0 5px rgba(243, 156, 18, 0.7);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.9);
+        }
+        100% {
+            box-shadow: 0 0 5px rgba(243, 156, 18, 0.7);
+        }
+    }
+
+    /* Overlay pour live programmé */
+    .scheduled-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(243, 156, 18, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .scheduled-content {
+        text-align: center;
+        color: #2c3e50;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .scheduled-content i {
+        color: #f4c700;
+    }
+
+    .scheduled-content h4 {
+        color: #2c3e50;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .scheduled-content p {
+        color: #555;
+        font-weight: 500;
+    }
+
+    /* Overlay pour aucun live */
+    .no-live-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .no-live-content {
+        text-align: center;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Décompte */
+    .countdown-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+    }
+
+    .countdown-display {
+        font-family: 'Courier New', monospace;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f39c12;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .countdown-label {
+        font-size: 0.9rem;
+        text-align: center;
+    }
     .news-area {
         background: linear-gradient(to right, #996633, #f7c807);
     }
@@ -466,32 +575,78 @@
                 </div>
             </div>
         </div>
-        @if($featuredWebtv)
+        <!-- Section WebTV - Toujours affichée avec messages adaptatifs -->
         <section class="live-video-section">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="video-player-wrapper">
-                            @if(!empty($featuredWebtv->code_embed_vimeo))
+                            @if($featuredWebtv && $featuredWebtv->statut == 'en_direct' && !empty($featuredWebtv->code_embed_vimeo))
+                                <!-- Live en cours avec code embed -->
                                 {!! $featuredWebtv->code_embed_vimeo !!}
-                            @else
+                            @elseif($featuredWebtv && $featuredWebtv->statut == 'en_direct')
+                                <!-- Live en cours sans code embed -->
                                 <img src="{{ $featuredWebtv->image_path ? asset('storage/' . $featuredWebtv->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $featuredWebtv->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            @elseif($prochainLive)
+                                <!-- Live programmé -->
+                                <img src="{{ $prochainLive->image_path ? asset('storage/' . $prochainLive->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $prochainLive->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div class="scheduled-overlay">
+                                    <div class="scheduled-content">
+                                        <i class="fas fa-clock fa-3x mb-3"></i>
+                                        <h4>Prochain Live</h4>
+                                        <p class="mb-0">Programmé</p>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Aucun live -->
+                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="WebTV Excellence Afrik" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div class="no-live-overlay">
+                                    <div class="no-live-content">
+                                        <i class="fas fa-tv fa-3x mb-3"></i>
+                                        <h4>Aucun Live En Cours</h4>
+                                        <p class="mb-0">Restez connectés pour nos prochains programmes !</p>
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
                     <div class="col-lg-4 d-flex align-items-center">
                         <div class="live-video-info">
-                            @if($featuredWebtv->statut == 'en_direct')
+                            @if($featuredWebtv && $featuredWebtv->statut == 'en_direct')
+                                <!-- Live en cours -->
                                 <span class="live-badge mb-3 d-inline-block">En Direct</span>
+                                <h2 class="h3 fw-bold text-white mb-3">{{ $featuredWebtv->titre }}</h2>
+                                <p class="text-white-50 mb-3">{{ Str::limit($featuredWebtv->description, 150) }}</p>
+                                <a href="{{ route('webtv.show', $featuredWebtv) }}" class="btn btn-warning">
+                                    <i class="fas fa-play me-2"></i>Regarder maintenant
+                                </a>
+                            @elseif($prochainLive)
+                                <!-- Live programmé avec décompte -->
+                                <span class="scheduled-badge mb-3 d-inline-block">Programmé</span>
+                                <h2 class="h3 fw-bold text-white mb-3">{{ $prochainLive->titre }}</h2>
+                                <p class="text-white-50 mb-3">{{ Str::limit($prochainLive->description, 120) }}</p>
+                                <div class="countdown-container mb-3">
+                                    <div class="countdown-label text-white-50 mb-2">Commence dans :</div>
+                                    <div class="countdown-timer" data-date="{{ $prochainLive->date_programmee->toISOString() }}">
+                                        <div class="countdown-display">Calcul en cours...</div>
+                                    </div>
+                                </div>
+                                <a href="{{ route('webtv.show', $prochainLive) }}" class="btn btn-outline-light">
+                                    <i class="fas fa-info-circle me-2"></i>Voir les détails
+                                </a>
+                            @else
+                                <!-- Aucun live -->
+                                <h2 class="h3 fw-bold text-white mb-3">WebTV Excellence Afrik</h2>
+                                <p class="text-white-50 mb-3">Découvrez nos émissions, interviews et reportages exclusifs.</p>
+                                <a href="{{ route('webtv.index') }}" class="btn btn-outline-light">
+                                    <i class="fas fa-play me-2"></i>Voir nos programmes
+                                </a>
                             @endif
-                            <h2 class="h3 fw-bold text-white mb-3">{{ $featuredWebtv->titre }}</h2>
-                            <p class="text-white-50">{{ Str::limit($featuredWebtv->description, 150) }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        @endif
 
         <br/>
         <br/>
@@ -945,9 +1100,55 @@
             }
         }
 
+        // --- Countdown Timer ---
+        function initCountdown() {
+            const countdownTimer = document.querySelector('.countdown-timer');
+            if (!countdownTimer) return;
+
+            const targetDate = new Date(countdownTimer.dataset.date);
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate.getTime() - now;
+
+                if (distance < 0) {
+                    countdownTimer.querySelector('.countdown-display').innerHTML =
+                        '<span style="color: #f4c700; font-weight: bold; font-size: 1.1em; animation: pulse 1s infinite;">Le live commence maintenant !</span>';
+                    // Recharger la page après 5 secondes pour mettre à jour le statut
+                    setTimeout(() => location.reload(), 5000);
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                let display = '';
+                if (days > 0) {
+                    display = `<span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${days}</span><span style="color: #ffffff;">j</span> <span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${hours}</span><span style="color: #ffffff;">h</span> <span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${minutes}</span><span style="color: #ffffff;">min</span>`;
+                } else if (hours > 0) {
+                    display = `<span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${hours}</span><span style="color: #ffffff;">h</span> <span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${minutes}</span><span style="color: #ffffff;">min</span> <span style="color: #f4c700; font-weight: bold; font-size: 1.2em;">${seconds}</span><span style="color: #ffffff;">s</span>`;
+                } else if (minutes > 0) {
+                    display = `<span style="color: #f4c700; font-weight: bold; font-size: 1.3em;">${minutes}</span><span style="color: #ffffff;">min</span> <span style="color: #f4c700; font-weight: bold; font-size: 1.3em;">${seconds}</span><span style="color: #ffffff;">s</span>`;
+                } else {
+                    display = `<span style="color: #e74c3c; font-weight: bold; font-size: 1.4em; animation: pulse 1s infinite;">${seconds}</span><span style="color: #ffffff;">s</span>`;
+                }
+
+                countdownTimer.querySelector('.countdown-display').innerHTML = display;
+            }
+
+            // Mise à jour initiale
+            updateCountdown();
+
+            // Mise à jour toutes les secondes
+            setInterval(updateCountdown, 1000);
+        }
+
         // Fetch all data
         fetchWeather();
         displayBrvm();
+        initCountdown();
     });
 </script>
 @endpush

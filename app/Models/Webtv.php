@@ -82,4 +82,10 @@ class Webtv extends Model
         $d = Carbon::parse($this->date_programmee);
         return $d->isToday();
     }
+
+    // Route key pour les URLs (utilise l'ID par défaut)
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 }

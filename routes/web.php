@@ -61,6 +61,7 @@ Route::get('/', function () {
     }
     
     // Featured WebTV for homepage (À la une)
+    // Prioriser : en_direct > programme futur > aucun
     $featuredWebtv = \App\Models\Webtv::query()
         ->where('est_actif', true)
         ->whereIn('statut', ['en_direct', 'programme', 'termine'])
@@ -70,10 +71,22 @@ Route::get('/', function () {
         ->orderByDesc('created_at')
         ->first();
 
+    // Si pas de live en cours, récupérer le prochain live programmé
+    $prochainLive = null;
+    if (!$featuredWebtv || $featuredWebtv->statut !== 'en_direct') {
+        $prochainLive = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->where('statut', 'programme')
+            ->whereNotNull('date_programmee')
+            ->where('date_programmee', '>', now())
+            ->orderBy('date_programmee')
+            ->first();
+    }
+
     // Flash Info for homepage ticker
     $flashInfos = \App\Models\FlashInfo::affichage()->limit(10)->get();
 
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'flashInfos'));
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'prochainLive', 'flashInfos'));
 })->name('home');
 
 // Pages routes
@@ -483,12 +496,67 @@ Route::prefix('webtv')->name('webtv.')->group(function () {
 
         $webtvs = $query->paginate(12)->withQueryString();
 
+        // Récupérer les programmes récents pour la section "Nos programmes"
+        $recentPrograms = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->whereIn('statut', ['termine', 'programme', 'en_direct'])
+            // S'assurer qu'il y a du contenu vidéo (code embed ou intégration)
+            ->where(function($query) {
+                $query->whereNotNull('code_embed_vimeo')
+                      ->orWhereNotNull('code_integration_vimeo');
+            })
+            ->orderByDesc('created_at')
+            ->limit(9) // Afficher 9 programmes récents
+            ->get();
+
+        // Récupérer aussi les données pour le live principal (comme sur l'accueil)
+        $featuredWebtv = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->where('statut', 'en_direct')
+            ->orderByDesc('date_programmee')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $prochainLive = null;
+        if (!$featuredWebtv || $featuredWebtv->statut !== 'en_direct') {
+            $prochainLive = \App\Models\Webtv::query()
+                ->where('est_actif', true)
+                ->where('statut', 'programme')
+                ->whereNotNull('date_programmee')
+                ->where('date_programmee', '>', now())
+                ->orderBy('date_programmee')
+                ->first();
+        }
+
         return view('pages.webtv', [
             'webtvs' => $webtvs,
             'categories' => $allCategories,
             'currentCategory' => $current,
+            'recentPrograms' => $recentPrograms,
+            'featuredWebtv' => $featuredWebtv,
+            'prochainLive' => $prochainLive,
         ]);
     })->name('index');
+
+    Route::get('/{webtv}', function (\App\Models\Webtv $webtv) {
+        // Vérifier que la WebTV est active
+        if (!$webtv->est_actif) {
+            abort(404);
+        }
+
+        // Récupérer d'autres programmes similaires (même catégorie)
+        $programmesLies = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->where('id', '!=', $webtv->id)
+            ->when($webtv->categorie, function($query) use ($webtv) {
+                return $query->where('categorie', $webtv->categorie);
+            })
+            ->whereIn('statut', ['termine', 'programme'])
+            ->limit(4)
+            ->get();
+
+        return view('pages.webtv-detail', compact('webtv', 'programmesLies'));
+    })->name('show');
 });
 
 // Newsletter route
