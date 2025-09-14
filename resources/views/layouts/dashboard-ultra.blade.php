@@ -79,22 +79,22 @@
                                 <i class="submenu-arrow fas fa-chevron-down"></i>
                             </a>
                             <ul class="nav-submenu">
-                                <!-- Créer article - Accessible à tous -->
+                                <!-- Ajouter un article -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.articles.create') }}" class="nav-sublink" data-section="add-article">
                                         <i class="nav-subicon fas fa-plus"></i>
                                         <span class="nav-subtext">Ajouter un article</span>
                                     </a>
                                 </li>
-                                
-                                <!-- Liste des articles - Accessible à tous -->
+
+                                <!-- Liste des articles -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.articles') }}" class="nav-sublink" data-section="list-articles">
                                         <i class="nav-subicon fas fa-list"></i>
                                         <span class="nav-subtext">Liste des articles</span>
                                     </a>
                                 </li>
-                                
+
                                 <!-- Mes articles - Seulement pour journalistes -->
                                 @if(auth()->check() && auth()->user()->estJournaliste())
                                     <li class="nav-subitem">
@@ -104,44 +104,20 @@
                                         </a>
                                     </li>
                                 @endif
-                                
-                                <!-- Catégories - Lecture pour tous -->
+
+                                <!-- Catégories -->
                                 <li class="nav-subitem">
                                     <a href="{{ route('dashboard.categories.index') }}" class="nav-sublink" data-section="list-categories">
                                         <i class="nav-subicon fas fa-folder-tree"></i>
                                         <span class="nav-subtext">Catégories</span>
                                     </a>
                                 </li>
-                                
-                                <!-- Créer catégorie - Seulement Admin et Directeur -->
-                                @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
-                                    <li class="nav-subitem">
-                                        <a href="{{ route('dashboard.categories.create') }}" class="nav-sublink" data-section="add-article-category">
-                                            <i class="nav-subicon fas fa-folder-plus"></i>
-                                            <span class="nav-subtext">Ajouter une catégorie</span>
-                                        </a>
-                                    </li>
-                                @endif
-                                @if(isset($sidebarCategories) && $sidebarCategories->count())
-                                    @foreach($sidebarCategories as $cat)
-                                        <li class="nav-subitem">
-                                            <a href="{{ route('dashboard.categories.edit', $cat->id) }}" class="nav-sublink" title="Éditer {{ $cat->name }}">
-                                                <i class="nav-subicon fas fa-folder"></i>
-                                                <span class="nav-subtext">{{ $cat->name }}</span>
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                @endif
+
+                                <!-- Ajouter une catégorie -->
                                 <li class="nav-subitem">
-                                    <a href="#article-drafts" class="nav-sublink" data-section="article-drafts">
-                                        <i class="nav-subicon fas fa-edit"></i>
-                                        <span class="nav-subtext">Brouillons</span>
-                                    </a>
-                                </li>
-                                <li class="nav-subitem">
-                                    <a href="#article-comments" class="nav-sublink" data-section="article-comments">
-                                        <i class="nav-subicon fas fa-comments"></i>
-                                        <span class="nav-subtext">Commentaires</span>
+                                    <a href="{{ route('dashboard.categories.create') }}" class="nav-sublink" data-section="add-article-category">
+                                        <i class="nav-subicon fas fa-folder-plus"></i>
+                                        <span class="nav-subtext">Ajouter une catégorie</span>
                                     </a>
                                 </li>
                             </ul>

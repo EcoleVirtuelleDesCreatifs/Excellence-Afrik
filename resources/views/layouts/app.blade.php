@@ -67,6 +67,42 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Messages flash newsletter en position fixe -->
+    @if(session('success') || session('info') || session('error') || $errors->any())
+        <div id="newsletter-flash-messages" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div class="alert alert-info alert-dismissible fade show shadow" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>{{ session('info') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show shadow" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show shadow" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    @foreach($errors->all() as $error)
+                        {{ $error }}
+                    @endforeach
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            @endif
+        </div>
+    @endif
+
     <link rel="manifest" href="{{ asset('styles/site.webmanifest') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('styles/img/favicon.ico') }}">
     <!-- Place favicon.ico in the root directory -->
@@ -272,8 +308,10 @@ try {
                                 </div>
                                 <div class="col-xl-5 col-lg-5">
                                     <div class="subscribe-form mb-30">
-                                        <form action="#">
-                                            <input type="email" placeholder="Entrez votre adresse E-mail">
+                                        <form action="{{ route('newsletter.subscribe') }}" method="POST">
+                                            @csrf
+                                            <input type="email" name="email" placeholder="Entrez votre adresse E-mail" required value="{{ old('email') }}">
+                                            <input type="hidden" name="source" value="footer">
                                             <button type="submit">
                                                 Abonnez-vous
                                             </button>
@@ -482,6 +520,23 @@ try {
                 "retina_detect": true
             });
         }
+    </script>
+
+    <!-- Auto-hide flash messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.getElementById('newsletter-flash-messages');
+            if (flashMessages) {
+                // Auto-hide after 5 seconds
+                setTimeout(function() {
+                    flashMessages.style.opacity = '0';
+                    flashMessages.style.transition = 'opacity 0.5s ease';
+                    setTimeout(function() {
+                        flashMessages.remove();
+                    }, 500);
+                }, 5000);
+            }
+        });
     </script>
 
     <!-- Advertisement Impression Tracking -->

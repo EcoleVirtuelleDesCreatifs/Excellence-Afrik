@@ -9,8 +9,8 @@ class ContactController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('verifier.role:admin,directeur_publication');
+        $this->middleware('auth')->except(['store']);
+        $this->middleware('verifier.role:admin,directeur_publication')->except(['store']);
     }
 
     /**
@@ -207,5 +207,38 @@ class ContactController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Store a new contact message from the public contact form
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:2000'
+        ], [
+            'name.required' => 'Le nom est obligatoire',
+            'email.required' => 'L\'email est obligatoire',
+            'email.email' => 'L\'email doit être valide',
+            'subject.required' => 'L\'objet est obligatoire',
+            'message.required' => 'Le message est obligatoire',
+            'message.max' => 'Le message ne peut pas dépasser 2000 caractères'
+        ]);
+
+        // Créer le nouveau contact
+        Contact::create([
+            'nom' => $request->name,
+            'email' => $request->email,
+            'objet' => $request->subject,
+            'message' => $request->message,
+            'statut' => 'nouveau',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        return redirect()->route('pages.contact')->with('success', 'Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');
     }
 }

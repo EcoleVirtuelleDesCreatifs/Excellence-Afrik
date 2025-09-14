@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     // Permettre la configuration via .env pour refléter les changements sans dépendre des libellés
@@ -154,7 +155,12 @@ Route::get('/', function () {
 Route::prefix('pages')->name('pages.')->group(function () {
     Route::get('/presentation', function () { return view('pages.presentation'); })->name('presentation');
     Route::get('/editorial', function () { return view('pages.editorial'); })->name('editorial');
-    Route::get('/contact', function () { return view('pages.contact'); })->name('contact');
+    Route::match(['get', 'post'], '/contact', function (Request $request) {
+        if ($request->isMethod('post')) {
+            return app(App\Http\Controllers\ContactController::class)->store($request);
+        }
+        return view('pages.contact');
+    })->name('contact');
     Route::get('/advertise', function () { return view('pages.advertise'); })->name('advertise');
     Route::get('/sponsor', function () { return view('pages.sponsor'); })->name('sponsor');
     Route::get('/awards', function () { return view('pages.awards'); })->name('awards');
@@ -404,6 +410,7 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
     Route::get('/dashboard/articles/create', [App\Http\Controllers\DashboardController::class, 'createArticle'])->name('dashboard.articles.create');
     Route::post('/dashboard/articles', [App\Http\Controllers\DashboardController::class, 'storeArticle'])->name('dashboard.articles.store');
     Route::get('/dashboard/articles/{id}/edit', [App\Http\Controllers\DashboardController::class, 'editArticle'])->name('dashboard.articles.edit');
+    Route::get('/dashboard/articles/{id}/show', [App\Http\Controllers\DashboardController::class, 'showArticle'])->name('dashboard.articles.show');
     Route::put('/dashboard/articles/{id}', [App\Http\Controllers\DashboardController::class, 'updateArticle'])->name('dashboard.articles.update');
     
     // === SUPPRESSION ARTICLES - Permissions gérées dans le contrôleur ===

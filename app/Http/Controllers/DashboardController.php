@@ -392,6 +392,25 @@ class DashboardController extends Controller
         return view('dashboard.articles.edit', compact('article', 'categories'));
     }
 
+    /**
+     * Afficher les détails d'un article
+     */
+    public function showArticle($id)
+    {
+        $utilisateur = Auth::user();
+        $article = Article::with(['category', 'user'])->findOrFail($id);
+
+        // Vérification des permissions de visualisation
+        if ($utilisateur->estJournaliste()) {
+            // Journalistes peuvent voir seulement leurs propres articles
+            if ($article->user_id !== $utilisateur->id) {
+                abort(403, 'Vous ne pouvez voir que vos propres articles.');
+            }
+        }
+
+        return view('dashboard.articles.show', compact('article'));
+    }
+
 
 
     /**

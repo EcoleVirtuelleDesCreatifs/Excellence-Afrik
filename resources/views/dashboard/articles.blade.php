@@ -468,9 +468,9 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 @endif
-                                <button class="btn btn-outline-info" onclick="viewArticle({{ $article->id }})" title="Voir">
+                                <a href="{{ route('dashboard.articles.show', $article->id) }}" class="btn btn-outline-info" title="Voir les détails">
                                     <i class="fas fa-eye"></i>
-                                </button>
+                                </a>
                                 
                                 <!-- Bouton approuver - Seulement Admin et Directeur pour articles en attente -->
                                 @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()) && $article->status === 'pending')
@@ -652,9 +652,6 @@ function editArticle(id) {
     alert(`Modification de l'article ${id}`);
 }
 
-function viewArticle(id) {
-    alert(`Affichage de l'article ${id}`);
-}
 
 function deleteArticle(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {

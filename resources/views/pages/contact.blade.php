@@ -84,20 +84,20 @@
                                         </div>
                                     @endif
 
-                                    <form id="contact-form" action="{{ route('pages.contact') }}" method="POST">
+                                    <form id="contact-form-laravel" action="{{ route('pages.contact') }}" method="POST">
                                         @csrf
                                         <div class="row">
                                             <div class="col-xl-6">
-                                                <input name="name" type="text" placeholder="Nom">
+                                                <input name="name" type="text" placeholder="Nom" required value="{{ old('name') }}">
                                             </div>
                                             <div class="col-xl-6">
-                                                <input name="email" type="email" placeholder="Email">
+                                                <input name="email" type="email" placeholder="Email" required value="{{ old('email') }}">
                                             </div>
                                             <div class="col-xl-12">
-                                                <input name="subject" type="text" placeholder="Objet">
+                                                <input name="subject" type="text" placeholder="Objet" required value="{{ old('subject') }}">
                                             </div>
                                             <div class="col-xl-12">
-                                                <textarea name="message" id="mesage" cols="30" rows="10" placeholder="Message"></textarea>
+                                                <textarea name="message" id="mesage" cols="30" rows="10" placeholder="Message" required>{{ old('message') }}</textarea>
                                                 <button class="btn brand-btn" type="submit">Envoyer</button>
                                             </div>
                                         </div>
