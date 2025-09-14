@@ -731,3 +731,6 @@ Route::get('/api/brvm', function () {
 
 // Advertisement click tracking route (public)
 Route::get('/ad/click/{id}', [App\Http\Controllers\AdvertisementController::class, 'click'])->name('advertisement.click');
+
+// Advertisement impression tracking route (public)
+Route::post('/ad/impression/{id}', [App\Http\Controllers\AdvertisementController::class, 'impression'])->name('advertisement.impression');

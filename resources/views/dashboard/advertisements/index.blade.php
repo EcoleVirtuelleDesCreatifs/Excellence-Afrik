@@ -30,6 +30,7 @@
                                             <th>Position</th>
                                             <th>Statut</th>
                                             <th>Clics</th>
+                                            <th>Impressions</th>
                                             <th>Période</th>
                                             <th>Priorité</th>
                                             <th>Actions</th>
@@ -69,6 +70,9 @@
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-primary">{{ $ad->click_count }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">{{ $ad->impression_count ?? 0 }}</span>
                                                 </td>
                                                 <td>
                                                     <small>

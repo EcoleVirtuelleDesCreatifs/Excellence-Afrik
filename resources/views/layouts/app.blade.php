@@ -65,6 +65,7 @@ try {
     <title>ACCUEIL - EXCELLENCE AFRIK</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="manifest" href="{{ asset('styles/site.webmanifest') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('styles/img/favicon.ico') }}">
@@ -158,7 +159,9 @@ try {
                                 <a href="{{ $bannerTop->getTrackableUrl() }}" target="_blank" rel="noopener">
                                     <img src="{{ asset('storage/' . $bannerTop->image) }}"
                                          alt="{{ $bannerTop->title }}"
-                                         style="max-width: 100%; max-height: 120px; width: auto;">
+                                         style="max-width: 100%; max-height: 120px; width: auto;"
+                                         data-ad-id="{{ $bannerTop->id }}"
+                                         class="advertisement-banner">
                                 </a>
                             @else
                                 <a href="#">
@@ -480,6 +483,49 @@ try {
             });
         }
     </script>
+
+    <!-- Advertisement Impression Tracking -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour envoyer l'impression
+            function trackImpression(adId) {
+                fetch(`/ad/impression/${adId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Impression trackée:', data);
+                })
+                .catch(error => {
+                    console.error('Erreur tracking impression:', error);
+                });
+            }
+
+            // Tracker les impressions des publicités visibles
+            const adBanners = document.querySelectorAll('.advertisement-banner');
+            adBanners.forEach(banner => {
+                const adId = banner.getAttribute('data-ad-id');
+                if (adId) {
+                    // Observer pour détecter quand la publicité devient visible
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                trackImpression(adId);
+                                observer.unobserve(entry.target); // Ne tracker qu'une seule fois par session
+                            }
+                        });
+                    }, { threshold: 0.5 }); // Se déclenche quand 50% de la pub est visible
+
+                    observer.observe(banner);
+                }
+            });
+        });
+    </script>
+
     @stack('scripts')
 </body>
 

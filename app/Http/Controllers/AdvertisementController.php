@@ -13,8 +13,8 @@ class AdvertisementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['click']);
-        $this->middleware('verifier.role:admin,directeur_publication')->except(['click']);
+        $this->middleware('auth')->except(['click', 'impression']);
+        $this->middleware('verifier.role:admin,directeur_publication')->except(['click', 'impression']);
     }
 
     /**
@@ -257,6 +257,25 @@ class AdvertisementController extends Controller
         ]);
         
         return redirect('/')->with('error', 'Publicité expirée ou inactive.');
+    }
+
+    /**
+     * Track advertisement impression (view)
+     */
+    public function impression($id)
+    {
+        $advertisement = Advertisement::find($id);
+
+        if ($advertisement && $advertisement->isCurrentlyActive()) {
+            $advertisement->incrementImpressionCount();
+
+            return response()->json([
+                'success' => true,
+                'impression_count' => $advertisement->fresh()->impression_count
+            ]);
+        }
+
+        return response()->json(['success' => false], 404);
     }
 
     /**

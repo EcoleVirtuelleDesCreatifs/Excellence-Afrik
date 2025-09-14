@@ -9,13 +9,14 @@ class Advertisement extends Model
 {
     protected $fillable = [
         'title',
-        'image', 
+        'image',
         'url',
         'page_type',
         'category_slug',
         'position_in_page',
         'status',
         'click_count',
+        'impression_count',
         'start_date',
         'end_date',
         'priority'
@@ -55,6 +56,12 @@ class Advertisement extends Model
     public function incrementClickCount()
     {
         $this->increment('click_count');
+    }
+
+    // Incrémenter le compteur d'impressions
+    public function incrementImpressionCount()
+    {
+        $this->increment('impression_count');
     }
 
     // Vérifier si la publicité est active actuellement
