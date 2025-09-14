@@ -25,7 +25,6 @@
                                 <tr>
                                     <th width="5%">#</th>
                                     <th width="20%">Titre</th>
-                                    <th width="30%">Contenu</th>
                                     <th width="10%">Statut</th>
                                     <th width="8%">Ordre</th>
                                     <th width="12%">Période</th>
@@ -39,9 +38,6 @@
                                         <td>{{ $flashInfo->id }}</td>
                                         <td>
                                             <strong>{{ Str::limit($flashInfo->titre, 50) }}</strong>
-                                        </td>
-                                        <td>
-                                            <span class="text-muted">{{ Str::limit($flashInfo->contenu, 80) }}</span>
                                         </td>
                                         <td>
                                             <button class="btn btn-sm toggle-statut-btn {{ $flashInfo->statut === 'actif' ? 'btn-success' : 'btn-secondary' }}"

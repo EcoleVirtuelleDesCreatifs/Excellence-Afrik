@@ -314,29 +314,30 @@
         font-weight: 500;
         white-space: nowrap;
         opacity: 0;
-        animation: tickerVertical 15s infinite;
         z-index: 1;
     }
-    @keyframes tickerVertical {
+
+    /* Animation dynamique générée par JavaScript */
+    @keyframes flashInfoFadeIn {
         0% {
             opacity: 0;
-            transform: translateY(-50%) scale(0.8);
+            transform: translateY(-100%);
         }
         5% {
             opacity: 1;
-            transform: translateY(-50%) scale(1);
+            transform: translateY(-50%);
         }
-        30% {
+        20% {
             opacity: 1;
-            transform: translateY(-50%) scale(1);
+            transform: translateY(-50%);
         }
-        35% {
+        25% {
             opacity: 0;
-            transform: translateY(-50%) scale(0.8);
+            transform: translateY(100%);
         }
         100% {
             opacity: 0;
-            transform: translateY(-50%) scale(0.8);
+            transform: translateY(100%);
         }
     }
 
@@ -1045,13 +1046,13 @@
             if (totalItems > 0) {
                 if (!isMobile) {
                     // Animation verticale pour desktop
-                    const displayTime = 3; // Temps d'affichage par Flash Info (secondes)
-                    const totalCycleTime = totalItems * displayTime;
+                    const displayTime = 4; // Temps d'affichage par Flash Info (secondes)
+                    const totalCycleTime = totalItems * displayTime; // Durée totale du cycle complet
 
                     flashInfoItems.forEach((item, index) => {
-                        const delay = index * displayTime;
-                        item.style.animationDuration = `${totalCycleTime}s`;
-                        item.style.animationDelay = `${delay}s`;
+                        // Chaque Flash Info a une animation qui dure le cycle complet
+                        item.style.animation = `flashInfoFadeIn ${totalCycleTime}s infinite`;
+                        item.style.animationDelay = `${index * displayTime}s`;
 
                         // Positionnement pour desktop
                         item.style.position = 'absolute';
@@ -1062,7 +1063,11 @@
                         item.style.textAlign = 'left';
                         item.style.paddingLeft = '1rem';
                         item.style.paddingRight = '1rem';
+
+                        console.log(`Flash Info ${index + 1}: délai de ${index * displayTime}s, durée totale: ${totalCycleTime}s`);
                     });
+
+                    console.log(`Animation configurée: cycle complet de ${totalCycleTime}s pour ${totalItems} éléments`);
                 }
                 // En mobile, laisser le CSS gérer le défilement horizontal
             }

@@ -32,7 +32,6 @@ class FlashInfoController extends Controller
     {
         $request->validate([
             'titre' => 'required|string|max:200',
-            'contenu' => 'required|string',
             'statut' => 'required|in:actif,inactif',
             'ordre' => 'nullable|integer|min:0',
             'date_debut' => 'nullable|date',
@@ -42,7 +41,6 @@ class FlashInfoController extends Controller
         try {
             FlashInfo::create([
                 'titre' => $request->titre,
-                'contenu' => $request->contenu,
                 'statut' => $request->statut,
                 'ordre' => $request->ordre ?? 0,
                 'date_debut' => $request->date_debut,

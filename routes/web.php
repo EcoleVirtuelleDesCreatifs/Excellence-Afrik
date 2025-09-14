@@ -121,9 +121,30 @@ Route::prefix('articles')->name('articles.')->group(function () {
     Route::get('/category/{slug}', function ($slug) {
         $category = \App\Models\Category::where('slug', $slug)->first();
 
+        // Robust resolution for "Figures de l'économie" page
+        if (!$category && in_array($slug, ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie'])) {
+            $category = \App\Models\Category::whereIn('slug', ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie'])
+                ->where('status', 'active')
+                ->first();
+        }
+
+        // Robust resolution for "Portrait de l'entrepreneur" page
+        if (!$category && in_array($slug, ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])) {
+            $category = \App\Models\Category::whereIn('slug', ['portrait-de-l-entreprise', 'portrait-de-l-entrepreneur', 'portrait-d-entrepreneur'])
+                ->where('status', 'active')
+                ->first();
+        }
+
+        // Robust resolution for "Startup de la diaspora" page
+        if (!$category && in_array($slug, ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])) {
+            $category = \App\Models\Category::whereIn('slug', ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])
+                ->where('status', 'active')
+                ->first();
+        }
+
         // Robust resolution for "Parole d'experts" page
         if (!$category && in_array($slug, ['parole-experts', 'parole-d-experts'])) {
-            $nameVariants = ["Parole d'experts", "Parole d’experts", "Parole D'Experts", "Parole D’Experts"];
+            $nameVariants = ["Parole d'experts", "Parole d'experts", "Parole D'Experts", "Parole D'Experts"];
             $slugVariants = ['parole-experts', 'parole-d-experts'];
             // First, try with active constraints
             $category = \App\Models\Category::where(function($q) use ($nameVariants, $slugVariants) {
@@ -143,29 +164,16 @@ Route::prefix('articles')->name('articles.')->group(function () {
 
             // If still not found, try without any status filters as a final fallback
             if (!$category) {
-                $category = \App\Models\Category::where(function($q) use ($nameVariants, $slugVariants) {
+                $baseQuery = \App\Models\Category::where(function($q) use ($nameVariants, $slugVariants) {
                         $q->whereIn('slug', $slugVariants)
                           ->orWhereIn('name', $nameVariants);
-                    })
-                    ->first();
-            }
+                    });
 
-        // Final fuzzy fallback for Parole d'experts-like slugs/names
-        if (!$category && (stripos($slug, 'parole') !== false && stripos($slug, 'expert') !== false)) {
-            // Try to find a category whose slug or name looks like "parole" + "expert"
-            $baseQuery = \App\Models\Category::query()
-                ->where(function($q){
-                    $q->where('slug', 'like', '%parole%expert%')
-                      ->orWhere('name', 'like', '%parole%expert%');
-                });
-
-            // Prefer active when possible
-            $category = (clone $baseQuery)
-                ->where(function($q){
-                    $q->where('status', 'active')->orWhereNull('status');
-                })
-                ->where(function($q){
-                    $q->where('is_active', 1)->orWhereNull('is_active');
+                // Try with only is_active = 1
+                $category = clone $baseQuery;
+                $category = $category->where(function($q) {
+                    $q->where('is_active', 1)
+                      ->orWhereNull('is_active');
                 })
                 ->first();
 
@@ -260,7 +268,11 @@ Route::prefix('articles')->name('articles.')->group(function () {
                 ->pluck('sector')
                 ->filter();
         }
-        
+
+        // Theme filtering - Add default values
+        $theme = request('theme');
+        $allowedThemes = ['innovation', 'finance', 'leadership', 'sustainability'];
+
         return view('articles.category', compact('category', 'articles', 'relatedCategories', 'slug', 'availableSectors', 'isFigures', 'isEntreprisesImpacts', 'isContributionsAnalyses', 'isPortraitEntrepreneur', 'sector', 'isGrandsGenres', 'allowedSectors', 'featuredArticle'))
             ->with(['theme' => $theme, 'allowedThemes' => $allowedThemes]); 
     })->name('category');

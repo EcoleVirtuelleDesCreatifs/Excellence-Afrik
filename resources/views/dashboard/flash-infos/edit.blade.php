@@ -59,19 +59,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="contenu" class="form-label required">Contenu détaillé</label>
-                        <textarea class="form-control @error('contenu') is-invalid @enderror"
-                                  id="contenu"
-                                  name="contenu"
-                                  rows="4"
-                                  placeholder="Détails complets de la Flash Info..."
-                                  required>{{ old('contenu', $flashInfo->contenu) }}</textarea>
-                        <div class="form-text">Contenu qui sera affiché dans les détails ou tooltips</div>
-                        @error('contenu')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
 
                     <div class="row">
                         <div class="col-md-4">
