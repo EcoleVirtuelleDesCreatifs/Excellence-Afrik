@@ -154,9 +154,17 @@ try {
                     </div>
                     <div class="col-lg-8 col-md-9">
                         <div class="header__add text-center text-md-right mb-20">
-                            <a href="#">
-                                <img src="{{ asset('styles/img/add/header-add.jpg') }}" alt="">
-                            </a>
+                            @if(isset($bannerTop) && $bannerTop)
+                                <a href="{{ $bannerTop->getTrackableUrl() }}" target="_blank" rel="noopener">
+                                    <img src="{{ asset('storage/' . $bannerTop->image) }}"
+                                         alt="{{ $bannerTop->title }}"
+                                         style="max-width: 100%; max-height: 120px; width: auto;">
+                                </a>
+                            @else
+                                <a href="#">
+                                    <img src="{{ asset('styles/img/add/header-add.jpg') }}" alt="">
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

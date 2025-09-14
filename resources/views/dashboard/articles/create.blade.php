@@ -517,15 +517,24 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="category" class="form-label required">Catégorie</label>
-                    <select id="category" name="category_id" class="form-input form-select" required>
+                    <label for="main_category" class="form-label required">Catégorie principale</label>
+                    <select id="main_category" name="main_category" class="form-input form-select" required>
                         <option value="">Sélectionnez une catégorie</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            <option value="{{ $category->id }}" {{ old('main_category') == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
                     </select>
+                </div>
+                <div class="form-group" id="subcategory-group" style="display: none;">
+                    <label for="subcategory" class="form-label">Sous-catégorie</label>
+                    <select id="subcategory" name="category_id" class="form-input form-select">
+                        <option value="">Sélectionnez une sous-catégorie</option>
+                    </select>
+                    <small style="color: #6b7280; font-size: 0.85rem;">
+                        Pour "Page accueil", sélectionnez la section spécifique où l'article apparaîtra.
+                    </small>
                 </div>
 
                 <div class="form-group">
@@ -788,6 +797,9 @@
 @push('scripts')
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
+// Données des sous-catégories depuis PHP
+const subcategoriesData = @json($subcategories);
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Quill Editor
     const quill = new Quill('#editor', {
@@ -805,6 +817,55 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         },
         placeholder: 'Commencez à écrire votre article...'
+    });
+
+    // === Gestion Catégories et Sous-catégories ===
+    const mainCategorySelect = document.getElementById('main_category');
+    const subcategoryGroup = document.getElementById('subcategory-group');
+    const subcategorySelect = document.getElementById('subcategory');
+
+    mainCategorySelect.addEventListener('change', function() {
+        const selectedCategoryId = this.value;
+
+        if (selectedCategoryId && subcategoriesData[selectedCategoryId]) {
+            // Il y a des sous-catégories pour cette catégorie
+            const subcategories = subcategoriesData[selectedCategoryId];
+
+            // Vider le select des sous-catégories
+            subcategorySelect.innerHTML = '<option value="">Sélectionnez une sous-catégorie</option>';
+
+            // Ajouter les sous-catégories
+            subcategories.forEach(function(subcat) {
+                const option = document.createElement('option');
+                option.value = subcat.id;
+                option.textContent = subcat.name;
+                subcategorySelect.appendChild(option);
+            });
+
+            // Afficher le groupe sous-catégorie
+            subcategoryGroup.style.display = 'block';
+            subcategorySelect.required = true;
+
+            // Vider le champ category_id principal pour forcer l'utilisation de la sous-catégorie
+            subcategorySelect.name = 'category_id';
+        } else {
+            // Pas de sous-catégories, utiliser directement la catégorie principale
+            subcategoryGroup.style.display = 'none';
+            subcategorySelect.required = false;
+
+            // Utiliser directement la catégorie principale
+            mainCategorySelect.name = 'category_id';
+            subcategorySelect.name = '';
+        }
+    });
+
+    // Gestion du changement de sous-catégorie
+    subcategorySelect.addEventListener('change', function() {
+        if (this.value) {
+            // Une sous-catégorie est sélectionnée
+            this.name = 'category_id';
+            mainCategorySelect.name = 'main_category';
+        }
     });
 
     // Character counters

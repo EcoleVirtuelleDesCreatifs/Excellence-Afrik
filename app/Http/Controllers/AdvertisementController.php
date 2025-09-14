@@ -13,8 +13,8 @@ class AdvertisementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('verifier.role:admin,directeur_publication');
+        $this->middleware('auth')->except(['click']);
+        $this->middleware('verifier.role:admin,directeur_publication')->except(['click']);
     }
 
     /**

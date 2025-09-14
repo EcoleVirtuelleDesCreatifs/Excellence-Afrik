@@ -199,14 +199,25 @@ class DashboardController extends Controller
      */
     public function createArticle()
     {
-        // Récupération des catégories depuis la base de données
+        // Récupération des catégories principales (sans parent)
         $categories = Category::where('status', 'active')
             ->where('is_active', 1)
+            ->whereNull('parent_id')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
-        return view('dashboard.articles.create', compact('categories'));
+        // Récupération de toutes les sous-catégories groupées par parent
+        $subcategories = Category::where('status', 'active')
+            ->where('is_active', 1)
+            ->whereNotNull('parent_id')
+            ->with('parent')
+            ->orderBy('parent_id')
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy('parent_id');
+
+        return view('dashboard.articles.create', compact('categories', 'subcategories'));
     }
 
     /**

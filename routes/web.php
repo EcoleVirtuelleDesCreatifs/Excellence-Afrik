@@ -9,7 +9,7 @@ Route::get('/', function () {
     $figuresSlugEnv   = env('FIGURES_CATEGORY_SLUG');
     $figuresIdEnv     = env('FIGURES_CATEGORY_ID');
 
-    // Récupérer la catégorie "Actualité du jour"
+    // Récupérer la sous-catégorie "Top 3 Actualité du jour" de la catégorie "Page accueil"
     $dailyQuery = \App\Models\Category::where('status', 'active')->where('is_active', 1);
     if ($dailyNewsIdEnv) {
         $dailyQuery->where('id', $dailyNewsIdEnv);
@@ -17,20 +17,20 @@ Route::get('/', function () {
         $dailyQuery->where('slug', $dailyNewsSlugEnv);
     } else {
         $dailyQuery->where(function($q) {
-            $q->where('slug', 'actualite-du-jour')
-              ->orWhere('name', 'Actualité du jour');
+            $q->where('slug', 'top-3-actualite-du-jour')
+              ->orWhere('name', 'Top 3 Actualité du jour');
         });
     }
     $dailyNewsCategory = $dailyQuery->first();
-    
+
     $dailyNews = collect();
     if ($dailyNewsCategory) {
-        // Récupérer les articles de la catégorie "Actualité du jour"
+        // Récupérer les articles de la sous-catégorie "Top 3 Actualité du jour"
         $dailyNews = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $dailyNewsCategory->id)
             ->where('status', 'published')
             ->orderBy('created_at', 'desc')
-            ->limit(6)
+            ->limit(3) // Limité à 3 pour "Top 3"
             ->get();
     }
     
@@ -83,11 +83,72 @@ Route::get('/', function () {
             ->first();
     }
 
+    // Récupérer la sous-catégorie "Actualités à la une" de la catégorie "Page accueil"
+    $actualitesUneCategory = \App\Models\Category::where('status', 'active')
+        ->where('is_active', 1)
+        ->where('slug', 'actualites-a-la-une')
+        ->first();
+
+    $actualitesUne = collect();
+    if ($actualitesUneCategory) {
+        // Récupérer les articles de la sous-catégorie "Actualités à la une"
+        $actualitesUne = \App\Models\Article::with(['category', 'user'])
+            ->where('category_id', $actualitesUneCategory->id)
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(8) // Pour correspondre au layout de la page (structure actuelle)
+            ->get();
+    }
+
+    // Récupérer les articles pour la section "Portraits d'entrepreneurs"
+    // D'abord essayer la nouvelle sous-catégorie "Page accueil > Portraits d'entrepreneurs"
+    $portraitsAccueilCategory = \App\Models\Category::where('status', 'active')
+        ->where('is_active', 1)
+        ->where('slug', 'portraits-entrepreneurs-accueil')
+        ->first();
+
+    $entrepreneurArticles = collect();
+    if ($portraitsAccueilCategory) {
+        // Récupérer les articles de la sous-catégorie "Portraits d'entrepreneurs" (Page accueil)
+        $entrepreneurArticles = \App\Models\Article::with(['category', 'user'])
+            ->where('category_id', $portraitsAccueilCategory->id)
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(7)
+            ->get();
+    }
+
+    // Si pas d'articles dans la nouvelle sous-catégorie, fallback sur l'ancienne catégorie "Portrait de l'entrepreneur"
+    if ($entrepreneurArticles->isEmpty()) {
+        $oldEntrepreneurCategory = \App\Models\Category::where('status', 'active')
+            ->where('is_active', 1)
+            ->whereIn('slug', ['portrait-de-l-entrepreneur', 'portrait-de-lentrepreneur'])
+            ->orWhere('name', "Portrait de l'entrepreneur")
+            ->first();
+
+        if ($oldEntrepreneurCategory) {
+            $entrepreneurArticles = \App\Models\Article::with(['category', 'user'])
+                ->where('category_id', $oldEntrepreneurCategory->id)
+                ->where('status', 'published')
+                ->orderBy('created_at', 'desc')
+                ->limit(7)
+                ->get();
+        }
+    }
+
+    // Récupérer les magazines depuis la section Magazine du dashboard
+    $latestMagazines = \App\Models\Magazine::where('status', 'published')
+        ->orderBy('created_at', 'desc')
+        ->limit(4)
+        ->get();
+
     // Flash Info for homepage ticker
     $flashInfos = \App\Models\FlashInfo::affichage()->limit(10)->get();
 
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'prochainLive', 'flashInfos'));
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'prochainLive', 'flashInfos', 'actualitesUne', 'entrepreneurArticles', 'latestMagazines'));
 })->name('home');
+
+// Route pour tracking des clics sur les publicités - voir ligne 741 pour la route complète
 
 // Pages routes
 Route::prefix('pages')->name('pages.')->group(function () {

@@ -565,7 +565,7 @@
         </section>
         <!-- breaking end -->
 
-        <div class="page-banner-area">
+<div class="page-banner-area">
             <div class="container">
                 <div class="row">
                     <div class="col-12">
@@ -735,7 +735,7 @@
         <!-- hero-area end -->
 
         <!-- ============================================================== -->
-        <!-- Section des Actualités du Jour -->
+        <!-- Section des Actualités à la Une -->
         <!-- ============================================================== -->
         <section class="news-area pt-30 pb-30">
             <br />
@@ -745,132 +745,128 @@
                 <div class="row ">
                     <div class="col-12">
                         <div class="section-title mb-30">
-                            <h2 style="color: #fff;">ACTUALITÉ DU JOUR</h2>
+                            <h2 style="color: #fff;">ACTUALITÉS À LA UNE</h2>
                         </div>
                     </div>
                 </div>
                 <br />
             </div>
             <div class="container">
-                <div class="row row-10">
-                    <div class="col-20 wow fadeInUp" data-wow-delay=".3s">
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm1.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Paul Manafort’s Accountant Testifies She Helped Alter Financial Documents</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm2.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Rina Sawayama Is Not the Asian Britney Spears</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm3.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Receiving the Summer Sols tice the Swedish Way</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-40 wow fadeInUp" data-wow-delay=".5s">
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/lg1.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text">
-                                <h3 class="pr-100"><a href="#">Trump’s Inaccurate Claims About High ways the world, Immigration and Beyoncé.</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
+                @if(isset($actualitesUne) && $actualitesUne->count() > 0)
+                    @php
+                        $leftArticles = $actualitesUne->slice(0, 3);
+                        $mainArticles = $actualitesUne->slice(3, 2);
+                        $rightMiddleArticles = $actualitesUne->slice(5, 3);
+                        $rightBottomArticles = $actualitesUne->slice(3, 3);
+                    @endphp
+                    <div class="row row-10">
+                        <!-- Colonne gauche -->
+                        <div class="col-20 wow fadeInUp" data-wow-delay=".3s">
+                            @foreach($leftArticles as $article)
+                                <div class="hero pos-relative mb-30">
+                                    <div class="hero__thumb" data-overlay="dark-gradient">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
+                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
+                                            @elseif($article->featured_image_url)
+                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
+                                            @else
+                                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $article->title }}">
+                                            @endif
+                                        </a>
+                                    </div>
+                                    <div class="hero__text hero__text-small">
+                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 80) }}</a></h3>
+                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
 
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/lg2.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text">
-                                <h3 class="pr-100"><a href="#">Moving From Buyer to Seller, Major League Soccer Revenue In The World Wide Claims About.</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-20 d-md-none d-xl-block wow fadeInUp" data-wow-delay=".7s">
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/xs/xs-1.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <span class="post-cat mb-10"><a href="#">Fashion</a></span>
-                                <h3 class="pr-0"><a href="#">Storm in aw ame home away.</a></h3>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/xs/xs-2.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <span class="post-cat mb-10"><a href="#">Fashion</a></span>
-                                <h3 class="pr-0"><a href="#">Good ridre urants bid farewell.</a></h3>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/xs/xs-3.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <span class="post-cat mb-10"><a href="#">Fashion</a></span>
-                                <h3 class="pr-0"><a href="#">Nahan dow plays Lieral lership..</a></h3>
-                            </div>
+                        <!-- Colonne centrale -->
+                        <div class="col-40 wow fadeInUp" data-wow-delay=".5s">
+                            @foreach($mainArticles as $article)
+                                <div class="hero pos-relative mb-30">
+                                    <div class="hero__thumb" data-overlay="dark-gradient">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
+                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
+                                            @elseif($article->featured_image_url)
+                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
+                                            @else
+                                                <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $article->title }}">
+                                            @endif
+                                        </a>
+                                    </div>
+                                    <div class="hero__text">
+                                        <h3 class="pr-100"><a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a></h3>
+                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
 
-                    </div>
-                    <div class="col-20 wow fadeInUp" data-wow-delay=".9s">
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm4.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Paul Manafort’s Accountant Testifies She Helped Alter Financial Documents</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm5.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Rina Sawayama Is Not the Asian Britney Spears</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
-                        </div>
-                        <div class="hero pos-relative mb-30">
-                            <div class="hero__thumb" data-overlay="dark-gradient">
-                                <a href="#"><img src="{{ asset('styles/img/trendy/sm6.jpg') }}" alt="hero image"></a>
-                            </div>
-                            <div class="hero__text hero__text-small">
-                                <h3 class="pr-0"><a href="#">Receiving the Summer Sols tice the Swedish Way</a></h3>
-                                <small>01 Sep 2018 | Nom de la Catégorie</small>
-                            </div>
+                        <!-- Colonne droite milieu (visible sur desktop uniquement) -->
+                        <div class="col-20 d-md-none d-xl-block wow fadeInUp" data-wow-delay=".7s">
+                            @foreach($rightMiddleArticles->take(3) as $article)
+                                <div class="hero pos-relative mb-30">
+                                    <div class="hero__thumb" data-overlay="dark-gradient">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
+                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
+                                            @elseif($article->featured_image_url)
+                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
+                                            @else
+                                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $article->title }}">
+                                            @endif
+                                        </a>
+                                    </div>
+                                    <div class="hero__text hero__text-small">
+                                        <span class="post-cat mb-10"><a href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a></span>
+                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 60) }}</a></h3>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
 
+                        <!-- Colonne droite -->
+                        <div class="col-20 wow fadeInUp" data-wow-delay=".9s">
+                            @foreach($rightBottomArticles->take(3) as $article)
+                                <div class="hero pos-relative mb-30">
+                                    <div class="hero__thumb" data-overlay="dark-gradient">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
+                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
+                                            @elseif($article->featured_image_url)
+                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
+                                            @else
+                                                <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $article->title }}">
+                                            @endif
+                                        </a>
+                                    </div>
+                                    <div class="hero__text hero__text-small">
+                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 80) }}</a></h3>
+                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-
+                @else
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p style="color: #fff; font-size: 1.2rem;">Aucune actualité à afficher pour le moment.</p>
+                        </div>
+                    </div>
+                @endif
             </div>
             <br />
             <br />
             <br />
             <div class="post-btn mb-50">
-                <a href="#" class="btn btn-border">Voir plus </a>
+                @if(isset($actualitesUne) && $actualitesUne->count() > 0)
+                    <a href="{{ route('articles.category', 'actualites-a-la-une') }}" class="btn btn-border">Voir plus </a>
+                @endif
             </div>
             <!-- trendy news end -->
         </section>
@@ -972,7 +968,11 @@
                                         <div class="hero pos-relative mb-30">
                                             <div class="hero__thumb" data-overlay="dark-gradient">
                                                 <a href="{{ route('magazines.show', $magazine->slug) }}">
-                                                    <img src="{{ $magazine->cover_image_path ? Storage::url($magazine->cover_image_path) : asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $magazine->title }}">
+                                                    @if($magazine->cover_path)
+                                                        <img src="{{ Storage::url($magazine->cover_path) }}" alt="{{ $magazine->title }}">
+                                                    @else
+                                                        <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $magazine->title }}">
+                                                    @endif
                                                 </a>
                                             </div>
                                             <div class="hero__text hero__text-small">
