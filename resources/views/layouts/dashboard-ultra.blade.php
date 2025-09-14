@@ -64,49 +64,13 @@
                                 <span class="nav-text">Tableau de Bord</span>
                             </a>
                         </li>
+                        
                     </ul>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Gestion</div>
                     <ul class="nav-menu">
-                        <!-- Gestion des Menus - Masqué pour les journalistes -->
-                        @if(auth()->check() && !auth()->user()->estJournaliste())
-                            <li class="nav-item has-submenu">
-                                <a href="#" class="nav-link submenu-toggle">
-                                    <i class="nav-icon fas fa-bars"></i>
-                                    <span class="nav-text">Gestion des Menus</span>
-                                    <i class="submenu-arrow fas fa-chevron-down"></i>
-                                </a>
-                                <ul class="nav-submenu">
-                                    <li class="nav-subitem">
-                                        <a href="#add-menu" class="nav-sublink" data-section="add-menu">
-                                            <i class="nav-subicon fas fa-plus"></i>
-                                            <span class="nav-subtext">Ajouter un menu</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
-                                        <a href="#list-menus" class="nav-sublink" data-section="list-menus">
-                                            <i class="nav-subicon fas fa-list"></i>
-                                            <span class="nav-subtext">Liste des menus</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
-                                        <a href="#add-menu-category" class="nav-sublink" data-section="add-menu-category">
-                                            <i class="nav-subicon fas fa-folder-plus"></i>
-                                            <span class="nav-subtext">Ajouter une catégorie</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
-                                        <a href="#menu-structure" class="nav-sublink" data-section="menu-structure">
-                                            <i class="nav-subicon fas fa-sitemap"></i>
-                                            <span class="nav-subtext">Structure des menus</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endif
-
                         <!-- Gestion des Articles -->
                         <li class="nav-item has-submenu {{ request()->routeIs('dashboard.articles') ? 'active' : '' }}">
                             <a href="#" class="nav-link submenu-toggle">
@@ -305,21 +269,9 @@
                                 </a>
                                 <ul class="nav-submenu">
                                     <li class="nav-subitem">
-                                        <a href="#create-newsletter" class="nav-sublink" data-section="create-newsletter">
-                                            <i class="nav-subicon fas fa-plus"></i>
-                                            <span class="nav-subtext">Créer Newsletter</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
                                         <a href="{{ route('dashboard.newsletter.index') }}" class="nav-sublink">
                                             <i class="nav-subicon fas fa-users"></i>
                                             <span class="nav-subtext">Abonnés</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-subitem">
-                                        <a href="#newsletter-campaigns" class="nav-sublink" data-section="newsletter-campaigns">
-                                            <i class="nav-subicon fas fa-paper-plane"></i>
-                                            <span class="nav-subtext">Campagnes</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -331,11 +283,7 @@
                                     <i class="nav-icon fas fa-message"></i>
                                     <span class="nav-text">Messages de Contact</span>
                                     @php
-                                        try {
-                                            $nouveauxContacts = \App\Models\Contact::where('is_read', false)->count();
-                                        } catch (\Throwable $e) {
-                                            $nouveauxContacts = 0;
-                                        }
+                                        $nouveauxContacts = \App\Models\Contact::nouveaux()->count();
                                     @endphp
                                     @if($nouveauxContacts > 0)
                                         <span class="nav-badge">{{ $nouveauxContacts }}</span>

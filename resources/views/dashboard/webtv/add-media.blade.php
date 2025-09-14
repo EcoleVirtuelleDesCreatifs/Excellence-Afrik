@@ -5,6 +5,176 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/webtv.css') }}">
+    <style>
+        /* Variables CSS pour la cohérence */
+        :root {
+            --ea-gold: #F2CB05;
+            --ea-blue: #2563eb;
+            --ea-green: #10b981;
+            --ea-danger: #dc3545;
+            --card-bg: #ffffff;
+            --card-border: #e9ecef;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        
+        /* Layout principal */
+        .modern-webtv-create-section {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        /* Header amélioré */
+        .page-header-modern {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-main {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--ea-gold), var(--ea-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin: 0.25rem 0 0 0;
+        }
+        
+        .breadcrumb-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+        
+        .breadcrumb-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .breadcrumb-item:hover {
+            color: var(--ea-gold);
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--ea-gold);
+            font-weight: 600;
+        }
+        
+        .breadcrumb-separator {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        /* Boutons d\'actions du header */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn-secondary-modern {
+            background: var(--ea-blue);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Messages d\'alerte */
+        .alert-modern {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-modern.danger {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: var(--ea-danger);
+        }
+        
+        .alert-modern strong {
+            font-weight: 600;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header-modern {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header-main {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 @endpush
 
 
@@ -200,12 +370,12 @@
                             <i class="fas fa-broadcast-tower"></i>
                             Code Embed Live Vimeo
                         </h3>
-                        <p class="section-description">Collez le code d'intégration de votre live Vimeo</p>
+                        <p class="section-description">Collez le code d\'intégration de votre live Vimeo</p>
                     </div>
 
                     <div class="form-fields">
                         <div class="form-field">
-                            <label for="code_embed_vimeo" class="form-label required">Code d'Intégration Live</label>
+                            <label for="code_embed_vimeo" class="form-label required">Code d\'Intégration Live</label>
                             <textarea id="code_embed_vimeo"
                                       name="code_embed_vimeo"
                                       class="form-textarea code-textarea @error('code_embed_vimeo') error @enderror"
@@ -221,26 +391,26 @@
                                     <ol>
                                         <li>Connectez-vous à votre compte Vimeo</li>
                                         <li>Créez votre événement live</li>
-                                        <li>Allez dans l'onglet "Embed"</li>
+                                        <li>Allez dans l\'onglet "Embed"</li>
                                         <li>Copiez le code complet et collez-le ici</li>
                                     </ol>
                                 </div>
                             </div>
                         </div>
                 @else
-                <!-- Code d'Intégration Vimeo Programme -->
+                <!-- Code d\'Intégration Vimeo Programme -->
                 <div class="form-section">
                     <div class="section-header">
                         <h3 class="section-title">
                             <i class="fab fa-vimeo-v"></i>
-                            Code d'Intégration Vidéo Vimeo
+                            Code d\'Intégration Vidéo Vimeo
                         </h3>
-                        <p class="section-description">Collez le code d'intégration de votre vidéo Vimeo</p>
+                        <p class="section-description">Collez le code d\'intégration de votre vidéo Vimeo</p>
                     </div>
 
                     <div class="form-fields">
                         <div class="form-field">
-                            <label for="code_integration_vimeo" class="form-label required">Code d'Intégration Vidéo</label>
+                            <label for="code_integration_vimeo" class="form-label required">Code d\'Intégration Vidéo</label>
                             <textarea id="code_integration_vimeo"
                                       name="code_integration_vimeo"
                                       class="form-textarea code-textarea @error('code_integration_vimeo') error @enderror"
@@ -257,7 +427,7 @@
                                         <li>Uploadez votre vidéo sur Vimeo</li>
                                         <li>Allez sur la page de votre vidéo</li>
                                         <li>Cliquez sur le bouton "Partager"</li>
-                                        <li>Copiez le code d'intégration complet</li>
+                                        <li>Copiez le code d\'intégration complet</li>
                                     </ol>
                                 </div>
                             </div>
@@ -368,9 +538,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validateEmbedCode(code) {
         if (type === 'programme') {
-            // Pour les programmes, validation simple du code d'intégration
+            // Pour les programmes, validation simple du code d\'intégration
             if (code.includes('vimeo.com/video/') && code.includes('iframe')) {
-                // Extraction de l'ID vidéo pour les programmes
+                // Extraction de l\'ID vidéo pour les programmes
                 const match = code.match(/vimeo\.com\/video\/(\d+)/);
                 const videoId = match ? match[1] : null;
 
@@ -387,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 resetValidation();
             }
         } else {
-            // Pour les lives, utiliser l'API existante
+            // Pour les lives, utiliser l\'API existante
             fetch('{{ route("dashboard.webtv.preview-embed") }}', {
                 method: 'POST',
                 headers: {
@@ -455,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showError(message) {
         codeTextarea.classList.add('error');
 
-        // Créer ou mettre à jour le message d'erreur
+        // Créer ou mettre à jour le message d\'erreur
         let errorSpan = codeTextarea.parentElement.querySelector('.error-message');
         if (!errorSpan) {
             errorSpan = document.createElement('span');
