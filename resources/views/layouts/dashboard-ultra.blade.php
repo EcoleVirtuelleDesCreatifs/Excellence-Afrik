@@ -64,26 +64,6 @@
                                 <span class="nav-text">Tableau de Bord</span>
                             </a>
                         </li>
-                        
-                        <!-- Analytics - Seulement Admin et Directeur -->
-                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
-                            <li class="nav-item {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}">
-                                <a href="{{ route('dashboard.analytics') }}" class="nav-link" data-section="analytics">
-                                    <i class="nav-icon fas fa-chart-line"></i>
-                                    <span class="nav-text">Analytics</span>
-                                </a>
-                            </li>
-                        @endif
-                        
-                        <!-- Contenu - Masqué pour les journalistes -->
-                        @if(auth()->check() && !auth()->user()->estJournaliste())
-                            <li class="nav-item">
-                                <a href="#content" class="nav-link" data-section="content">
-                                    <i class="nav-icon fas fa-newspaper"></i>
-                                    <span class="nav-text">Contenu</span>
-                                </a>
-                            </li>
-                        @endif
                     </ul>
                 </div>
 
@@ -265,6 +245,31 @@
                         </li>
                         @endif
 
+                        <!-- Gestion des Publicités - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu {{ request()->routeIs('dashboard.advertisements.*') ? 'active' : '' }}">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-bullhorn"></i>
+                                    <span class="nav-text">Gestion des Publicités</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
+                            <ul class="nav-submenu">
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.advertisements.index') }}" class="nav-sublink" data-section="list-advertisements">
+                                        <i class="nav-subicon fas fa-list"></i>
+                                        <span class="nav-subtext">Liste des publicités</span>
+                                    </a>
+                                </li>
+                                <li class="nav-subitem">
+                                    <a href="{{ route('dashboard.advertisements.create') }}" class="nav-sublink" data-section="add-advertisement">
+                                        <i class="nav-subicon fas fa-plus"></i>
+                                        <span class="nav-subtext">Nouvelle publicité</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
                         <!-- Gestion des Utilisateurs - Seulement Admin et Directeur -->
                         @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
                             <li class="nav-item has-submenu {{ request()->routeIs('dashboard.users') ? 'active' : '' }}">
@@ -318,6 +323,24 @@
                                         </a>
                                     </li>
                                 </ul>
+                            </li>
+
+                            <!-- Gestion des Contacts -->
+                            <li class="nav-item {{ request()->routeIs('dashboard.contacts.*') ? 'active' : '' }}">
+                                <a href="{{ route('dashboard.contacts.index') }}" class="nav-link" data-section="contacts">
+                                    <i class="nav-icon fas fa-message"></i>
+                                    <span class="nav-text">Messages de Contact</span>
+                                    @php
+                                        try {
+                                            $nouveauxContacts = \App\Models\Contact::where('is_read', false)->count();
+                                        } catch (\Throwable $e) {
+                                            $nouveauxContacts = 0;
+                                        }
+                                    @endphp
+                                    @if($nouveauxContacts > 0)
+                                        <span class="nav-badge">{{ $nouveauxContacts }}</span>
+                                    @endif
+                                </a>
                             </li>
                         @endif
                     </ul>

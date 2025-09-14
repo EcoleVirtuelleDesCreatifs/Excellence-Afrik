@@ -361,7 +361,7 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::put('/{id}', [App\Http\Controllers\MagazineController::class, 'update'])->name('update');
         Route::delete('/{id}', [App\Http\Controllers\MagazineController::class, 'destroy'])->name('destroy');
     });
-    
+
     // Gestion complète des publicités
     Route::prefix('dashboard/advertisements')->name('dashboard.advertisements.')->group(function () {
         Route::get('/', [App\Http\Controllers\AdvertisementController::class, 'index'])->name('index');
@@ -374,7 +374,7 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::post('/{advertisement}/toggle-status', [App\Http\Controllers\AdvertisementController::class, 'toggleStatus'])->name('toggle-status');
         Route::get('/subcategories', [App\Http\Controllers\AdvertisementController::class, 'getSubcategories'])->name('subcategories');
     });
-    
+
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
 
