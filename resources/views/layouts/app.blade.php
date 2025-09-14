@@ -84,6 +84,13 @@ try {
         main {
             background: linear-gradient(to right, #996633, #f7c807);
         }
+
+        /* Titres du footer en jaune-or comme WebTV */
+        .footer-widget h3 {
+            color: #f4c700 !important;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
     </style>
     @stack('styles')
 </head>

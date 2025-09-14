@@ -259,6 +259,31 @@
                         </li>
                         @endif
 
+                        <!-- Gestion des Flash Info - Seulement Admin et Directeur -->
+                        @if(auth()->check() && (auth()->user()->estAdmin() || auth()->user()->estDirecteurPublication()))
+                            <li class="nav-item has-submenu {{ request()->routeIs('dashboard.flash-infos.*') ? 'active' : '' }}">
+                                <a href="#" class="nav-link submenu-toggle">
+                                    <i class="nav-icon fas fa-bolt text-warning"></i>
+                                    <span class="nav-text">Flash Info</span>
+                                    <i class="submenu-arrow fas fa-chevron-down"></i>
+                                </a>
+                                <ul class="nav-submenu">
+                                    <li class="nav-subitem">
+                                        <a href="{{ route('dashboard.flash-infos.index') }}" class="nav-sublink" data-section="list-flash-infos">
+                                            <i class="nav-subicon fas fa-list"></i>
+                                            <span class="nav-subtext">Liste des Flash Info</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-subitem">
+                                        <a href="{{ route('dashboard.flash-infos.create') }}" class="nav-sublink" data-section="add-flash-info">
+                                            <i class="nav-subicon fas fa-plus"></i>
+                                            <span class="nav-subtext">Nouvelle Flash Info</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
+
                         <!-- Gestion Newsletters - Masqué pour les journalistes -->
                         @if(auth()->check() && !auth()->user()->estJournaliste())
                             <li class="nav-item has-submenu">

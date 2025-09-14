@@ -198,7 +198,7 @@
         top: 50%;
         left: 0;
         right: 0;
-        transform: translateY(-100px);
+        transform: translateY(-50%);
         padding: 0 1rem;
         font-size: 0.9rem;
         color: #333;
@@ -208,31 +208,26 @@
         animation: tickerVertical 15s infinite;
         z-index: 1;
     }
-    .ticker__content ul li:nth-child(1) { animation-delay: 0s; }
-    .ticker__content ul li:nth-child(2) { animation-delay: 3s; }
-    .ticker__content ul li:nth-child(3) { animation-delay: 6s; }
-    .ticker__content ul li:nth-child(4) { animation-delay: 9s; }
-    .ticker__content ul li:nth-child(5) { animation-delay: 12s; }
     @keyframes tickerVertical {
         0% {
             opacity: 0;
-            transform: translateY(-100px);
+            transform: translateY(-50%) scale(0.8);
         }
-        6.67% {
+        5% {
             opacity: 1;
-            transform: translateY(-50%);
+            transform: translateY(-50%) scale(1);
         }
-        13.33% {
+        30% {
             opacity: 1;
-            transform: translateY(-50%);
+            transform: translateY(-50%) scale(1);
         }
-        20% {
+        35% {
             opacity: 0;
-            transform: translateY(100px);
+            transform: translateY(-50%) scale(0.8);
         }
         100% {
             opacity: 0;
-            transform: translateY(100px);
+            transform: translateY(-50%) scale(0.8);
         }
     }
 
@@ -295,14 +290,26 @@
         }
         .breaking__ticker-section {
             order: 1;
+            width: 100%;
         }
         .breaking__static-info {
             order: 2;
+            width: 100%;
             justify-content: space-between;
             padding: 10px 15px;
             background: #fff;
             border-radius: 4px;
             flex-wrap: wrap;
+        }
+
+        /* Flash Info optimisations pour tablette */
+        .ticker__label {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+        .ticker__content ul li {
+            font-size: 0.85rem;
+            padding: 0 0.8rem;
         }
     }
     @media (max-width: 768px) {
@@ -315,6 +322,88 @@
         }
         .breaking__static-info .info__item i {
             font-size: 0.9rem;
+        }
+
+        /* Flash Info mobile - Défilement horizontal */
+        .breaking__horizontal {
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+        .breaking__ticker-section {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+        .ticker__label {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            margin-right: 0;
+            margin-bottom: 8px;
+            text-align: center;
+            width: 100%;
+        }
+        .ticker__content {
+            height: 35px;
+            overflow: hidden;
+        }
+        .ticker__content ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            animation: scrollHorizontal 15s linear infinite;
+            white-space: nowrap;
+        }
+        .ticker__content ul li {
+            display: inline-block !important;
+            position: relative !important;
+            opacity: 1 !important;
+            animation: none !important;
+            padding: 0 1rem !important;
+            font-size: 0.95rem !important;
+            line-height: 35px !important;
+            white-space: nowrap !important;
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        .ticker__content ul li::after {
+            content: " • ";
+            color: #f1c40f;
+            margin-left: 0.5rem;
+        }
+        .ticker__content ul li:last-child::after {
+            content: "";
+        }
+
+        /* Animation de défilement horizontal pour mobile */
+        @keyframes scrollHorizontal {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+    }
+    @media (max-width: 480px) {
+        /* Très petit mobile */
+        .breaking__horizontal {
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+        .ticker__content ul li {
+            font-size: 0.85rem !important;
+            padding: 0 0.8rem !important;
+        }
+        .breaking__static-info {
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+        .breaking__static-info .info__item {
+            padding: 4px 6px;
+            font-size: 0.7rem;
+            justify-content: center;
         }
     }
 </style>
@@ -338,9 +427,11 @@
                                 </div>
                                 <div class="ticker__content">
                                     <ul>
-                                        <li>La BRVM enregistre une hausse de 2.3% aujourd'hui</li>
-                                        <li>Le Président reçoit une délégation de la Banque Mondiale</li>
-                                        <li>Sommet de l'UA : La Côte d'Ivoire présente ses projets</li>
+                                        @forelse($flashInfos as $flashInfo)
+                                            <li><strong>{{ $flashInfo->titre }}</strong></li>
+                                        @empty
+                                            <li>Aucune Flash Info disponible pour le moment</li>
+                                        @endforelse
                                     </ul>
                                 </div>
                             </div>
@@ -790,8 +881,36 @@
         // --- Ticker Animation ---
         const tickerList = document.querySelector('.ticker__content ul');
         if (tickerList) {
-            const listContent = tickerList.innerHTML;
-            tickerList.innerHTML += listContent; // Duplicate content for seamless loop
+            const flashInfoItems = tickerList.querySelectorAll('li');
+            const totalItems = flashInfoItems.length;
+            const isMobile = window.innerWidth <= 768;
+
+            console.log(`Flash Info: ${totalItems} éléments détectés, Mobile: ${isMobile}`);
+
+            if (totalItems > 0) {
+                if (!isMobile) {
+                    // Animation verticale pour desktop
+                    const displayTime = 3; // Temps d'affichage par Flash Info (secondes)
+                    const totalCycleTime = totalItems * displayTime;
+
+                    flashInfoItems.forEach((item, index) => {
+                        const delay = index * displayTime;
+                        item.style.animationDuration = `${totalCycleTime}s`;
+                        item.style.animationDelay = `${delay}s`;
+
+                        // Positionnement pour desktop
+                        item.style.position = 'absolute';
+                        item.style.top = '50%';
+                        item.style.left = '0';
+                        item.style.right = '0';
+                        item.style.transform = 'translateY(-50%)';
+                        item.style.textAlign = 'left';
+                        item.style.paddingLeft = '1rem';
+                        item.style.paddingRight = '1rem';
+                    });
+                }
+                // En mobile, laisser le CSS gérer le défilement horizontal
+            }
         }
 
         // --- Weather Data ---

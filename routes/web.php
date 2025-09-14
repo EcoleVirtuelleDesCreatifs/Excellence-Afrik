@@ -70,7 +70,10 @@ Route::get('/', function () {
         ->orderByDesc('created_at')
         ->first();
 
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv'));
+    // Flash Info for homepage ticker
+    $flashInfos = \App\Models\FlashInfo::affichage()->limit(10)->get();
+
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'flashInfos'));
 })->name('home');
 
 // Pages routes
@@ -377,6 +380,18 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
 
     // Gestion des utilisateurs
     Route::get('/dashboard/users', [App\Http\Controllers\DashboardController::class, 'users'])->name('dashboard.users');
+
+    // Gestion des Flash Info
+    Route::prefix('dashboard/flash-infos')->name('dashboard.flash-infos.')->group(function () {
+        Route::get('/', [App\Http\Controllers\FlashInfoController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\FlashInfoController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\FlashInfoController::class, 'store'])->name('store');
+        Route::get('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'show'])->name('show');
+        Route::get('/{flashInfo}/edit', [App\Http\Controllers\FlashInfoController::class, 'edit'])->name('edit');
+        Route::put('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'update'])->name('update');
+        Route::delete('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'destroy'])->name('destroy');
+        Route::post('/{flashInfo}/toggle-statut', [App\Http\Controllers\FlashInfoController::class, 'toggleStatut'])->name('toggle-statut');
+    });
 
     // Gestion des contacts
     Route::prefix('dashboard/contacts')->name('dashboard.contacts.')->group(function () {
