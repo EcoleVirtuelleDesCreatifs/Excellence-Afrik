@@ -55,10 +55,17 @@ class DashboardController extends Controller
         $stats['mes_vues_totales'] = $totalViews;
         $stats['ma_moyenne_vues'] = $stats['mes_articles_total'] > 0 ? round($totalViews / $stats['mes_articles_total']) : 0;
 
+        // Répartition des statuts pour les graphiques
+        $repartitionStatuts = [
+            'published' => $stats['mes_articles_published'],
+            'pending' => $stats['mes_articles_pending'],
+            'draft' => $stats['mes_articles_drafts'],
+        ];
+
         $mesArticlesRecents = Article::with(['category'])->where('user_id', $user->id)->orderBy('created_at', 'desc')->limit(5)->get();
         $mesMeilleursArticles = Article::with(['category'])->where('user_id', $user->id)->where('status', 'published')->orderBy('view_count', 'desc')->limit(6)->get();
 
-        return view('dashboard.journalist', compact('user', 'stats', 'mesArticlesRecents', 'mesMeilleursArticles'));
+        return view('dashboard.journalist', compact('user', 'stats', 'repartitionStatuts', 'mesArticlesRecents', 'mesMeilleursArticles'));
     }
 
     /**
@@ -143,6 +150,7 @@ class DashboardController extends Controller
             'excerpt' => $validatedData['excerpt'],
             'content' => $validatedData['content'],
             'author_id' => Auth::id(),
+            'user_id' => Auth::id(), // Assigner l'utilisateur connecté comme auteur
             'category_id' => $validatedData['category_id'],
             'seo_title' => $validatedData['meta_title'],
             'seo_description' => $validatedData['meta_description'],

@@ -538,15 +538,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="author" class="form-label">Auteur</label>
-                    <input 
-                        type="text" 
-                        id="author" 
-                        name="author" 
-                        class="form-input" 
-                        value="{{ Auth::user()->name }}"
-                        placeholder="Nom de l'auteur"
-                    >
+                    <label class="form-label">Auteur</label>
+                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                        <div class="bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <strong>{{ Auth::user()->name }}</strong>
+                            <br>
+                            <small class="text-muted">{{ Auth::user()->nom_role }}</small>
+                        </div>
+                    </div>
+                    <small style="color: #6b7280; font-size: 0.85rem; margin-top: 0.5rem; display: block;">
+                        L'auteur sera automatiquement défini avec votre compte utilisateur.
+                    </small>
                 </div>
             </div>
 
