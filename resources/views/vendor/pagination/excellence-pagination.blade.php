@@ -2,7 +2,7 @@
     <nav class="excellence-pagination" aria-label="Navigation des pages">
         <div class="pagination-wrapper d-flex justify-content-center align-items-center">
             <div class="pagination-info me-4">
-                <span class="text-muted">
+                <span>
                     Page {{ $paginator->currentPage() }} sur {{ $paginator->lastPage() }}
                     ({{ $paginator->total() }} {{ $paginator->total() > 1 ? 'articles' : 'article' }})
                 </span>
@@ -73,79 +73,81 @@
 
     <style>
     .excellence-pagination {
-        margin: 2rem 0;
+        margin: 2.5rem 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
-    
-    .excellence-pagination-list {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
     }
-    
-    .excellence-page-link {
-        border: none;
-        background: #ffffff;
-        color: #2563eb;
-        padding: 12px 16px;
+
+    .pagination-info {
+        font-size: 0.875rem; /* 14px */
+        color: #495057;
+        background-color: #f1f3f5;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
         font-weight: 500;
-        transition: all 0.3s ease;
-        border-right: 1px solid #e5e7eb;
-        text-decoration: none;
+    }
+
+    .excellence-pagination-list {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; /* Use gap for spacing */
+    }
+
+    .excellence-page-link {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 48px;
+        text-decoration: none;
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem; /* 6px */
+        min-width: 42px;
+        height: 42px;
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
     }
-    
+
     .excellence-page-link:hover:not(.disabled) {
-        background: linear-gradient(135deg, #D4AF37 0%, #F2CB05 100%);
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        background-color: #f8f9fa;
+        border-color: #c1933e;
+        color: #c1933e;
     }
-    
-    .excellence-page-link.active {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+
+    /* Active state styling */
+    .page-item.active .excellence-page-link {
+        background-color: #000000; /* Black */
+        border-color: #000000;
         color: #ffffff;
-        font-weight: 600;
+        font-weight: 700;
     }
-    
+
+    /* Disabled state styling */
     .excellence-page-link.disabled {
-        background: #f8fafc;
-        color: #9ca3af;
+        color: #adb5bd;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
         cursor: not-allowed;
     }
-    
-    .page-item:first-child .excellence-page-link {
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
+
+    /* Remove default page-item styling */
+    .page-item {
+        list-style: none;
     }
-    
-    .page-item:last-child .excellence-page-link {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-        border-right: none;
-    }
-    
-    .pagination-info {
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-    
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
         .pagination-wrapper {
             flex-direction: column;
             gap: 1rem;
-        }
-        
-        .pagination-info {
-            margin: 0 !important;
-            text-align: center;
-        }
-        
-        .excellence-page-link {
-            padding: 10px 14px;
-            font-size: 0.9rem;
         }
     }
     </style>

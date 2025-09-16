@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Magazine N° 24 - L\'Afrique à l\'ère de l\'Intelligence Artificielle - Excellence Afrik')
-@section('meta_description', 'Découvrez notre numéro spécial sur l\'intelligence artificielle en Afrique avec des analyses exclusives et des interviews de leaders technologiques')
+@section('title', $magazine->title . ' - Excellence Afrik')
+@section('meta_description', $magazine->description)
 
 @section('content')
 <div class="container my-5">
@@ -13,23 +13,19 @@
                 <div class="row align-items-center">
                     <div class="col-lg-4">
                         <div class="magazine-cover-large">
-                            <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=500&fit=crop" 
-                                 alt="Magazine N° 24" class="img-fluid rounded-3 shadow-lg">
+                            <img src="{{ asset('storage/' . $magazine->cover_path) }}" 
+                                 alt="{{ $magazine->title }}" class="img-fluid rounded-3 shadow-lg">
                             <div class="cover-badge">Édition Spéciale</div>
                         </div>
                     </div>
                     <div class="col-lg-8">
                         <div class="magazine-details">
                             <div class="magazine-meta-large">
-                                <span class="issue-number-large">N° 24</span>
-                                <span class="issue-date-large">Décembre 2024</span>
-                                <span class="issue-type-large">Édition Spéciale</span>
+                                <span class="issue-date-large">{{ $magazine->published_at->translatedFormat('F Y') }}</span>
                             </div>
-                            <h1 class="magazine-title-large">L'Afrique à l'ère de l'Intelligence Artificielle</h1>
+                            <h1 class="magazine-title-large">{{ $magazine->title }}</h1>
                             <p class="magazine-description-large">
-                                Ce numéro spécial explore en profondeur la révolution de l'intelligence artificielle 
-                                sur le continent africain. Découvrez comment l'IA transforme l'économie, l'éducation, 
-                                la santé et l'agriculture, et rencontrez les pionniers qui façonnent l'avenir technologique de l'Afrique.
+                                {{ $magazine->description }}
                             </p>
                             
                             <div class="magazine-stats-large">
@@ -59,7 +55,7 @@
                                 <button class="btn btn-primary btn-lg me-3" onclick="openReader()">
                                     <i class="fas fa-book-open me-2"></i>Lire en ligne
                                 </button>
-                                <a href="{{ route('magazines.download', 24) }}" class="btn btn-outline-primary btn-lg me-3">
+                                <a href="{{ asset('storage/' . $magazine->pdf_path) }}" class="btn btn-outline-primary btn-lg me-3" download>
                                     <i class="fas fa-download me-2"></i>Télécharger PDF
                                 </a>
                                 <button class="btn btn-outline-secondary btn-lg" onclick="shareMagazine()">

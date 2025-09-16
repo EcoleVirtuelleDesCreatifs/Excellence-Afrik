@@ -180,7 +180,7 @@
                             @endif
                         </td>
                         <td>{{ number_format($article->view_count ?? 0) }}</td>
-                        <td>{{ $article->created_at->format('d M Y') }}</td>
+                        <td>{{ $article->created_at->translatedFormat('d F Y') }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn btn-outline-primary" title="Modifier">

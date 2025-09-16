@@ -2,12 +2,41 @@
 
 @push('styles')
 <style>
-    .page-banner-area .page-title-bar {
-        background: #000000;
+    /* New WebTV Hero Banner Styles */
+    .webtv-hero-banner {
+        background: #000;
+        padding: 80px 0;
+        border-top: 5px solid var(--ea-gold);
+        border-bottom: 5px solid var(--ea-gold);
     }
-    .page-banner-area .page-title-bar h1 {
+    .webtv-hero-title {
+        font-size: 4rem;
+        font-weight: 700;
         color: #fff;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    }
+    .webtv-hero-subtitle {
+        font-size: 1.25rem;
+        color: #ccc;
+        margin-bottom: 2rem;
+    }
+    .btn-webtv {
+        background: var(--ea-gold);
+        color: #000;
+        font-weight: 700;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+    .btn-webtv:hover {
+        background: #fff;
+        color: #000;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
     .live-video-section {
         background-color: #1a1a1a;
@@ -228,6 +257,45 @@
     .portrait-card .btn-link:hover i {
         transform: translateX(5px);
     }
+
+    /* Decorated Section Title */
+    .section-title--decorated {
+        text-align: center;
+        position: relative;
+    }
+    .section-title--decorated h2 {
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 2.2rem;
+        display: inline-block;
+        padding: 0 25px;
+        background: linear-gradient(to right, #996633, #f7c807); /* Match the main background */
+        position: relative;
+        z-index: 1;
+    }
+    .section-title--decorated::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.3);
+        z-index: 0;
+    }
+
+    /* Gradient overlay for hero images to improve text readability */
+    .hero::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 70%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+        border-radius: 15px; /* Match the image border-radius */
+    }
     .bg-light {
         background-color: #f8f9fa !important;
     }
@@ -243,6 +311,8 @@
     .portrait-card__title--small {
         font-size: 1rem;
         margin-bottom: 0;
+        white-space: normal; /* Allow text to wrap */
+        word-wrap: break-word; /* Break long words if necessary */
     }
 
     .breaking__meta .positive {
@@ -569,8 +639,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="page-title-bar text-center pt-60 pb-60">
-                            <h1>WebTV</h1>
+                        <div class="webtv-hero-banner">
+                            <div class="container text-center">
+                                <h1 class="webtv-hero-title">WebTV</h1>
+                                <p class="webtv-hero-subtitle">Plongez au cœur de l'actualité avec nos émissions et reportages.</p>
+                                <a href="{{ route('webtv.index') }}" class="btn btn-lg btn-webtv">Accéder à la WebTV</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -587,10 +661,10 @@
                                 {!! $featuredWebtv->code_embed_vimeo !!}
                             @elseif($featuredWebtv && $featuredWebtv->statut == 'en_direct')
                                 <!-- Live en cours sans code embed -->
-                                <img src="{{ $featuredWebtv->image_path ? asset('storage/' . $featuredWebtv->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $featuredWebtv->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ $featuredWebtv->image_path ? asset('storage/' . $featuredWebtv->image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $featuredWebtv->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
                             @elseif($prochainLive)
                                 <!-- Live programmé -->
-                                <img src="{{ $prochainLive->image_path ? asset('storage/' . $prochainLive->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $prochainLive->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ $prochainLive->image_path ? asset('storage/' . $prochainLive->image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $prochainLive->titre ?? '' }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 <div class="scheduled-overlay">
                                     <div class="scheduled-content">
                                         <i class="fas fa-clock fa-3x mb-3"></i>
@@ -600,7 +674,7 @@
                                 </div>
                             @else
                                 <!-- Aucun live -->
-                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="WebTV Excellence Afrik" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ asset('assets/default/image_default.jpg') }}" alt="WebTV Excellence Afrik" style="width: 100%; height: 100%; object-fit: cover;">
                                 <div class="no-live-overlay">
                                     <div class="no-live-content">
                                         <i class="fas fa-tv fa-3x mb-3"></i>
@@ -656,202 +730,73 @@
         <!-- Section Principale (Hero Area) -->
         <!-- ============================================================== -->
 
-        <section class="hero-area">
+        <section class="unified-a-la-une-area pt-30 pb-30">
             <div class="container">
-
                 <div class="row">
                     <div class="col-12">
-                        <div class="section-title mb-30">
-                            <h2>TOPS 3 DE L'ARTICLE DU JOUR</h2>
-                        </div>
-                    </div>
-                @if(isset($dailyNews) && $dailyNews->count() > 0)
-                    @php
-                        $topArticle = $dailyNews->first();
-                        $sideArticles = $dailyNews->slice(1, 2);
-                    @endphp
-                    <div class="row">
-                        {{-- Main Article --}}
-                        @if($topArticle)
-                            <div class="col-lg-6 col-md-12">
-                                <div class="hero pos-relative mb-30">
-                                    <div class="hero__thumb" data-overlay="dark-gradient">
-                                        <a href="{{ route('articles.show', $topArticle->slug) }}">
-                                            @if($topArticle->featured_image_path && file_exists(public_path('storage/' . $topArticle->featured_image_path)))
-                                                <img src="{{ asset('storage/' . $topArticle->featured_image_path) }}" alt="{{ $topArticle->title }}">
-                                            @elseif($topArticle->featured_image_url)
-                                                <img src="{{ $topArticle->featured_image_url }}" alt="{{ $topArticle->title }}">
-                                            @else
-                                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $topArticle->title }}">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="hero__text">
-                                        <span class="post-cat mb-10"><a href="{{ route('articles.category', $topArticle->category->slug) }}">{{ $topArticle->category->name }}</a></span>
-                                        <h3 class="pr-100"><a href="{{ route('articles.show', $topArticle->slug) }}">{{ $topArticle->title }}</a></h3>
-                                        <small>{{ $topArticle->created_at->format('d M Y') }} | {{ $topArticle->user->name ?? 'Admin' }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Side Articles --}}
-                        <div class="col-lg-6">
-                            <div class="row">
-                                @if($sideArticles->count() > 0)
-                                    @foreach($sideArticles as $article)
-                                        <div class="col-lg-6 col-md-6">
-                                            <div class="hero pos-relative mb-30">
-                                                <div class="hero__thumb" data-overlay="dark-gradient">
-                                                    <a href="{{ route('articles.show', $article->slug) }}">
-                                                        @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                                            <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
-                                                        @elseif($article->featured_image_url)
-                                                            <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
-                                                        @else
-                                                            <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $article->title }}">
-                                                        @endif
-                                                    </a>
-                                                </div>
-                                                <div class="hero__text hero__text-small">
-                                                    <span class="post-cat mb-10">
-                                                        <a href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a>
-                                                    </span>
-                                                    <h3 class="pr-0">
-                                                        <a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 50) }}</a>
-                                                    </h3>
-                                                    <small>{{ $article->created_at->format('d M Y') }}</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </section>
-        <!-- hero-area end -->
-
-        <!-- ============================================================== -->
-        <!-- Section des Actualités à la Une -->
-        <!-- ============================================================== -->
-        <section class="news-area pt-30 pb-30">
-            <br />
-            <br />
-            <!-- trendy news -->
-            <div class="container">
-                <div class="row ">
-                    <div class="col-12">
-                        <div class="section-title mb-30">
-                            <h2 style="color: #fff;">ACTUALITÉS À LA UNE</h2>
+                        <div class="section-title section-title--decorated mb-50">
+                            <h2>À LA UNE</h2>
                         </div>
                     </div>
                 </div>
-                <br />
-            </div>
-            <div class="container">
-                @if(isset($actualitesUne) && $actualitesUne->count() > 0)
-                    @php
-                        $leftArticles = $actualitesUne->slice(0, 3);
-                        $mainArticles = $actualitesUne->slice(3, 2);
-                        $rightMiddleArticles = $actualitesUne->slice(5, 3);
-                        $rightBottomArticles = $actualitesUne->slice(3, 3);
-                    @endphp
-                    <div class="row row-10">
-                        <!-- Colonne gauche -->
-                        <div class="col-20 wow fadeInUp" data-wow-delay=".3s">
-                            @foreach($leftArticles as $article)
-                                <div class="hero pos-relative mb-30">
-                                    <div class="hero__thumb" data-overlay="dark-gradient">
-                                        <a href="{{ route('articles.show', $article->slug) }}">
-                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
-                                            @elseif($article->featured_image_url)
-                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
-                                            @else
-                                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $article->title }}">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="hero__text hero__text-small">
-                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 80) }}</a></h3>
-                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
 
-                        <!-- Colonne centrale -->
-                        <div class="col-40 wow fadeInUp" data-wow-delay=".5s">
-                            @foreach($mainArticles as $article)
-                                <div class="hero pos-relative mb-30">
-                                    <div class="hero__thumb" data-overlay="dark-gradient">
+                @if(isset($homepageAlaUneArticles) && $homepageAlaUneArticles->count() > 0)
+                    @php
+                        $largeArticles = $homepageAlaUneArticles->take(3);
+                        $smallArticles = $homepageAlaUneArticles->slice(3);
+                    @endphp
+
+                    <!-- 3 Large Articles -->
+                    <div class="row mb-30">
+                        @foreach($largeArticles as $article)
+                            <div class="col-lg-4 col-md-6 mb-30">
+                                <div class="hero pos-relative h-100">
+                                    <div class="hero__thumb" style="aspect-ratio: 5 / 3;">
                                         <a href="{{ route('articles.show', $article->slug) }}">
-                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
-                                            @elseif($article->featured_image_url)
-                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
-                                            @else
-                                                <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $article->title }}">
-                                            @endif
+                                            @php
+                                                $thumb_path = $article->featured_image_path ? preg_replace('/(\.[^.]+)$/', '_thumb$1', $article->featured_image_path) : null;
+                                            @endphp
+                                            <img src="{{ ($thumb_path && file_exists(public_path('storage/' . $thumb_path))) ? asset('storage/' . $thumb_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}" style="height: 100%; width: 100%; object-fit: cover;">
                                         </a>
                                     </div>
                                     <div class="hero__text">
-                                        <h3 class="pr-100"><a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a></h3>
-                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
+                                        @if($article->category)
+                                            <span class="post-cat mb-10"><a href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a></span>
+                                        @endif
+                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a></h3>
+                                        @if($article->published_at)
+                                            <small>{{ $article->published_at->translatedFormat('d F Y') }}</small>
+                                        @endif
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Colonne droite milieu (visible sur desktop uniquement) -->
-                        <div class="col-20 d-md-none d-xl-block wow fadeInUp" data-wow-delay=".7s">
-                            @foreach($rightMiddleArticles->take(3) as $article)
-                                <div class="hero pos-relative mb-30">
-                                    <div class="hero__thumb" data-overlay="dark-gradient">
-                                        <a href="{{ route('articles.show', $article->slug) }}">
-                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
-                                            @elseif($article->featured_image_url)
-                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
-                                            @else
-                                                <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $article->title }}">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="hero__text hero__text-small">
-                                        <span class="post-cat mb-10"><a href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a></span>
-                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 60) }}</a></h3>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Colonne droite -->
-                        <div class="col-20 wow fadeInUp" data-wow-delay=".9s">
-                            @foreach($rightBottomArticles->take(3) as $article)
-                                <div class="hero pos-relative mb-30">
-                                    <div class="hero__thumb" data-overlay="dark-gradient">
-                                        <a href="{{ route('articles.show', $article->slug) }}">
-                                            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                                <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
-                                            @elseif($article->featured_image_url)
-                                                <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
-                                            @else
-                                                <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $article->title }}">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="hero__text hero__text-small">
-                                        <h3 class="pr-0"><a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 80) }}</a></h3>
-                                        <small>{{ $article->created_at->format('d M Y') }} | {{ $article->category->name }}</small>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
+
+                    <!-- 12 Small Articles -->
+                    <div class="row">
+                        @foreach($smallArticles as $article)
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-30">
+                                <div class="hero pos-relative h-100 hero-small">
+                                    <div class="hero__thumb" style="aspect-ratio: 5 / 3;">
+                                        <a href="{{ route('articles.show', $article->slug) }}">
+                                             @php
+                                                $thumb_path = $article->featured_image_path ? preg_replace('/(\.[^.]+)$/', '_thumb$1', $article->featured_image_path) : null;
+                                            @endphp
+                                            <img src="{{ ($thumb_path && file_exists(public_path('storage/' . $thumb_path))) ? asset('storage/' . $thumb_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}" style="height: 100%; width: 100%; object-fit: cover;">
+                                        </a>
+                                    </div>
+                                    <div class="hero__text hero__text-small">
+                                         @if($article->category)
+                                            <span class="post-cat mb-10"><a href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a></span>
+                                        @endif
+                                        <h6><a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
                 @else
                     <div class="row">
                         <div class="col-12 text-center">
@@ -860,15 +805,6 @@
                     </div>
                 @endif
             </div>
-            <br />
-            <br />
-            <br />
-            <div class="post-btn mb-50">
-                @if(isset($actualitesUne) && $actualitesUne->count() > 0)
-                    <a href="{{ route('articles.category', 'actualites-a-la-une') }}" class="btn btn-border">Voir plus </a>
-                @endif
-            </div>
-            <!-- trendy news end -->
         </section>
         <!-- news area end -->
 
@@ -903,7 +839,7 @@
                                 <div class="portrait-card h-100 wow fadeInUp">
                                     <div class="portrait-card__image">
                                         <a href="{{ route('articles.show', $article->slug) }}">
-                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('styles/img/video/video-2.jpg') }}" alt="{{ $article->title }}">
+                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
                                         </a>
                                     </div>
                                     <div class="portrait-card__content">
@@ -926,12 +862,12 @@
                                 <div class="portrait-card portrait-card--small h-100 wow fadeInUp">
                                     <div class="portrait-card__image portrait-card__image--small">
                                         <a href="{{ route('articles.show', $article->slug) }}">
-                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('styles/img/video/video-2.jpg') }}" alt="{{ $article->title }}">
+                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
                                         </a>
                                     </div>
                                     <div class="portrait-card__content portrait-card__content--small">
                                         <h4 class="portrait-card__title portrait-card__title--small">
-                                            <a href="{{ route('articles.show', $article->slug) }}">{{ Str::limit($article->title, 50) }}</a>
+                                            <a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a>
                                         </h4>
                                     </div>
                                 </div>
@@ -966,12 +902,12 @@
                                 @foreach($latestMagazines as $magazine)
                                     <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{{ $loop->index * 0.1 }}s">
                                         <div class="hero pos-relative mb-30">
-                                            <div class="hero__thumb" data-overlay="dark-gradient">
+                                            <div class="hero__thumb">
                                                 <a href="{{ route('magazines.show', $magazine->slug) }}">
                                                     @if($magazine->cover_path)
                                                         <img src="{{ Storage::url($magazine->cover_path) }}" alt="{{ $magazine->title }}">
                                                     @else
-                                                        <img src="{{ asset('styles/img/hero/part1/hero2.jpg') }}" alt="{{ $magazine->title }}">
+                                                        <img src="{{ asset('assets/default/image_default.jpg') }}" alt="{{ $magazine->title }}">
                                                     @endif
                                                 </a>
                                             </div>
@@ -1001,25 +937,17 @@
         <!-- ============================================================== -->
         <!-- Section de Téléchargement des Applications -->
         <!-- ============================================================== -->
+        @if(isset($bottomBannerAd))
         <section class="app-area pb-60">
             <div class="container">
-                <div class="grey-bg pt-55 pb-55 pl-60 pr-60 wow fadeInUp" data-wow-delay=".3s">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-12">
-                            <div class="app-text text-center text-xl-left">
-                                <h2>Download our apps now</h2>
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-12">
-                            <div class="app-store text-center text-xl-right">
-                                <a href="#"><img src="{{ asset('styles/img/store/apple.png') }}" alt=""></a>
-                                <a href="#"><img src="{{ asset('styles/img/store/google.png') }}" alt=""></a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="wow fadeInUp" data-wow-delay=".3s">
+                    <a href="{{ $bottomBannerAd->getTrackableUrl() }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ asset('storage/' . $bottomBannerAd->image) }}" alt="{{ $bottomBannerAd->title }}" style="width: 100%; height: auto;">
+                    </a>
                 </div>
             </div>
         </section>
+        @endif
 
 
 

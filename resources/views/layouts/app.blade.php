@@ -68,7 +68,11 @@ try {
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="manifest" href="{{ asset('styles/site.webmanifest') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('styles/img/favicon.ico') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('styles/img/logo/logo.png') }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Place favicon.ico in the root directory -->
 
     <!-- CSS here -->
@@ -76,7 +80,7 @@ try {
     <link rel="stylesheet" href="{{ asset('styles/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/animate.min.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/magnific-popup.css') }}">
-    <link rel="stylesheet" href="{{ asset('styles/css/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('styles/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/meanmenu.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/css/slick.css') }}">
@@ -341,6 +345,7 @@ try {
                                         <h3>QUI SOMMES-NOUS</h3>
                                         <ul>
                                             <li><a href="{{ route('pages.presentation') }}">A propos</a></li>
+                                            <li><a href="{{ route('pages.equipe') }}">Equipe</a></li>
                                             <li><a href="{{ route('pages.legal') }}">Mentions légales</a></li>
                                             <li><a href="{{ route('pages.terms') }}">Conditions d'utilisation</a></li>
                                             <li><a href="{{ route('pages.privacy') }}">Politique de confidentialité</a></li>
@@ -381,8 +386,7 @@ try {
     <!-- JS here -->
     <script src="{{ asset('styles/js/vendor/modernizr-3.5.0.min.js') }}"></script>
     <script src="{{ asset('styles/js/vendor/jquery-1.12.4.min.js') }}"></script>
-    <script src="{{ asset('styles/js/popper.min.js') }}"></script>
-    <script src="{{ asset('styles/js/bootstrap.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{{ asset('styles/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('styles/js/isotope.pkgd.min.js') }}"></script>
     <script src="{{ asset('styles/js/one-page-nav-min.js') }}"></script>

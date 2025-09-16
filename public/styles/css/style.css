@@ -75,7 +75,7 @@ body {
      background: #fff;
      color: #a16e33;
  }
-  
+
 .img, img {
   max-width: 100%;
   -webkit-transition: all 0.3s ease-out 0s;
@@ -1337,7 +1337,7 @@ label {
   line-height: 1;
   padding-left: 5px; }
   .section-title h2::before {
-    background: #f4c700;
+
     height: 25px;
     width: 3px;
     content: "";
@@ -1648,8 +1648,9 @@ label {
         margin-left: 0; } }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-  .header__menu-area {
-    padding: 5px 0; } }
+  .page-banner-area {
+  background: linear-gradient(to right, #1a1a1a, #000000);
+  padding: 120px 0; } }
 
 .menu__border {
   border-top: 1px solid #eee; }
@@ -2203,6 +2204,14 @@ label {
 
 .black-icon.mean-container a.meanmenu-reveal span {
   background: #f4c700; }
+
+/* Override for article content to ensure correct font size */
+.article-content p,
+.article-content p span {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 18px !important;
+    color: #ffffff !important;
+}
 
 /* 4. Hero */
 
@@ -3334,7 +3343,7 @@ blockquote {
 /* Styles for Page Banner Area */
 .page-banner-area {
     position: relative;
-    background-color: #000;
+    background: linear-gradient(to right, #996633, #f7c807);
     overflow: hidden; /* Important to contain the absolutely positioned child */
 }
 
@@ -3399,4 +3408,17 @@ blockquote {
 
 .portrait-text .btn-link:hover {
     color: #f4c700;
+}
+
+/* Styles for legal pages (legal, terms, privacy) */
+.card-body h1,
+.card-body h2,
+.card-body p,
+.card-body li,
+.card-body strong {
+    color: #000000 !important;
+}
+
+.card-text {
+    color: #000000 !important;
 }

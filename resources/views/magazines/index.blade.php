@@ -55,10 +55,7 @@
                                     
                                     <div class="hero-actions">
                                         @if($featured->pdf_path)
-                                          <a href="{{ asset('storage/'.$featured->pdf_path) }}" target="_blank" class="btn-primary-gold">
-                                              <i class="fas fa-book-reader"></i> Télécharger
-                                          </a>
-                                          <a href="{{ asset('storage/'.$featured->pdf_path) }}" download class="btn-secondary-outline btn-download-brown">
+                                          <a href="{{ asset('storage/'.$featured->pdf_path) }}" download class="btn-secondary-outline btn-download-brown" style="background-color: #daa520; color: #fff; border-color: #daa520;">
                                               <i class="fas fa-download"></i> Télécharger PDF
                                           </a>
                                         @else

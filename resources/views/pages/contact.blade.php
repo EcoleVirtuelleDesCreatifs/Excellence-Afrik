@@ -7,7 +7,7 @@
 @section('page_subtitle', 'Nous sommes à votre écoute pour toute question ou collaboration')
 
 @section('content')
-<div class="container my-5">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-10">
 
@@ -84,7 +84,7 @@
                                         </div>
                                     @endif
 
-                                    <form id="contact-form" action="{{ route('pages.contact') }}" method="POST">
+                                    <form action="{{ route('pages.contact.send') }}" method="POST">
                                         @csrf
                                         <div class="row">
                                             <div class="col-xl-6">
@@ -183,10 +183,19 @@
 }
 
 .contact-info {
-    background: #f8f9fa;
+    background: #000;
     padding: 2.5rem;
     border-radius: 1.5rem;
     height: fit-content;
+}
+
+.contact-info h2 {
+    color: #D4AF37; /* Gold color */
+}
+
+.contact-info h4,
+.contact-info p {
+    color: #fff; /* White color */
 }
 
 .info-title {

@@ -92,6 +92,7 @@
         margin: 0;
     }
     .grid-filters .filter-pill-webtv {
+        color: #000;
         background-color: #f0f0f0;
         border: none;
         border-radius: 50px;
@@ -197,6 +198,17 @@
     .status-live {
         background-color: #e74c3c;
         color: white;
+        animation: blink-animation 1.5s infinite;
+    }
+
+    @keyframes blink-animation {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.3;
+        }
+    
     }
 
     .status-scheduled {
@@ -362,13 +374,13 @@
                             {!! $liveVideo->code_embed_vimeo !!}
                         @elseif($liveVideo)
                             <!-- Live en cours sans code embed -->
-                            <img src="{{ $liveVideo->image_path ? asset('storage/' . $liveVideo->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $liveVideo->titre ?? 'Vidéo en direct' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ $liveVideo->image_path ? asset('storage/' . $liveVideo->image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $liveVideo->titre ?? 'Vidéo en direct' }}" style="width: 100%; height: 100%; object-fit: cover;">
                             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 10px; text-align: center;">
                                 <p class="h5">Le direct est terminé ou le code d'intégration est manquant.</p>
                             </div>
                         @elseif($prochainLive)
                             <!-- Live programmé -->
-                            <img src="{{ $prochainLive->image_path ? asset('storage/' . $prochainLive->image_path) : asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $prochainLive->titre ?? 'Live programmé' }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ $prochainLive->image_path ? asset('storage/' . $prochainLive->image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $prochainLive->titre ?? 'Live programmé' }}" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="scheduled-overlay">
                                 <div class="scheduled-content">
                                     <i class="fas fa-clock fa-3x mb-3"></i>
@@ -378,7 +390,7 @@
                             </div>
                         @else
                             <!-- Aucun live -->
-                            <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="WebTV Excellence Afrik" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ asset('assets/default/image_default.jpg') }}" alt="WebTV Excellence Afrik" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="no-live-overlay">
                                 <div class="no-live-content">
                                     <i class="fas fa-tv fa-3x mb-3"></i>
@@ -448,7 +460,7 @@
                                 @if($program->image_path && file_exists(public_path('storage/' . $program->image_path)))
                                     <img src="{{ asset('storage/' . $program->image_path) }}" alt="{{ $program->titre }}">
                                 @else
-                                    <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $program->titre }}">
+                                    <img src="{{ asset('assets/default/image_default.jpg') }}" alt="{{ $program->titre }}">
                                 @endif
                             </a>
                             <div class="video-duration">{{ $program->duree_estimee_formatee ?? 'N/A' }}</div>

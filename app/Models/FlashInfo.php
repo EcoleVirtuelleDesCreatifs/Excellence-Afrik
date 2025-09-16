@@ -9,7 +9,6 @@ class FlashInfo extends Model
 {
     protected $fillable = [
         'titre',
-        'contenu',
         'statut',
         'ordre',
         'date_debut',

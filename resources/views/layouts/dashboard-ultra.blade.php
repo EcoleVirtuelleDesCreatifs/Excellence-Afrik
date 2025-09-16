@@ -147,6 +147,14 @@
                             </ul>
                         </li>
 
+                        <!-- Gestion des Articles À la une -->
+                        <li class="nav-item {{ request()->routeIs('dashboard.a_la_une.*') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard.a_la_une.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-star"></i>
+                                <span class="nav-text">Articles À la une</span>
+                            </a>
+                        </li>
+
                         <!-- Gestion WebTV - Accessible à tous les utilisateurs authentifiés -->
                         @if(auth()->check())
                             <li class="nav-item has-submenu {{ request()->routeIs('dashboard.webtv.*') ? 'active' : '' }}">

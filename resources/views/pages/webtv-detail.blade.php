@@ -222,7 +222,7 @@
                             </div>
                         @else
                             <!-- Fallback si pas de code Vimeo -->
-                            <div class="video-embed" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; padding-bottom: 56.25%;">
+                            <div class="hero__thumb" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; padding-bottom: 56.25%;">
                                 <div style="position: absolute; text-align: center; color: #6c757d;">
                                     <i class="fas fa-video fa-3x mb-3"></i>
                                     <p>Vidéo non disponible</p>
@@ -253,7 +253,7 @@
 
                             <div class="meta-item">
                                 <i class="fas fa-calendar"></i>
-                                <span>{{ $webtv->date_programmee_formatee ?? $webtv->created_at->format('d M Y') }}</span>
+                                <span>{{ $webtv->date_programmee_formatee ?? $webtv->created_at->translatedFormat('d F Y') }}</span>
                             </div>
                         </div>
 
@@ -296,7 +296,7 @@
                                 @if($programme->image_path && file_exists(public_path('storage/' . $programme->image_path)))
                                     <img src="{{ asset('storage/' . $programme->image_path) }}" alt="{{ $programme->titre }}">
                                 @else
-                                    <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="{{ $programme->titre }}">
+                                    <img src="{{ asset('assets/default/image_default.jpg') }}" alt="{{ $programme->titre }}">
                                 @endif
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>

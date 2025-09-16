@@ -156,6 +156,28 @@ class MagazineController extends Controller
         return view('magazines.index', compact('magazines', 'featured'));
     }
 
+    public function publicShow($slug)
+    {
+        // This method will now behave like the index page, as requested.
+        if (!Schema::hasTable('magazines')) {
+            $magazines = collect();
+            return view('magazines.index', compact('magazines'));
+        }
+        $featured = \App\Models\Magazine::where('status', 'published')
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $magazines = \App\Models\Magazine::where('status', 'published')
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
+            ->paginate(12);
+
+        return view('magazines.index', compact('magazines', 'featured'));
+    }
+
     private function processCover($file): array
     {
         $dir = 'magazines/covers';

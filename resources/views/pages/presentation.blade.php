@@ -24,6 +24,7 @@
         font-weight: 700;
         color: #333;
         margin-bottom: 20px;
+        line-height: 1.2; /* Réduit l'interligne */
     }
     .about-content .lead {
         font-size: 1.25rem;
@@ -88,6 +89,10 @@
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 15px;
+        color: #000;
+    }
+    .value-card p {
+        color: #333; /* Un noir légèrement plus doux pour le corps du texte */
     }
     .founder-section {
         padding: 80px 0;
@@ -105,6 +110,10 @@
     }
     .founder-content h2 {
         font-size: 2.2rem;
+        color: #000;
+    }
+    .founder-content p {
+        color: #333;
     }
     .founder-content .founder-title {
         font-size: 1.2rem;
@@ -119,7 +128,7 @@
 
 <main>
     <!-- Hero Banner -->
-    <div class="page-banner-area mt-60">
+    <div class="page-banner-area">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -139,9 +148,9 @@
                     <div class="about-content">
                         <span class="post-cat mb-10">Un média pionnier</span>
                         <h2>
-                            <span style="display: block;">PREMIER MAGAZINE PANAFRICAIN</span>
-                            <span style="display: block;">DÉDIÉ AUX BÂTISSEURS</span>
-                            <span style="display: block;">DE L'ÉCONOMIE RÉELLE.</span>
+                            <span style="display: block;">1er MEDIA PANAFRICAIN dédié</span>
+                            <span style="display: block;"> aux bâtisseurs de l'économie</span>
+                            <span style="display: block;">réelle.</span>
                         </h2>
                         <p class="lead">
                             Fondé en 2021, Excellence AFRIK est le premier média panafricain entièrement consacré aux entreprises non cotées : TPE, PME, et startups qui forment le cœur de l'économie africaine.
@@ -182,7 +191,7 @@
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="value-card">
-                        <div class="icon"><i class="fas fa-pen-fancy"></i></div>
+                        <div class="icon"><i class="fas fa-pen-nib"></i></div>
                         <h3>Notre Ligne Éditoriale</h3>
                         <p>Nous privilégions le portrait humain et narratif, à travers des articles de fond et des podcasts authentiques, pour capturer l'essence de l'entrepreneuriat : le courage, les échecs et les réussites.</p>
                     </div>
@@ -196,28 +205,19 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-4 text-center mb-4 mb-lg-0">
-                    <img src="{{ asset('assets/about/deza.jpg') }}" alt="Deza Auguste César" class="founder-image">
+                    <img src="{{ asset('assets/about/kokora.jpg') }}" alt="Venance Kokora" class="founder-image">
                 </div>
                 <div class="col-lg-8">
                     <div class="founder-content">
-                        <span class="post-cat mb-10">Le Fondateur</span>
-                        <h2>Deza Auguste César</h2>
-                        <p class="founder-title">Communicant Panafricain & Expert en Marketing Stratégique</p>
-                        <p>Passionné par l'émergence du continent et convaincu que l'avenir de l'Afrique se construit par ses entrepreneurs, Deza Auguste César a fondé Excellence Afrik pour donner une voix et une visibilité à ceux qui sont au cœur de la transformation économique africaine. Son ambition est de créer un écosystème médiatique qui non seulement informe, mais aussi inspire et connecte les forces vives du continent.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="post-cat mb-10">Directeur de publication</span>
+                        <h2>Venance Kokora</h2>
+                        <p class="founder-title">Journaliste & Homme de Médias ivoirien</p>
+                        <p>Venance Kokora est un journaliste chevronné, fort de plus de vingt années d’expérience au sein de la presse nationale. Il a fait ses preuves dans des journaux de référence tels que Le Rebond, Le Temps, L’Inter et L’Avenir. Son expertise ne se limite pas à la presse écrite : elle s’étend également à l’audiovisuel, où il s’est illustré en tant qu’animateur et directeur de radio de proximité. Cette polyvalence lui confère une vision globale et stratégique des métiers de l’information et de la communication.</p>
                     </div>
                 </div>
-            </section>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
 
 

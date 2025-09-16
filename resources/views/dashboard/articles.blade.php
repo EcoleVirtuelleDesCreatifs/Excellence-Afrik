@@ -3,6 +3,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/dashboard-ultra.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/dashboard-pages.css') }}">
+
 <style>
 /* Variables CSS pour la cohérence */
 :root {
@@ -261,6 +262,38 @@
         justify-content: center;
     }
 }
+
+/* Custom Pagination Styles */
+.pagination {
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 1rem 0;
+}
+.pagination .page-item .page-link {
+    color: var(--ea-blue);
+    border: 1px solid #dee2e6;
+    margin: 0 3px;
+    border-radius: 0.375rem; /* 6px */
+    transition: all 0.3s ease;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, var(--ea-gold), var(--ea-blue));
+    border-color: var(--ea-gold);
+    color: white;
+    z-index: 3;
+    box-shadow: var(--shadow-light);
+}
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+.pagination .page-item:not(.active) .page-link:hover {
+    background-color: #f0f0f0;
+    border-color: var(--ea-gold);
+}
 </style>
 @endpush
 
@@ -424,13 +457,16 @@
                             </div>
                         </td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" 
-                                     style="width: 30px; height: 30px; font-size: 12px;">
-                                    {{ strtoupper(substr($article->user->name ?? 'U', 0, 1)) }}
+                            @if($article->user)
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center text-white" style="width: 30px; height: 30px; font-size: 12px;">
+                                        {{ strtoupper(substr($article->user->name, 0, 1)) }}
+                                    </div>
+                                    {{ $article->user->name }}
                                 </div>
-                                {{ $article->user->name ?? 'Utilisateur inconnu' }}
-                            </div>
+                            @else
+                                Utilisateur inconnu
+                            @endif
                         </td>
                         <td>
                             <span class="badge bg-primary">{{ $article->category->name ?? 'Sans catégorie' }}</span>
@@ -459,7 +495,7 @@
                             @endif
                         </td>
                         <td>{{ number_format($article->view_count ?? 0) }}</td>
-                        <td>{{ $article->created_at->format('d M Y') }}</td>
+                        <td>{{ $article->created_at->translatedFormat('d F Y') }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <!-- Bouton modifier - Permissions selon le rôle -->
@@ -526,29 +562,8 @@
             </table>
         </div>
     </div>
-    <div class="card-footer d-flex justify-content-between align-items-center">
-        <div>
-            <span class="text-muted">Affichage 1-10 sur 45 articles</span>
-        </div>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled">
-                    <span class="page-link">Précédent</span>
-                </li>
-                <li class="page-item active">
-                    <span class="page-link">1</span>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Suivant</a>
-                </li>
-            </ul>
-        </nav>
+    <div class="card-footer bg-white">
+        {{ $articles->links() }}
     </div>
 </div>
 

@@ -35,21 +35,27 @@ return new class extends Migration
         
         // Ajouter les contraintes de clés étrangères après avoir ajouté les colonnes
         Schema::table('categories', function (Blueprint $table) {
-            if (Schema::hasColumn('categories', 'parent_id') && Schema::hasColumn('categories', 'user_id')) {
-                // Vérifier si les contraintes n'existent pas déjà
-                try {
-                    $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
-                } catch (\Exception $e) {
-                    // La contrainte existe déjà
-                }
-                
-                try {
-                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                } catch (\Exception $e) {
-                    // La contrainte existe déjà
-                }
+            if (Schema::hasColumn('categories', 'parent_id') && !$this->hasForeignKey($table, 'categories_parent_id_foreign')) {
+                $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
+            }
+            if (Schema::hasColumn('categories', 'user_id') && !$this->hasForeignKey($table, 'categories_user_id_foreign')) {
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             }
         });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    private function hasForeignKey(Blueprint $table, string $name): bool
+    {
+        $foreignKeys = Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys($table->getTable());
+        foreach ($foreignKeys as $foreignKey) {
+            if (strtolower($foreignKey->getName()) === strtolower($name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

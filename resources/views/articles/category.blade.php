@@ -43,8 +43,9 @@
         gap: 8px;
     }
     .filter-tab:hover {
-        background-color: #f0f0f0;
-        border-color: #ccc;
+        background-color: #f0f0f0 !important;
+        border-color: #ccc !important;
+        color: #333 !important; /* Assurer que le texte reste lisible */
     }
     .filter-tab.active {
         background-color: #D4AF37;
@@ -143,18 +144,19 @@
                 $categoriesWithFilters = ['grands-genres', 'entreprises-impacts', 'figures-de-leconomie'];
             @endphp
 
-            @if(in_array($category->slug, $categoriesWithFilters))
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 text-center">
-                      <h2 class="fw-bold" style="font-weight: 700 !important;">{{ $category->name }}</h2>
-                    </div>
-                </div>
-            @elseif($category && $category->description)
+            @if($category->slug === 'grands-genres')
                  <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <p class="category-description">{{ $category->description }}</p>
+                    <div class="col-lg-8 text-center">
+                      <h2 class="fw-bold" style="font-weight: 700 !important; margin-bottom: 2rem;">THÉMATIQUES</h2>
                     </div>
                 </div>
+            @elseif($category->slug === 'entreprises-impacts' || $category->slug === 'figures-de-leconomie')
+                 <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                      <h2 class="fw-bold" style="font-weight: 700 !important; margin-bottom: 2rem;">SECTEURS</h2>
+                    </div>
+                </div>
+
             @endif
 
             <!-- Filters -->
@@ -224,7 +226,7 @@
                                     @elseif($article->featured_image_url)
                                         <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
                                     @else
-                                        <img src="{{ asset('styles/img/hero/part1/hero1.jpg') }}" alt="Image par défaut">
+                                        <img src="{{ asset('assets/default/image_default.jpg') }}" alt="Image par défaut">
                                     @endif
                                 </a>
                                 @if($isVideoCategory)
@@ -239,17 +241,17 @@
                                     <a href="{{ route('articles.show', $article->slug) }}">{{ $article->title }}</a>
                                 </h3>
                                 <div class="article-card-v2__meta">
-                                    <span>Par {{ $article->user->name ?? 'Admin' }}</span> |
-                                    <span>{{ $article->created_at->format('d M Y') }}</span>
+                                    <span>Par {{ $article->author->name ?? 'Admin' }}</span> |
+                                    <span>{{ $article->created_at->translatedFormat('d F Y') }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="col-12 text-center py-5">
-                        <i class="fas fa-newspaper fa-4x text-muted mb-4"></i>
-                        <h3 class="text-muted">Aucun article trouvé</h3>
-                        <p class="text-muted">Il n'y a pas encore de contenu dans cette catégorie.</p>
+                        <i class="fas fa-newspaper fa-4x text-white mb-4"></i>
+                        <h3 class="text-white">Aucun article trouvé</h3>
+                        <p class="text-white">Il n'y a pas encore de contenu dans cette catégorie.</p>
                     </div>
                 @endforelse
             </div>

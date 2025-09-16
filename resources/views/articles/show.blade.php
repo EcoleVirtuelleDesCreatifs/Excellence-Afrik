@@ -4,6 +4,22 @@
 @section('meta_description', $article->seo_description ?: $article->excerpt)
 
 @section('content')
+@push('styles')
+<style>
+    .article-content p,
+    .article-content p span {
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 18px !important;
+        color: #ffffff !important;
+        background-color: transparent !important; /* Ensure no background color is applied from the editor */
+        text-align: justify !important;
+    }
+    .article-content p {
+        margin-bottom: 1.5em;
+    }
+</style>
+@endpush
+
 <main class="py-5">
     <div class="container">
         <div class="row">
@@ -13,7 +29,7 @@
                     <!-- En-tête de l'article -->
                     <header class="mb-4">
                         <h1 class="fw-bolder mb-1">{{ $article->title }}</h1>
-                        <div class="text-muted fst-italic mb-2">Posté le {{ $article->created_at->format('d F Y') }} par {{ $article->user->name ?? 'Admin' }}</div>
+                        <div class="text-muted fst-italic mb-2">Posté le {{ $article->created_at->translatedFormat('d F Y') }} par {{ $article->user->name ?? 'Admin' }}</div>
                         @if($article->category)
                             <a class="badge bg-secondary text-decoration-none link-light" href="{{ route('articles.category', $article->category->slug) }}">{{ $article->category->name }}</a>
                         @endif
@@ -23,6 +39,8 @@
                     <figure class="mb-4">
                         @if($article->featured_image_path)
                             <img class="img-fluid rounded" src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}" />
+                        @else
+                            <img class="img-fluid rounded" src="{{ asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}" />
                         @endif
                     </figure>
 
@@ -32,14 +50,30 @@
                     </section>
                 </article>
 
-                <!-- Section de partage social -->
-                <div class="text-center my-5">
-                    <h4 class="mb-3">Partager cet article</h4>
-                    <div class="social-share">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="btn btn-primary btn-lg mx-2"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->title) }}" target="_blank" class="btn btn-info btn-lg mx-2 text-white"><i class="fab fa-twitter"></i></a>
-                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(request()->url()) }}" target="_blank" class="btn btn-secondary btn-lg mx-2"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://wa.me/?text={{ urlencode($article->title . ' ' . request()->url()) }}" target="_blank" class="btn btn-success btn-lg mx-2"><i class="fab fa-whatsapp"></i></a>
+                <!-- Section de partage social redessinée -->
+                <div class="share-section-wrapper my-5">
+                    <h4 class="share-title">Partager cet article</h4>
+                    <div class="share-buttons-grid">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="share-button facebook">
+                            <i class="fab fa-facebook-f"></i>
+                            <span>Facebook</span>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($article->title) }}" target="_blank" class="share-button twitter">
+                            <i class="fab fa-twitter"></i>
+                            <span>Twitter</span>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode(request()->url()) }}" target="_blank" class="share-button linkedin">
+                            <i class="fab fa-linkedin-in"></i>
+                            <span>LinkedIn</span>
+                        </a>
+                        <a href="https://wa.me/?text={{ urlencode($article->title . ' ' . request()->url()) }}" target="_blank" class="share-button whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+                    <div class="copy-link-wrapper mt-3">
+                        <input type="text" id="shareableLink" class="form-control" value="{{ request()->url() }}" readonly>
+                        <button class="btn btn-outline-secondary" id="copyLinkBtn" type="button">Copier</button>
                     </div>
                 </div>
 
@@ -65,14 +99,14 @@
                     <div class="card-body">
                         @foreach($relatedArticles as $related)
                             <div class="d-flex mb-3 sidebar-article-card">
-                                <div class="flex-shrink-0">
-                                    <a href="{{ route('articles.show', $related->slug) }}">
-                                        <img src="{{ $related->featured_image_path ? asset('storage/' . $related->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $related->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
-                                    </a>
-                                </div>
-                                <div class="ms-3">
+                                <div class="flex-shrink-0 me-3" style="padding-right: 1rem">
+                                     <a href="{{ route('articles.show', $related->slug) }}">
+                                         <img src="{{ $related->featured_image_path ? asset('storage/' . $related->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $related->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                     </a>
+                                 </div>
+                                <div>
                                     <h5 class="mb-1" style="font-size: 1rem;"><a href="{{ route('articles.show', $related->slug) }}" class="text-dark text-decoration-none">{{ $related->title }}</a></h5>
-                                    <div class="text-muted" style="font-size: 0.8rem;">{{ $related->created_at->format('d M Y') }}</div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">{{ $related->created_at->translatedFormat('d F Y') }}</div>
                                 </div>
                             </div>
                         @endforeach
@@ -80,6 +114,31 @@
                 </div>
                 @endif
 
+                <!-- Dynamic Sibling Categories Widget -->
+                @if($sidebarCategories->count() > 0)
+                    @foreach($sidebarCategories as $category)
+                        @if($category->articles->count() > 0)
+                            <div class="card mb-4">
+                                <div class="card-header">{{ $category->name }}</div>
+                                <div class="card-body">
+                                    @foreach($category->articles as $articleItem)
+                                        <div class="d-flex mb-3 sidebar-article-card">
+                                            <div class="flex-shrink-0 me-3">
+                                                <a href="{{ route('articles.show', $articleItem->slug) }}">
+                                                    <img src="{{ $articleItem->featured_image_path ? asset('storage/' . $articleItem->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $articleItem->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-1" style="font-size: 1rem;"><a href="{{ route('articles.show', $articleItem->slug) }}" class="text-dark text-decoration-none">{{ $articleItem->title }}</a></h5>
+                                                <div class="text-muted" style="font-size: 0.8rem;">{{ $articleItem->created_at->translatedFormat('d F Y') }}</div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>
@@ -166,13 +225,123 @@
 
     /* Titre de l'article */
     article header .fw-bolder {
-        color: #c1933e;
+        color: #000000;
+        line-height: 1.2;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+        /* Responsive Article Title */
+        article header .fw-bolder {
+            font-size: 1.5rem; /* Further reduce font size for mobile */
+            line-height: 1.3; /* Adjust line height for wrapped text */
+            text-align: center; /* Center the title */
+        }
+
+        /* Responsive Article Content */
+        .article-content p,
+        .article-content p span {
+            font-size: 16px !important; /* Slightly smaller font for mobile readability */
+        }
+
+        /* Responsive Share Buttons */
+        .share-buttons-grid {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+        }
+
+        /* Responsive Sidebar */
+        .sidebar-article-card h5 a {
+            font-size: 0.9rem;
+        }
+    }
+    article header .text-muted {
+        color: #ffffff !important;
+    }
+
+    /* Nouvelle section de partage */
+    .share-section-wrapper {
+        background-color: #f1f1f1;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+    }
+    .share-title {
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 1.5rem;
+    }
+    .share-buttons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+    .share-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .share-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+    .share-button i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .share-button.facebook { background-color: #1877F2; }
+    .share-button.twitter { background-color: #1DA1F2; }
+    .share-button.linkedin { background-color: #0A66C2; }
+    .share-button.whatsapp { background-color: #25D366; }
+
+    .copy-link-wrapper {
+        display: flex;
+    }
+    .copy-link-wrapper .form-control {
+        border-right: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        background-color: #fff;
+    }
+    .copy-link-wrapper .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 </style>
 @endpush
-@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('copyLinkBtn');
+    const linkInput = document.getElementById('shareableLink');
+
+    if(copyBtn && linkInput) {
+        copyBtn.addEventListener('click', function() {
+            linkInput.select();
+            document.execCommand('copy');
+            this.textContent = 'Copié!';
+            setTimeout(() => {
+                this.textContent = 'Copier';
+            }, 2000);
+        });
+    }
+});
+</script>
+@endpush
 
 @push('head')
+
 <script type="application/ld+json">
 {!! json_encode([
     '@context' => 'https://schema.org',
@@ -201,3 +370,6 @@
 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endpush
+
+
+@endsection;

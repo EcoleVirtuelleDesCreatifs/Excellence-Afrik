@@ -66,6 +66,7 @@
                         </div>
                         <h5 class="card-title">Prix d'Excellence International</h5>
                         <p class="card-text">Récompense l'entreprise qui a introduit une technologie ou un modèle économique révolutionnaire.</p>
+                        <a href="#" class="btn btn-primary-gold mt-3">Découvrez</a>
                     </div>
                 </div>
             </div>
@@ -79,6 +80,7 @@
                         </div>
                         <h5 class="card-title">Prix Impact Féminin</h5>
                         <p class="card-text">Dédié au projet ayant eu le plus grand impact positif sur sa communauté ou sur l'environnement.</p>
+                        <a href="#" class="btn btn-primary-gold mt-3">Découvrez</a>
                     </div>
                 </div>
             </div>
@@ -92,6 +94,7 @@
                         </div>
                         <h5 class="card-title">Prix d'Excellence Entrepreneuriale</h5>
                         <p class="card-text">Célèbre la jeune entreprise la plus prometteuse, avec un fort potentiel de croissance et d'innovation.</p>
+                        <a href="#" class="btn btn-primary-gold mt-3">Découvrez</a>
                     </div>
                 </div>
             </div>

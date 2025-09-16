@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\View;
 use App\Models\Article;
 use App\Models\Advertisement;
 use App\Observers\ArticleObserver;
+use Illuminate\Support\Facades\App;
+use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrap();
+        // Forcer la locale pour les dates
+        App::setLocale(config('app.locale'));
+        Carbon::setLocale(config('app.locale'));
+
         // Enregistrer l'observer pour le modèle Article
         Article::observe(ArticleObserver::class);
 

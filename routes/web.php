@@ -1,15 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
+
+//======================================================================
+// PUBLIC ROUTES
+//======================================================================
 
 Route::get('/', function () {
-    // Permettre la configuration via .env pour refléter les changements sans dépendre des libellés
+    // ... (Your existing homepage logic) ...
     $dailyNewsSlugEnv = env('DAILY_NEWS_CATEGORY_SLUG');
     $dailyNewsIdEnv   = env('DAILY_NEWS_CATEGORY_ID');
     $figuresSlugEnv   = env('FIGURES_CATEGORY_SLUG');
     $figuresIdEnv     = env('FIGURES_CATEGORY_ID');
-
-    // Récupérer la sous-catégorie "Top 3 Actualité du jour" de la catégorie "Page accueil"
     $dailyQuery = \App\Models\Category::where('status', 'active')->where('is_active', 1);
     if ($dailyNewsIdEnv) {
         $dailyQuery->where('id', $dailyNewsIdEnv);
@@ -22,19 +25,15 @@ Route::get('/', function () {
         });
     }
     $dailyNewsCategory = $dailyQuery->first();
-
     $dailyNews = collect();
     if ($dailyNewsCategory) {
-        // Récupérer les articles de la sous-catégorie "Top 3 Actualité du jour"
         $dailyNews = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $dailyNewsCategory->id)
             ->where('status', 'published')
             ->orderBy('created_at', 'desc')
-            ->limit(3) // Limité à 3 pour "Top 3"
+            ->limit(3)
             ->get();
     }
-    
-    // Récupérer la catégorie "Figures de l'Economie"
     $figuresQuery = \App\Models\Category::where('status', 'active')->where('is_active', 1);
     if ($figuresIdEnv) {
         $figuresQuery->where('id', $figuresIdEnv);
@@ -42,16 +41,13 @@ Route::get('/', function () {
         $figuresQuery->where('slug', $figuresSlugEnv);
     } else {
         $figuresQuery->where(function($q) {
-            // Privilégier le slug (moins sujet aux changements de libellé)
             $q->whereIn('slug', ['figures-de-leconomie', 'figures-de-l-economie'])
               ->orWhere('name', "Figures de l'Economie");
         });
     }
     $figuresCategory = $figuresQuery->first();
-    
     $figuresArticles = collect();
     if ($figuresCategory) {
-        // Récupérer les articles de la catégorie "Figures de l'Economie"
         $figuresArticles = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $figuresCategory->id)
             ->where('status', 'published')
@@ -59,9 +55,6 @@ Route::get('/', function () {
             ->limit(4)
             ->get();
     }
-    
-    // Featured WebTV for homepage (À la une)
-    // Prioriser : en_direct > programme futur > aucun
     $featuredWebtv = \App\Models\Webtv::query()
         ->where('est_actif', true)
         ->whereIn('statut', ['en_direct', 'programme', 'termine'])
@@ -70,8 +63,6 @@ Route::get('/', function () {
         ->orderByDesc('date_programmee')
         ->orderByDesc('created_at')
         ->first();
-
-    // Si pas de live en cours, récupérer le prochain live programmé
     $prochainLive = null;
     if (!$featuredWebtv || $featuredWebtv->statut !== 'en_direct') {
         $prochainLive = \App\Models\Webtv::query()
@@ -83,33 +74,14 @@ Route::get('/', function () {
             ->first();
     }
 
-    // Récupérer la sous-catégorie "Actualités à la une" de la catégorie "Page accueil"
-    $actualitesUneCategory = \App\Models\Category::where('status', 'active')
-        ->where('is_active', 1)
-        ->where('slug', 'actualites-a-la-une')
-        ->first();
 
-    $actualitesUne = collect();
-    if ($actualitesUneCategory) {
-        // Récupérer les articles de la sous-catégorie "Actualités à la une"
-        $actualitesUne = \App\Models\Article::with(['category', 'user'])
-            ->where('category_id', $actualitesUneCategory->id)
-            ->where('status', 'published')
-            ->orderBy('created_at', 'desc')
-            ->limit(8) // Pour correspondre au layout de la page (structure actuelle)
-            ->get();
-    }
 
-    // Récupérer les articles pour la section "Portraits d'entrepreneurs"
-    // D'abord essayer la nouvelle sous-catégorie "Page accueil > Portraits d'entrepreneurs"
     $portraitsAccueilCategory = \App\Models\Category::where('status', 'active')
         ->where('is_active', 1)
         ->where('slug', 'portraits-entrepreneurs-accueil')
         ->first();
-
     $entrepreneurArticles = collect();
     if ($portraitsAccueilCategory) {
-        // Récupérer les articles de la sous-catégorie "Portraits d'entrepreneurs" (Page accueil)
         $entrepreneurArticles = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $portraitsAccueilCategory->id)
             ->where('status', 'published')
@@ -117,15 +89,12 @@ Route::get('/', function () {
             ->limit(7)
             ->get();
     }
-
-    // Si pas d'articles dans la nouvelle sous-catégorie, fallback sur l'ancienne catégorie "Portrait de l'entrepreneur"
     if ($entrepreneurArticles->isEmpty()) {
         $oldEntrepreneurCategory = \App\Models\Category::where('status', 'active')
             ->where('is_active', 1)
             ->whereIn('slug', ['portrait-de-l-entrepreneur', 'portrait-de-lentrepreneur'])
             ->orWhere('name', "Portrait de l'entrepreneur")
             ->first();
-
         if ($oldEntrepreneurCategory) {
             $entrepreneurArticles = \App\Models\Article::with(['category', 'user'])
                 ->where('category_id', $oldEntrepreneurCategory->id)
@@ -135,26 +104,33 @@ Route::get('/', function () {
                 ->get();
         }
     }
-
-    // Récupérer les magazines depuis la section Magazine du dashboard
     $latestMagazines = \App\Models\Magazine::where('status', 'published')
         ->orderBy('created_at', 'desc')
         ->limit(4)
         ->get();
-
-    // Flash Info for homepage ticker
     $flashInfos = \App\Models\FlashInfo::affichage()->limit(10)->get();
-
-    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'prochainLive', 'flashInfos', 'actualitesUne', 'entrepreneurArticles', 'latestMagazines'));
+    // Fetch articles for the new unified "À LA UNE" section
+    $homepageAlaUneArticles = collect();
+    $actualiteDuJourCategory = \App\Models\Category::where('slug', 'actualite-du-jour')->first();
+    if ($actualiteDuJourCategory) {
+        $homepageAlaUneArticles = \App\Models\Article::with(['category', 'user'])
+            ->where('category_id', $actualiteDuJourCategory->id)
+            ->where('status', 'published')
+            ->orderBy('created_at', 'desc')
+            ->limit(15) // Fetch 15 articles for the new 3+12 layout
+            ->get();
+    }
+    $bottomBannerAd = \App\Models\Advertisement::active()->forPosition('home', null, 'bottom_banner')->first();
+    return view('home', compact('dailyNews', 'figuresArticles', 'featuredWebtv', 'prochainLive', 'flashInfos', 'entrepreneurArticles', 'latestMagazines', 'homepageAlaUneArticles', 'bottomBannerAd'));
 })->name('home');
 
-// Route pour tracking des clics sur les publicités - voir ligne 741 pour la route complète
-
-// Pages routes
+// Public static pages
 Route::prefix('pages')->name('pages.')->group(function () {
     Route::get('/presentation', function () { return view('pages.presentation'); })->name('presentation');
+    Route::get('/equipe', function () { return view('pages.equipe'); })->name('equipe');
     Route::get('/editorial', function () { return view('pages.editorial'); })->name('editorial');
-    Route::get('/contact', function () { return view('pages.contact'); })->name('contact');
+    Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+    Route::post('/contact', [PageController::class, 'sendContactForm'])->name('contact.send');
     Route::get('/advertise', function () { return view('pages.advertise'); })->name('advertise');
     Route::get('/sponsor', function () { return view('pages.sponsor'); })->name('sponsor');
     Route::get('/awards', function () { return view('pages.awards'); })->name('awards');
@@ -196,6 +172,20 @@ Route::prefix('articles')->name('articles.')->group(function () {
                 ->first();
         }
 
+        // Robust resolution for "Actualités à la une" page
+        if (!$category && in_array($slug, ['actualites-a-la-une', 'actualite-a-la-une'])) {
+            // Find the category by name first to get the correct, current slug
+            $actualitesCategory = \App\Models\Category::where('name', 'Actualités à la une')->first();
+            
+            if ($actualitesCategory) {
+                // Now, find the category using its actual slug from the database
+                $category = \App\Models\Category::where('slug', $actualitesCategory->slug)->first();
+            } else {
+                // Fallback: If the name doesn't match, try finding a category that contains 'Actualit' in its name
+                $category = \App\Models\Category::where('name', 'LIKE', '%Actualit%')->where('status', 'active')->first();
+            }
+        }
+
         // Robust resolution for "Startup de la diaspora" page
         if (!$category && in_array($slug, ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])) {
             $category = \App\Models\Category::whereIn('slug', ['startup-de-la-diaspora', 'start-up-de-la-diaspora'])
@@ -204,46 +194,27 @@ Route::prefix('articles')->name('articles.')->group(function () {
         }
 
         // Robust resolution for "Parole d'experts" page
-        if (!$category && in_array($slug, ['parole-experts', 'parole-d-experts'])) {
-            $nameVariants = ["Parole d'experts", "Parole d'experts", "Parole D'Experts", "Parole D'Experts"];
-            $slugVariants = ['parole-experts', 'parole-d-experts'];
-            // First, try with active constraints
-            $category = \App\Models\Category::where(function($q) use ($nameVariants, $slugVariants) {
-                    $q->whereIn('slug', $slugVariants)
+        if (!$category && in_array($slug, ['parole-experts', 'parole-d-experts', 'paroles-d-experts'])) {
+            $slugVariants = ['parole-experts', 'parole-d-experts', 'paroles-d-experts'];
+            $nameVariants = ["Parole d'experts", "Parole D'Experts", "Paroles d'experts"];
+
+            // First, try to find the category with an 'active' status.
+            $category = \App\Models\Category::where(function ($query) use ($slugVariants, $nameVariants) {
+                $query->whereIn('slug', $slugVariants)
                       ->orWhereIn('name', $nameVariants);
-                })
-                ->where(function($q){
-                    // accept either explicit 'active' or missing columns gracefully
-                    $q->where('status', 'active')
-                      ->orWhereNull('status');
-                })
-                ->where(function($q){
-                    $q->where('is_active', 1)
-                      ->orWhereNull('is_active');
-                })
-                ->first();
+            })
+            ->where('status', 'active')
+            ->first();
 
-            // If still not found, try without any status filters as a final fallback
+            // If it's still not found, try again without the status constraint as a fallback.
             if (!$category) {
-                $baseQuery = \App\Models\Category::where(function($q) use ($nameVariants, $slugVariants) {
-                        $q->whereIn('slug', $slugVariants)
+                $category = \App\Models\Category::where(function ($query) use ($slugVariants, $nameVariants) {
+                    $query->whereIn('slug', $slugVariants)
                           ->orWhereIn('name', $nameVariants);
-                    });
-
-                // Try with only is_active = 1
-                $category = clone $baseQuery;
-                $category = $category->where(function($q) {
-                    $q->where('is_active', 1)
-                      ->orWhereNull('is_active');
                 })
                 ->first();
-
-            if (!$category) {
-                $category = $baseQuery->first();
             }
         }
-        }
-        
         if (!$category) {
             abort(404, 'Catégorie non trouvée');
         }
@@ -253,65 +224,6 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->where('status', 'published')
             ->orderBy('created_at', 'desc');
 
-        // Sector filtering for Figures de l'économie and Entreprises & Impacts
-        $isFigures = in_array($category->slug, ['figures-economie', 'figures-de-leconomie', 'figures-de-l-economie']);
-        $isEntreprisesImpacts = ($category->slug === 'entreprises-impacts');
-        $isContributionsAnalyses = ($category->slug === 'contributions-analyses');
-        $isPortraitEntrepreneur = ($category->slug === 'portrait-entrepreneur');
-        $isGrandsGenres = ($category->slug === 'grands-genres');
-        $sector = request('sector');
-        $sectorApplied = false; // track if a valid sector filter is applied
-        $allowedSectors = ['agriculture', 'technologie', 'industrie', 'services', 'energie'];
-        // Map each FR sector to accepted DB values (compatibility with legacy EN values)
-        $sectorValueMap = [
-            'agriculture' => ['agriculture'],
-            'technologie' => ['technologie', 'tech', 'technology'],
-            'industrie'   => ['industrie', 'mining', 'industrie-extractives', 'industry'],
-            'services'    => ['services', 'telecom', 'télécom'],
-            'energie'     => ['energie', 'énergie', 'energy']
-        ];
-        if (($isFigures || $isEntreprisesImpacts) && $sector) {
-            $normalizedSector = strtolower($sector);
-            if (in_array($normalizedSector, $allowedSectors)) {
-                $accepted = $sectorValueMap[$normalizedSector] ?? [$normalizedSector];
-                $query->whereIn('sector', $accepted);
-                $sector = $normalizedSector; // ensure view receives normalized value
-                $sectorApplied = true;
-            }
-        }
-
-        // Theme filtering only for Grands Genres
-        $allowedThemes = ['reportages', 'interviews', 'documentaires', 'temoignages'];
-        $theme = request('theme');
-        if ($isGrandsGenres && $theme && in_array(strtolower($theme), $allowedThemes)) {
-            $query->where('theme', strtolower($theme));
-        }
-
-        // Featured article handling
-        $featuredArticle = null;
-        if ($isEntreprisesImpacts) {
-            // For Entreprises & Impacts: choose featured only when a valid sector filter is applied
-            if ($sectorApplied) {
-                $featuredQuery = clone $query;
-                $featuredArticle = $featuredQuery->where('is_featured', true)->first();
-                if ($featuredArticle) {
-                    $query->where('id', '!=', $featuredArticle->id);
-                }
-            } else {
-                // "Tous les secteurs" -> no single featured; show all articles
-                $featuredArticle = null;
-            }
-        } elseif ($isContributionsAnalyses) {
-            // Allow explicit featured for Contributions & Analyses (category-wide)
-            // Do NOT exclude it from the list: show featured AND keep full list
-            $featuredQuery = clone $query;
-            $featuredArticle = $featuredQuery->where('is_featured', true)->first();
-        } elseif ($isPortraitEntrepreneur) {
-            // Portrait d'Entrepreneur: allow explicit featured; keep it in the list
-            $featuredQuery = clone $query;
-            $featuredArticle = $featuredQuery->where('is_featured', true)->first();
-        }
-
         $articles = $query->paginate(12)->appends(request()->query());
             
         $relatedCategories = \App\Models\Category::where('status', 'active')
@@ -320,22 +232,7 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->limit(8)
             ->get();
 
-        // Available sectors for UI
-        $availableSectors = collect();
-        if ($isFigures || $isEntreprisesImpacts) {
-            $availableSectors = \App\Models\Article::where('category_id', $category->id)
-                ->whereNotNull('sector')
-                ->distinct()
-                ->pluck('sector')
-                ->filter();
-        }
-
-        // Theme filtering - Add default values
-        $theme = request('theme');
-        $allowedThemes = ['innovation', 'finance', 'leadership', 'sustainability'];
-
-        return view('articles.category', compact('category', 'articles', 'relatedCategories', 'slug', 'availableSectors', 'isFigures', 'isEntreprisesImpacts', 'isContributionsAnalyses', 'isPortraitEntrepreneur', 'sector', 'isGrandsGenres', 'allowedSectors', 'featuredArticle'))
-            ->with(['theme' => $theme, 'allowedThemes' => $allowedThemes]); 
+        return view('articles.category', compact('category', 'articles', 'relatedCategories', 'slug')); 
     })->name('category');
     
     Route::get('/{slug}', function ($slug) {
@@ -344,19 +241,31 @@ Route::prefix('articles')->name('articles.')->group(function () {
             ->where('status', 'published')
             ->firstOrFail();
             
-        // Increment view count
         $article->increment('view_count');
         
-        // Get related articles from same category
         $relatedArticles = \App\Models\Article::with(['category', 'user'])
             ->where('category_id', $article->category_id)
             ->where('id', '!=', $article->id)
             ->where('status', 'published')
             ->orderBy('created_at', 'desc')
-            ->limit(4)
+            ->limit(10)
             ->get();
-        
-        return view('articles.show', compact('article', 'relatedArticles')); 
+
+        $sidebarCategories = collect();
+        if ($article->category && $article->category->parent) {
+            $sidebarCategories = \App\Models\Category::where('parent_id', $article->category->parent_id)
+                ->where('id', '!=', $article->category_id)
+                ->where('status', 'active')
+                ->where('is_active', 1)
+                ->with(['articles' => function ($query) {
+                    $query->where('status', 'published')
+                          ->orderBy('created_at', 'desc')
+                          ->limit(10);
+                }])
+                ->get();
+        }
+
+        return view('articles.show', compact('article', 'relatedArticles', 'sidebarCategories')); 
     })->name('show');
     
     Route::get('/search', function () { 
@@ -367,9 +276,7 @@ Route::prefix('articles')->name('articles.')->group(function () {
 // Magazines routes
 Route::prefix('magazines')->name('magazines.')->group(function () {
     Route::get('/', [App\Http\Controllers\MagazineController::class, 'publicIndex'])->name('index');
-    Route::get('/{id}', function ($id) { 
-        return view('magazines.show', compact('id')); 
-    })->name('show')->where('id', '[0-9]+');
+    Route::get('/{slug}', [App\Http\Controllers\MagazineController::class, 'publicShow'])->name('show');
     Route::get('/{id}/download', function ($id) {
         // Here you would implement PDF download logic
         return redirect()->back()->with('info', 'Téléchargement du PDF N° ' . $id);
@@ -383,13 +290,6 @@ Route::prefix('magazines')->name('magazines.')->group(function () {
     Route::get('/newsletter/subscribe', function () {
         return view('newsletter.subscribe');
     })->name('newsletter.subscribe');
-});
-
-// Authentication Routes
-Route::prefix('auth')->group(function () {
-    Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
-    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 });
 
 // Dashboard Routes (Protected avec vérification des rôles)
@@ -423,6 +323,9 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
     // === ACTIONS GROUPÉES SUR ARTICLES - Seulement directeur et admin pour publication ===
     Route::post('/dashboard/articles/bulk-action', [App\Http\Controllers\DashboardController::class, 'bulkAction'])
          ->name('dashboard.articles.bulk-action');
+    
+    // Routes pour les articles "À la une"
+    Route::resource('/dashboard/a-la-une', App\Http\Controllers\Dashboard\ALaUneArticleController::class)->names('dashboard.a_la_une');
     
     // === GESTION CATÉGORIES - Lecture pour tous, modification pour admin/directeur ===
     Route::get('/dashboard/categories', [App\Http\Controllers\DashboardController::class, 'categories'])->name('dashboard.categories.index');
@@ -472,13 +375,23 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::get('/', [App\Http\Controllers\FlashInfoController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\FlashInfoController::class, 'create'])->name('create');
         Route::post('/', [App\Http\Controllers\FlashInfoController::class, 'store'])->name('store');
-        Route::get('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'show'])->name('show');
         Route::get('/{flashInfo}/edit', [App\Http\Controllers\FlashInfoController::class, 'edit'])->name('edit');
         Route::put('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'update'])->name('update');
         Route::delete('/{flashInfo}', [App\Http\Controllers\FlashInfoController::class, 'destroy'])->name('destroy');
-        Route::post('/{flashInfo}/toggle-statut', [App\Http\Controllers\FlashInfoController::class, 'toggleStatut'])->name('toggle-statut');
+        Route::post('/{flashInfo}/toggle-actif', [App\Http\Controllers\FlashInfoController::class, 'toggleActif'])->name('toggle-actif');
     });
 
+    // === GESTION DES NEWSLETTERS - Admin et Directeur uniquement ===
+    Route::middleware('verifier.role:admin,directeur_publication')->group(function () {
+        Route::get('/dashboard/newsletter', [App\Http\Controllers\NewsletterController::class, 'index'])->name('dashboard.newsletter.index');
+        Route::get('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'show'])->name('dashboard.newsletter.show');
+        Route::post('/dashboard/newsletter', [App\Http\Controllers\NewsletterController::class, 'store'])->name('dashboard.newsletter.store');
+        Route::put('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'update'])->name('dashboard.newsletter.update');
+        Route::post('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'update'])->name('dashboard.newsletter.update.post');
+        Route::delete('/dashboard/newsletter/{id}', [App\Http\Controllers\NewsletterController::class, 'destroy'])->name('dashboard.newsletter.destroy');
+        Route::get('/dashboard/newsletter/export/csv', [App\Http\Controllers\NewsletterController::class, 'export'])->name('dashboard.newsletter.export');
+    });
+    
     // Gestion des contacts
     Route::prefix('dashboard/contacts')->name('dashboard.contacts.')->group(function () {
         Route::get('/', [App\Http\Controllers\ContactController::class, 'index'])->name('index');
@@ -488,7 +401,6 @@ Route::middleware(['auth', 'verifier.role:admin|directeur_publication'])->group(
         Route::post('/bulk-action', [App\Http\Controllers\ContactController::class, 'bulkAction'])->name('bulk-action');
         Route::get('/export/csv', [App\Http\Controllers\ContactController::class, 'export'])->name('export');
     });
-});
 
 // === ROUTES WEBTV - ACCESSIBLE À TOUS LES UTILISATEURS AUTHENTIFIÉS ===
 Route::middleware(['auth', 'verifier.role'])->group(function () {
@@ -508,6 +420,8 @@ Route::middleware(['auth', 'verifier.role'])->group(function () {
         Route::post('/{webtv}/toggle-actif', [App\Http\Controllers\WebtvController::class, 'toggleActif'])->name('toggle-actif');
         Route::post('/{webtv}/changer-statut', [App\Http\Controllers\WebtvController::class, 'changerStatut'])->name('changer-statut');
     });
+});
+
 });
 
 // === ROUTES RÉSERVÉES SUPER-ADMINISTRATEUR UNIQUEMENT ===
@@ -536,100 +450,6 @@ Route::middleware(['auth', 'verifier.role:admin'])->group(function () {
     
     // Routes de test et développement
     Route::get('/dashboard/test', function() { return view('dashboard.test'); })->name('dashboard.test');
-    
-});
-
-// WebTV routes
-Route::prefix('webtv')->name('webtv.')->group(function () {
-    Route::get('/', function () {
-        $query = \App\Models\Webtv::query()
-            ->where('est_actif', true)
-            ->whereIn('statut', ['en_direct', 'programme', 'termine'])
-            // Prioritize live first, then programme, then others
-            ->orderByRaw("CASE statut WHEN 'en_direct' THEN 0 WHEN 'programme' THEN 1 ELSE 2 END")
-            // Within same statut, show scheduled most recent first, nulls last
-            ->orderByRaw('CASE WHEN date_programmee IS NULL THEN 1 ELSE 0 END')
-            ->orderByDesc('date_programmee')
-            ->orderByDesc('created_at');
-
-        // Distinct categories (non vides)
-        $allCategories = \App\Models\Webtv::where('est_actif', true)
-            ->whereNotNull('categorie')
-            ->where('categorie', '<>', '')
-            ->pluck('categorie')
-            ->unique()
-            ->values();
-
-        $current = request('category');
-        if ($current) {
-            $slug = \Illuminate\Support\Str::slug($current, '-');
-            // Compare on a normalized version of categorie: lower + spaces/underscores -> '-'
-            $query->whereRaw('LOWER(REPLACE(REPLACE(categorie, " ", "-"), "_", "-")) = ?', [strtolower($slug)]);
-        }
-
-        $webtvs = $query->paginate(12)->withQueryString();
-
-        // Récupérer les programmes récents pour la section "Nos programmes"
-        $recentPrograms = \App\Models\Webtv::query()
-            ->where('est_actif', true)
-            ->whereIn('statut', ['termine', 'programme', 'en_direct'])
-            // S'assurer qu'il y a du contenu vidéo (code embed ou intégration)
-            ->where(function($query) {
-                $query->whereNotNull('code_embed_vimeo')
-                      ->orWhereNotNull('code_integration_vimeo');
-            })
-            ->orderByDesc('created_at')
-            ->limit(9) // Afficher 9 programmes récents
-            ->get();
-
-        // Récupérer aussi les données pour le live principal (comme sur l'accueil)
-        $featuredWebtv = \App\Models\Webtv::query()
-            ->where('est_actif', true)
-            ->where('statut', 'en_direct')
-            ->orderByDesc('date_programmee')
-            ->orderByDesc('created_at')
-            ->first();
-
-        $prochainLive = null;
-        if (!$featuredWebtv || $featuredWebtv->statut !== 'en_direct') {
-            $prochainLive = \App\Models\Webtv::query()
-                ->where('est_actif', true)
-                ->where('statut', 'programme')
-                ->whereNotNull('date_programmee')
-                ->where('date_programmee', '>', now())
-                ->orderBy('date_programmee')
-                ->first();
-        }
-
-        return view('pages.webtv', [
-            'webtvs' => $webtvs,
-            'categories' => $allCategories,
-            'currentCategory' => $current,
-            'recentPrograms' => $recentPrograms,
-            'featuredWebtv' => $featuredWebtv,
-            'prochainLive' => $prochainLive,
-        ]);
-    })->name('index');
-
-    Route::get('/{webtv}', function (\App\Models\Webtv $webtv) {
-        // Vérifier que la WebTV est active
-        if (!$webtv->est_actif) {
-            abort(404);
-        }
-
-        // Récupérer d'autres programmes similaires (même catégorie)
-        $programmesLies = \App\Models\Webtv::query()
-            ->where('est_actif', true)
-            ->where('id', '!=', $webtv->id)
-            ->when($webtv->categorie, function($query) use ($webtv) {
-                return $query->where('categorie', $webtv->categorie);
-            })
-            ->whereIn('statut', ['termine', 'programme'])
-            ->limit(4)
-            ->get();
-
-        return view('pages.webtv-detail', compact('webtv', 'programmesLies'));
-    })->name('show');
 });
 
 // Newsletter route
@@ -734,3 +554,103 @@ Route::get('/ad/click/{id}', [App\Http\Controllers\AdvertisementController::clas
 
 // Advertisement impression tracking route (public)
 Route::post('/ad/impression/{id}', [App\Http\Controllers\AdvertisementController::class, 'impression'])->name('advertisement.impression');
+
+// WebTV routes
+Route::prefix('webtv')->name('webtv.')->group(function () {
+    Route::get('/', function () {
+        $query = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->whereIn('statut', ['en_direct', 'programme', 'termine'])
+            // Prioritize live first, then programme, then others
+            ->orderByRaw("CASE statut WHEN 'en_direct' THEN 0 WHEN 'programme' THEN 1 ELSE 2 END")
+            // Within same statut, show scheduled most recent first, nulls last
+            ->orderByRaw('CASE WHEN date_programmee IS NULL THEN 1 ELSE 0 END')
+            ->orderByDesc('date_programmee')
+            ->orderByDesc('created_at');
+
+        // Distinct categories (non vides)
+        $allCategories = \App\Models\Webtv::where('est_actif', true)
+            ->whereNotNull('categorie')
+            ->where('categorie', '<>', '')
+            ->pluck('categorie')
+            ->unique()
+            ->values();
+
+        $current = request('category');
+        if ($current) {
+            $slug = \Illuminate\Support\Str::slug($current, '-');
+            // Compare on a normalized version of categorie: lower + spaces/underscores -> '-'
+            $query->whereRaw('LOWER(REPLACE(REPLACE(categorie, " ", "-"), "_", "-")) = ?', [strtolower($slug)]);
+        }
+
+        $webtvs = $query->paginate(12)->withQueryString();
+
+        // Récupérer les programmes récents pour la section "Nos programmes"
+        $recentPrograms = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->whereIn('statut', ['termine', 'programme', 'en_direct'])
+            // S'assurer qu'il y a du contenu vidéo (code embed ou intégration)
+            ->where(function($query) {
+                $query->whereNotNull('code_embed_vimeo')
+                      ->orWhereNotNull('code_integration_vimeo');
+            })
+            ->orderByDesc('created_at')
+            ->limit(9) // Afficher 9 programmes récents
+            ->get();
+
+        // Récupérer aussi les données pour le live principal (comme sur l'accueil)
+        $featuredWebtv = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->where('statut', 'en_direct')
+            ->orderByDesc('date_programmee')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $prochainLive = null;
+        if (!$featuredWebtv || $featuredWebtv->statut !== 'en_direct') {
+            $prochainLive = \App\Models\Webtv::query()
+                ->where('est_actif', true)
+                ->where('statut', 'programme')
+                ->whereNotNull('date_programmee')
+                ->where('date_programmee', '>', now())
+                ->orderBy('date_programmee')
+                ->first();
+        }
+
+        return view('pages.webtv', [
+            'webtvs' => $webtvs,
+            'categories' => $allCategories,
+            'currentCategory' => $current,
+            'recentPrograms' => $recentPrograms,
+            'featuredWebtv' => $featuredWebtv,
+            'prochainLive' => $prochainLive,
+        ]);
+    })->name('index');
+
+    Route::get('/{webtv}', function (\App\Models\Webtv $webtv) {
+        // Vérifier que la WebTV est active
+        if (!$webtv->est_actif) {
+            abort(404);
+        }
+
+        // Récupérer d'autres programmes similaires (même catégorie)
+        $programmesLies = \App\Models\Webtv::query()
+            ->where('est_actif', true)
+            ->where('id', '!=', $webtv->id)
+            ->when($webtv->categorie, function($query) use ($webtv) {
+                return $query->where('categorie', $webtv->categorie);
+            })
+            ->whereIn('statut', ['termine', 'programme'])
+            ->limit(4)
+            ->get();
+
+        return view('pages.webtv-detail', compact('webtv', 'programmesLies')); 
+    })->name('show');
+});
+
+// Authentication Routes
+Route::prefix('auth')->group(function () {
+    Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+});
