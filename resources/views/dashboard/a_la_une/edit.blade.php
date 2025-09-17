@@ -74,7 +74,7 @@
         <p>Mettez à jour les informations de l'article ci-dessous.</p>
     </div>
 
-    <form action="{{ route('dashboard.a_la_une.update', $aLaUneArticle->id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('dashboard.a_la_une.update', $aLaUneArticle->id)" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="form-container">
@@ -82,11 +82,11 @@
                 <h2 class="section-title">Contenu Principal</h2>
                 <div class="form-group">
                     <label for="title" class="form-label required">Titre</label>
-                    <input type="text" id="title" name="title" class="form-input" value="{{ old('title', $aLaUneArticle->title) }}" required>
+                    <input type="text" id="title" name="title" class="form-input" value="{{ old('title', $aLaUneArticle->title)" required>
                 </div>
                 <div class="form-group">
                     <label for="excerpt" class="form-label required">Extrait</label>
-                    <textarea id="excerpt" name="excerpt" class="form-input form-textarea" rows="3" required>{{ old('excerpt', $aLaUneArticle->excerpt) }}</textarea>
+                    <textarea id="excerpt" name="excerpt" class="form-input form-textarea" rows="3" required>{{ old('excerpt', $aLaUneArticle->excerpt)</textarea>
                 </div>
                 <div class="form-group">
                     <label for="content" class="form-label required">Contenu complet</label>
@@ -127,7 +127,7 @@
                     @if($aLaUneArticle->featured_image_path)
                         <div class="mt-3">
                             <p>Image actuelle :</p>
-                            <img src="{{ asset('storage/' . $aLaUneArticle->featured_image_path) }}" alt="Image actuelle" style="max-width: 200px; border-radius: 0.5rem;">
+                            <img src="{{ $aLaUneArticle->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $aLaUneArticle->featured_image_path) : asset('storage/' . $aLaUneArticle->featured_image_path)) : 'https://via.placeholder.com/200' }}" alt="Image actuelle" style="max-width: 200px; border-radius: 0.5rem;">
                         </div>
                     @endif
                 </div>
@@ -137,16 +137,16 @@
                 <h2 class="section-title">SEO</h2>
                 <div class="form-group">
                     <label for="meta_title" class="form-label">Titre SEO</label>
-                    <input type="text" id="meta_title" name="meta_title" class="form-input" value="{{ old('meta_title', $aLaUneArticle->seo_title) }}">
+                    <input type="text" id="meta_title" name="meta_title" class="form-input" value="{{ old('meta_title', $aLaUneArticle->seo_title)">
                 </div>
                 <div class="form-group">
                     <label for="meta_description" class="form-label">Description SEO</label>
-                    <textarea id="meta_description" name="meta_description" class="form-input form-textarea" rows="2">{{ old('meta_description', $aLaUneArticle->seo_description) }}</textarea>
+                    <textarea id="meta_description" name="meta_description" class="form-input form-textarea" rows="2">{{ old('meta_description', $aLaUneArticle->seo_description)</textarea>
                 </div>
             </div>
 
             <div class="form-actions">
-                <a href="{{ route('dashboard.a_la_une.index') }}" class="btn btn-secondary">Annuler</a>
+                <a href="{{ route('dashboard.a_la_une.index')" class="btn btn-secondary">Annuler</a>
                 <button type="submit" class="btn btn-primary">Mettre à jour l'article</button>
             </div>
         </div>

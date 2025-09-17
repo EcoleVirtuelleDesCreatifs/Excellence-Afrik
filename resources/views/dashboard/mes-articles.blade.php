@@ -1,8 +1,8 @@
 @extends('layouts.dashboard-ultra')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/dashboard-ultra.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/dashboard-pages.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard-ultra.css')">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard-pages.css')">
 <style>
 .status-dot {
     width: 8px;
@@ -46,7 +46,7 @@
         <h2 class="h4 mb-1">Mes Articles</h2>
         <p class="text-muted mb-0">Gérez vos articles personnels</p>
     </div>
-    <a href="{{ route('dashboard.articles.create') }}" class="btn btn-primary">
+    <a href="{{ route('dashboard.articles.create')" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Nouvel article
     </a>
 </div>
@@ -99,7 +99,7 @@
 <!-- Articles Table -->
 <div class="dashboard-card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="card-title">Mes Articles ({{ $articles->count() }})</h3>
+        <h3 class="card-title">Mes Articles ({{ $articles->count())</h3>
         <div class="btn-group" role="group">
             <button class="btn btn-outline-secondary btn-sm active" onclick="setViewMode('table')">
                 <i class="fas fa-list"></i>
@@ -133,8 +133,8 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" 
+                                @if($article->featured_image_path)
+                                    <img src="{{ app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path) }}" 
                                          class="rounded me-3 object-fit-cover" width="60" height="40" alt="Article"
                                          style="object-fit: cover;">
                                 @elseif($article->featured_image_url)
@@ -148,8 +148,8 @@
                                     </div>
                                 @endif
                                 <div>
-                                    <div class="fw-semibold">{{ Str::limit($article->title, 60) }}</div>
-                                    <small class="text-muted">{{ Str::limit($article->excerpt, 80) }}</small>
+                                    <div class="fw-semibold">{{ Str::limit($article->title, 60)</div>
+                                    <small class="text-muted">{{ Str::limit($article->excerpt, 80)</small>
                                 </div>
                             </div>
                         </td>
@@ -175,15 +175,15 @@
                             @else
                                 <span class="d-flex align-items-center text-secondary">
                                     <span class="status-dot offline me-2"></span>
-                                    {{ ucfirst($article->status) }}
+                                    {{ ucfirst($article->status)
                                 </span>
                             @endif
                         </td>
-                        <td>{{ number_format($article->view_count ?? 0) }}</td>
-                        <td>{{ $article->created_at->translatedFormat('d F Y') }}</td>
+                        <td>{{ number_format($article->view_count ?? 0)</td>
+                        <td>{{ $article->created_at->translatedFormat('d F Y')</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn btn-outline-primary" title="Modifier">
+                                <a href="{{ route('dashboard.articles.edit', $article->id)" class="btn btn-outline-primary" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button class="btn btn-outline-info" onclick="viewArticle({{ $article->id }})" title="Voir">
@@ -192,7 +192,7 @@
                                 
                                 <!-- Bouton supprimer - Journaliste peut supprimer ses articles non-publiés -->
                                 @if($article->status !== 'published')
-                                    <form method="POST" action="{{ route('dashboard.articles.delete', $article->id) }}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
+                                    <form method="POST" action="{{ route('dashboard.articles.delete', $article->id)" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger" title="Supprimer">
@@ -210,7 +210,7 @@
                                 <i class="fas fa-newspaper fa-3x mb-3 opacity-50"></i>
                                 <h5>Aucun article trouvé</h5>
                                 <p class="mb-3">Vous n'avez pas encore créé d'articles.</p>
-                                <a href="{{ route('dashboard.articles.create') }}" class="btn btn-primary">
+                                <a href="{{ route('dashboard.articles.create')" class="btn btn-primary">
                                     <i class="fas fa-plus me-2"></i>Créer votre premier article
                                 </a>
                             </div>
@@ -223,7 +223,7 @@
     </div>
     <div class="card-footer d-flex justify-content-between align-items-center">
         <div>
-            <span class="text-muted">{{ $articles->count() }} article(s)</span>
+            <span class="text-muted">{{ $articles->count() article(s)</span>
         </div>
     </div>
 </div>
@@ -403,13 +403,13 @@ function executeBulkAction(action) {
     // Créer un formulaire pour envoyer les données
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '{{ route("dashboard.articles.bulk-action") }}';
+    form.action = '{{ route("dashboard.articles.bulk-action")';
     
     // Token CSRF
     const csrfToken = document.createElement('input');
     csrfToken.type = 'hidden';
     csrfToken.name = '_token';
-    csrfToken.value = '{{ csrf_token() }}';
+    csrfToken.value = '{{ csrf_token()';
     form.appendChild(csrfToken);
     
     // Action

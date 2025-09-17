@@ -839,7 +839,7 @@
                                 <div class="portrait-card h-100 wow fadeInUp">
                                     <div class="portrait-card__image">
                                         <a href="{{ route('articles.show', $article->slug) }}">
-                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
+                                            <img src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
                                         </a>
                                     </div>
                                     <div class="portrait-card__content">
@@ -862,7 +862,7 @@
                                 <div class="portrait-card portrait-card--small h-100 wow fadeInUp">
                                     <div class="portrait-card__image portrait-card__image--small">
                                         <a href="{{ route('articles.show', $article->slug) }}">
-                                            <img src="{{ $article->featured_image_path ? asset('storage/' . $article->featured_image_path) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
+                                            <img src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}">
                                         </a>
                                     </div>
                                     <div class="portrait-card__content portrait-card__content--small">

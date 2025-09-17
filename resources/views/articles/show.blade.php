@@ -38,7 +38,7 @@
                     <!-- Image à la une -->
                     <figure class="mb-4">
                         @if($article->featured_image_path)
-                            <img class="img-fluid rounded" src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}" />
+                            <img class="img-fluid rounded" src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : asset('assets/images/default-article.jpg') }}" alt="{{ $article->title }}" />
                         @else
                             <img class="img-fluid rounded" src="{{ asset('assets/default/image_default.jpg') }}" alt="{{ $article->title }}" />
                         @endif
@@ -101,7 +101,7 @@
                             <div class="d-flex mb-3 sidebar-article-card">
                                 <div class="flex-shrink-0 me-3" style="padding-right: 1rem">
                                      <a href="{{ route('articles.show', $related->slug) }}">
-                                         <img src="{{ $related->featured_image_path ? asset('storage/' . $related->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $related->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                         <img src="{{ $related->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $related->featured_image_path) : asset('storage/' . $related->featured_image_path)) : 'https://via.placeholder.com/80' }}" alt="{{ $related->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
                                      </a>
                                  </div>
                                 <div>
@@ -125,7 +125,7 @@
                                         <div class="d-flex mb-3 sidebar-article-card">
                                             <div class="flex-shrink-0 me-3">
                                                 <a href="{{ route('articles.show', $articleItem->slug) }}">
-                                                    <img src="{{ $articleItem->featured_image_path ? asset('storage/' . $articleItem->featured_image_path) : 'https://via.placeholder.com/80' }}" alt="{{ $articleItem->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                                    <img src="{{ $articleItem->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $articleItem->featured_image_path) : asset('storage/' . $articleItem->featured_image_path)) : 'https://via.placeholder.com/80' }}" alt="{{ $articleItem->title }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;">
                                                 </a>
                                             </div>
                                             <div>
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ],
     'datePublished' => $article->created_at->toISOString(),
     'dateModified' => $article->updated_at->toISOString(),
-    'image' => ($article->featured_image_path ? asset('storage/' . $article->featured_image_path) : ($article->featured_image_url ?: asset('assets/images/default-article.jpg'))),
+    'image' => ($article->featured_image_path ? ($article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : asset('assets/images/default-article.jpg')) : ($article->featured_image_url ?: asset('assets/images/default-article.jpg'))),
     'mainEntityOfPage' => [
         '@type' => 'WebPage',
         '@id' => request()->url()
@@ -372,4 +372,4 @@ document.addEventListener('DOMContentLoaded', function() {
 @endpush
 
 
-@endsection;
+@endsection

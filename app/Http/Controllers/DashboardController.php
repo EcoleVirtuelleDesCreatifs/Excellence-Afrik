@@ -11,6 +11,7 @@ use App\Models\Article;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -357,22 +358,46 @@ class DashboardController extends Controller
     private function processImage($file, $oldPath = null)
     {
         if ($oldPath) {
-            // Also delete old thumbnail if it exists
+            // Delete old images
             $thumbPath = str_replace('.', '_thumb.', $oldPath);
-            Storage::disk('public')->delete($oldPath);
-            Storage::disk('public')->delete($thumbPath);
+            if (app()->environment('production')) {
+                // En production LWS, supprimer directement de la racine
+                $publicPath = base_path($oldPath);
+                $publicThumbPath = base_path($thumbPath);
+                if (file_exists($publicPath)) unlink($publicPath);
+                if (file_exists($publicThumbPath)) unlink($publicThumbPath);
+            } else {
+                Storage::disk('public')->delete($oldPath);
+                Storage::disk('public')->delete($thumbPath);
+            }
         }
 
         $extension = $file->getClientOriginalExtension();
         $baseName = (string) Str::uuid();
-        
+
         // Define paths for large and thumb images
         $largeFilename = $baseName . '.' . $extension;
         $thumbFilename = $baseName . '_thumb.' . $extension;
         $relativeLargePath = 'articles/' . $largeFilename;
         $relativeThumbPath = 'articles/' . $thumbFilename;
-        $absoluteLargePath = storage_path('app/public/' . $relativeLargePath);
-        $absoluteThumbPath = storage_path('app/public/' . $relativeThumbPath);
+
+        if (app()->environment('production')) {
+            // En production LWS, les fichiers publics sont à la racine
+            $absoluteLargePath = base_path('uploads/' . $relativeLargePath);
+            $absoluteThumbPath = base_path('uploads/' . $relativeThumbPath);
+
+            // Créer le dossier s'il n'existe pas
+            $uploadDir = base_path('uploads/articles');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $relativeLargePath = 'uploads/' . $relativeLargePath; // Chemin pour la DB
+        } else {
+            // En local, utiliser storage comme avant
+            $absoluteLargePath = storage_path('app/public/' . $relativeLargePath);
+            $absoluteThumbPath = storage_path('app/public/' . $relativeThumbPath);
+        }
 
         // Create image instance
         $image = $this->imageManager->read($file->getRealPath());

@@ -221,8 +221,8 @@
                         <div class="article-card-v2">
                             <div class="article-card-v2__thumb">
                                 <a href="{{ route('articles.show', $article->slug) }}">
-                                    @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                        <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
+                                    @if($article->featured_image_path)
+                                        <img src="{{ app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}">
                                     @elseif($article->featured_image_url)
                                         <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}">
                                     @else

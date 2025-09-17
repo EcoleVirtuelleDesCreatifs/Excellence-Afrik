@@ -30,14 +30,14 @@
                         <div class="last-update">
                             <i class="fas fa-clock"></i>
                             @if($user->derniere_connexion)
-                                Dernière connexion : <span>{{ $user->derniere_connexion->diffForHumans() }}</span>
+                                Dernière connexion : <span>{{ $user->derniere_connexion->diffForHumans()</span>
                             @else
                                 Première connexion aujourd'hui
                             @endif
                         </div>
                     </div>
                     <div class="header-actions">
-                        <a href="{{ route('dashboard.articles.create') }}" class="btn-create-article">
+                        <a href="{{ route('dashboard.articles.create')" class="btn-create-article">
                             <i class="fas fa-plus"></i>
                             Nouvel Article
                         </a>
@@ -64,7 +64,7 @@
                         <i class="fas fa-edit"></i>
                         <span>{{ $stats['mes_articles_total'] }} articles</span>
                     </div>
-                    <a href="{{ route('dashboard.articles') }}" class="stat-view-more-btn">
+                    <a href="{{ route('dashboard.articles')" class="stat-view-more-btn">
                         <i class="fas fa-list"></i>
                         Voir mes articles
                     </a>
@@ -83,7 +83,7 @@
                         <i class="fas fa-arrow-up"></i>
                         <span>{{ $stats['mes_articles_total'] > 0 ? number_format(($stats['mes_articles_published'] / $stats['mes_articles_total']) * 100, 1) : 0 }}%</span>
                     </div>
-                    <a href="{{ route('dashboard.articles') }}?status=published" class="stat-view-more-btn">
+                    <a href="{{ route('dashboard.articles')?status=published" class="stat-view-more-btn">
                         <i class="fas fa-check-circle"></i>
                         Voir publiés
                     </a>
@@ -102,7 +102,7 @@
                         <i class="fas fa-clock"></i>
                         <span>{{ $stats['mes_articles_pending'] }} en cours</span>
                     </div>
-                    <a href="{{ route('dashboard.articles') }}?status=pending" class="stat-view-more-btn">
+                    <a href="{{ route('dashboard.articles')?status=pending" class="stat-view-more-btn">
                         <i class="fas fa-clock"></i>
                         Voir en attente
                     </a>
@@ -121,7 +121,7 @@
                         <i class="fas fa-edit"></i>
                         <span>{{ $stats['mes_articles_drafts'] }} brouillons</span>
                     </div>
-                    <a href="{{ route('dashboard.articles') }}?status=draft" class="stat-view-more-btn">
+                    <a href="{{ route('dashboard.articles')?status=draft" class="stat-view-more-btn">
                         <i class="fas fa-edit"></i>
                         Voir brouillons
                     </a>
@@ -132,13 +132,13 @@
                         <i class="fas fa-eye"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">{{ number_format($stats['mes_vues_totales']) }}</div>
+                        <div class="stat-number">{{ number_format($stats['mes_vues_totales'])</div>
                         <div class="stat-label">Vues Totales</div>
                         <div class="stat-period">Mes articles</div>
                     </div>
                     <div class="stat-trend positive">
                         <i class="fas fa-chart-line"></i>
-                        <span>{{ number_format($stats['ma_moyenne_vues']) }} /article</span>
+                        <span>{{ number_format($stats['ma_moyenne_vues']) /article</span>
                     </div>
                     <span class="stat-view-more-btn disabled">
                         <i class="fas fa-eye"></i>
@@ -164,7 +164,7 @@
                                 <i class="fas fa-newspaper"></i>
                                 Mes Articles Récents
                             </h3>
-                            <div class="card-badge">{{ $mesArticlesRecents->count() }} récents</div>
+                            <div class="card-badge">{{ $mesArticlesRecents->count() récents</div>
                         </div>
                         <div class="card-content">
                             <div class="publications-list">
@@ -174,25 +174,25 @@
                                         @if($article->featured_image_url)
                                             <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
                                         @elseif($article->featured_image_path)
-                                            <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
+                                            <img src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces' }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
                                         @else
                                             <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces" alt="Article thumbnail">
                                         @endif
                                     </div>
                                     <div class="publication-info">
-                                        <h4 class="publication-title">{{ Str::limit($article->title, 50) }}</h4>
+                                        <h4 class="publication-title">{{ Str::limit($article->title, 50)</h4>
                                         <div class="publication-meta">
                                             <span class="date">
                                                 <i class="fas fa-calendar"></i>
-                                                {{ $article->created_at->diffForHumans() }}
+                                                {{ $article->created_at->diffForHumans()
                                             </span>
                                             <span class="views">
                                                 <i class="fas fa-eye"></i>
-                                                {{ $article->view_count ?? rand(50, 500) }} vues
+                                                {{ $article->view_count ?? rand(50, 500) vues
                                             </span>
                                         </div>
                                         <div class="publication-actions">
-                                            <a href="{{ route('dashboard.articles.edit', $article->id) }}" class="btn-edit">
+                                            <a href="{{ route('dashboard.articles.edit', $article->id)" class="btn-edit">
                                                 <i class="fas fa-edit"></i>
                                                 Modifier
                                             </a>
@@ -210,14 +210,14 @@
                                             Brouillon
                                         @else
                                             <i class="fas fa-archive"></i>
-                                            {{ ucfirst($article->status) }}
+                                            {{ ucfirst($article->status)
                                         @endif
                                     </div>
                                 </div>
                                 @empty
                                 <div class="no-articles">
                                     <p><i class="fas fa-newspaper"></i> Vous n'avez pas encore d'articles</p>
-                                    <a href="{{ route('dashboard.articles.create') }}" class="btn-create-first">
+                                    <a href="{{ route('dashboard.articles.create')" class="btn-create-first">
                                         <i class="fas fa-plus"></i>
                                         Créer votre premier article
                                     </a>
@@ -225,7 +225,7 @@
                                 @endforelse
                             </div>
                             <div class="card-footer">
-                                <a href="{{ route('dashboard.articles') }}" class="btn-view-all">
+                                <a href="{{ route('dashboard.articles')" class="btn-view-all">
                                     <i class="fas fa-list"></i>
                                     Voir tous mes articles
                                 </a>
@@ -294,11 +294,11 @@
 
                             <div class="card-footer">
                                 <div class="quick-actions">
-                                    <a href="{{ route('dashboard.articles.create') }}" class="btn-quick-action primary">
+                                    <a href="{{ route('dashboard.articles.create')" class="btn-quick-action primary">
                                         <i class="fas fa-plus"></i>
                                         Nouvel Article
                                     </a>
-                                    <a href="{{ route('dashboard.articles') }}?status=draft" class="btn-quick-action">
+                                    <a href="{{ route('dashboard.articles')?status=draft" class="btn-quick-action">
                                         <i class="fas fa-edit"></i>
                                         Terminer brouillons
                                     </a>

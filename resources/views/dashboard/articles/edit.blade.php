@@ -627,9 +627,9 @@
                 Images et Médias
             </h2>
             
-            @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
+            @if($article->featured_image_path)
                 <div class="image-preview-container">
-                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" class="current-image" alt="Image actuelle">
+                    <img src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : 'https://via.placeholder.com/200' }}" class="current-image" alt="Image actuelle">
                     <p><small>Image actuelle</small></p>
                 </div>
             @endif
@@ -739,29 +739,29 @@
             <div class="form-group">
                 <label class="form-label required">Statut de publication</label>
                 <div class="status-selector">
-                    <div class="status-option {{ old('status', $article->status) == 'draft' ? 'selected' : '' }}" data-status="draft">
+                    <div class="status-option {{ old('status', $article->status) }} == 'draft' ? 'selected' : '' }}" data-status="draft">
                         <i class="fas fa-edit"></i>
                         <div>Brouillon</div>
                         <small>Enregistrer sans publier</small>
                     </div>
                     @if(auth()->check() && auth()->user()->estJournaliste())
-                        <div class="status-option {{ old('status', $article->status) == 'pending' ? 'selected' : '' }}" data-status="pending">
+                        <div class="status-option {{ old('status', $article->status) }} == 'pending' ? 'selected' : '' }}" data-status="pending">
                             <i class="fas fa-hourglass-half"></i>
                             <div>Soumettre</div>
                             <small>Soumettre pour validation</small>
                         </div>
                     @else
-                        <div class="status-option {{ old('status', $article->status) == 'pending' ? 'selected' : '' }}" data-status="pending">
+                        <div class="status-option {{ old('status', $article->status) }} == 'pending' ? 'selected' : '' }}" data-status="pending">
                             <i class="fas fa-hourglass-half"></i>
                             <div>En attente</div>
                             <small>En attente de validation</small>
                         </div>
-                        <div class="status-option {{ old('status', $article->status) == 'published' ? 'selected' : '' }}" data-status="published">
+                        <div class="status-option {{ old('status', $article->status) }} == 'published' ? 'selected' : '' }}" data-status="published">
                             <i class="fas fa-globe"></i>
                             <div>Publié</div>
                             <small>Visible par tous</small>
                         </div>
-                        <div class="status-option {{ old('status', $article->status) == 'archived' ? 'selected' : '' }}" data-status="archived">
+                        <div class="status-option {{ old('status', $article->status) }} == 'archived' ? 'selected' : '' }}" data-status="archived">
                             <i class="fas fa-archive"></i>
                             <div>Archivé</div>
                             <small>Article archivé</small>

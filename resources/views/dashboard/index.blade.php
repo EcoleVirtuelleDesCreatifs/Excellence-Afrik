@@ -266,7 +266,7 @@
                                         @if($article->featured_image_url)
                                             <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
                                         @elseif($article->featured_image_path)
-                                            <img src="{{ asset('storage/' . $article->featured_image_path) }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
+                                            <img src="{{ $article->featured_image_path ? (app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path)) : 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces' }}" alt="{{ $article->title }}" onerror="this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces'">
                                         @else
                                             <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=80&h=60&fit=crop&crop=faces" alt="Article thumbnail">
                                         @endif

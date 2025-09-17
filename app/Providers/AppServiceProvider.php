@@ -10,6 +10,8 @@ use App\Observers\ArticleObserver;
 use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
+use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,5 +49,8 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('bannerTop', null);
             }
         });
+
+        // Partager ImageHelper globalement avec toutes les vues
+        View::share('imageHelper', new ImageHelper());
     }
 }

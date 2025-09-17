@@ -436,8 +436,8 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                @if($article->featured_image_path && file_exists(public_path('storage/' . $article->featured_image_path)))
-                                    <img src="{{ asset('storage/' . $article->featured_image_path) }}" 
+                                @if($article->featured_image_path)
+                                    <img src="{{ app()->environment('production') ? asset('uploads/' . $article->featured_image_path) : asset('storage/' . $article->featured_image_path) }}" 
                                          class="rounded me-3 object-fit-cover" width="60" height="40" alt="Article"
                                          style="object-fit: cover;">
                                 @elseif($article->featured_image_url)
